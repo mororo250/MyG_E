@@ -106,6 +106,7 @@ void Game::Loop()
 		renderer.Clear();
 		
 		ImGui_ImplOpenGL3_NewFrame();
+		ImGui::NewFrame();
 
 		renderer.Draw(va, ib, shader);
 
