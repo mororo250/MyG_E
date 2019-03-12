@@ -1,0 +1,1 @@
+The purpose of this project is learning opengl and improve programming skills,
