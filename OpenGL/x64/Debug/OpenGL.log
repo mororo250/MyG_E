@@ -1,0 +1,34 @@
+﻿Game.obj : error LNK2019: unresolved external symbol __imp_glewInit referenced in function "public: bool __cdecl Game::Initialize(void)" (?Initialize@Game@@QEAA_NXZ)
+Game.obj : error LNK2019: unresolved external symbol glfwInit referenced in function "public: bool __cdecl Game::Initialize(void)" (?Initialize@Game@@QEAA_NXZ)
+Game.obj : error LNK2019: unresolved external symbol glfwTerminate referenced in function "public: bool __cdecl Game::Initialize(void)" (?Initialize@Game@@QEAA_NXZ)
+Game.obj : error LNK2019: unresolved external symbol glfwCreateWindow referenced in function "public: bool __cdecl Game::Initialize(void)" (?Initialize@Game@@QEAA_NXZ)
+Game.obj : error LNK2019: unresolved external symbol glfwWindowShouldClose referenced in function "public: void __cdecl Game::Loop(void)" (?Loop@Game@@QEAAXXZ)
+Game.obj : error LNK2019: unresolved external symbol glfwPollEvents referenced in function "public: void __cdecl Game::Loop(void)" (?Loop@Game@@QEAAXXZ)
+Game.obj : error LNK2019: unresolved external symbol glfwMakeContextCurrent referenced in function "public: bool __cdecl Game::Initialize(void)" (?Initialize@Game@@QEAA_NXZ)
+Game.obj : error LNK2019: unresolved external symbol glfwSwapBuffers referenced in function "public: void __cdecl Game::Loop(void)" (?Loop@Game@@QEAAXXZ)
+Game.obj : error LNK2019: unresolved external symbol glfwSwapInterval referenced in function "public: bool __cdecl Game::Initialize(void)" (?Initialize@Game@@QEAA_NXZ)
+Game.obj : error LNK2001: unresolved external symbol __imp___glewGetUniformLocation
+Game.obj : error LNK2001: unresolved external symbol __imp___glewUniform4f
+Game.obj : error LNK2001: unresolved external symbol __imp___glewUseProgram
+Shader.obj : error LNK2001: unresolved external symbol __imp___glewAttachShader
+Shader.obj : error LNK2001: unresolved external symbol __imp___glewCompileShader
+Shader.obj : error LNK2001: unresolved external symbol __imp___glewCreateProgram
+Shader.obj : error LNK2001: unresolved external symbol __imp___glewCreateShader
+Shader.obj : error LNK2001: unresolved external symbol __imp___glewDeleteProgram
+Shader.obj : error LNK2001: unresolved external symbol __imp___glewDeleteShader
+Shader.obj : error LNK2001: unresolved external symbol __imp___glewGetProgramInfoLog
+Shader.obj : error LNK2001: unresolved external symbol __imp___glewGetProgramiv
+Shader.obj : error LNK2001: unresolved external symbol __imp___glewGetShaderInfoLog
+Shader.obj : error LNK2001: unresolved external symbol __imp___glewGetShaderiv
+Shader.obj : error LNK2001: unresolved external symbol __imp___glewLinkProgram
+Shader.obj : error LNK2001: unresolved external symbol __imp___glewShaderSource
+Shader.obj : error LNK2001: unresolved external symbol __imp___glewValidateProgram
+VertexArray.obj : error LNK2001: unresolved external symbol __imp___glewBindBuffer
+VertexArray.obj : error LNK2001: unresolved external symbol __imp___glewBufferData
+VertexArray.obj : error LNK2001: unresolved external symbol __imp___glewDeleteBuffers
+VertexArray.obj : error LNK2001: unresolved external symbol __imp___glewGenBuffers
+VertexArray.obj : error LNK2001: unresolved external symbol __imp___glewEnableVertexAttribArray
+VertexArray.obj : error LNK2001: unresolved external symbol __imp___glewVertexAttribPointer
+E:\Programming\codes\C++ codes\OpenGL\Depencies\GLFW\lib-vc2015\glfw3.lib : warning LNK4272: library machine type 'x86' conflicts with target machine type 'x64'
+E:\Programming\codes\C++ codes\OpenGL\Depencies\GLEW\lib\Release\Win32\glew32s.lib : warning LNK4272: library machine type 'x86' conflicts with target machine type 'x64'
+E:\Programming\codes\C++ codes\OpenGL\x64\Debug\OpenGL.exe : fatal error LNK1120: 31 unresolved externals
