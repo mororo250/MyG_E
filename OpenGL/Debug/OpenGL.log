@@ -1,2 +1,3 @@
 ﻿  Game.cpp
+c:\users\joao_\desktop\programming\codes\c++ codes\opengl\opengl\game.cpp(32): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
   OpenGL.vcxproj -> C:\Users\joao_\Desktop\Programming\codes\C++ codes\OpenGL\Debug\OpenGL.exe

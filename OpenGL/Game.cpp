@@ -14,6 +14,7 @@
 //imgui
 #include "imgui.h"
 #include "imgui_impl_opengl3.h"
+#include "imgui_impl_glfw.h"
 
 Game::Game()
 :mWindow(nullptr)
@@ -28,7 +29,7 @@ bool Game::Initialize()
 		return 0;
 
 	/* Create a windowed mode window and its OpenGL context */
-	mWindow = glfwCreateWindow(1024, 768, "Hello World", NULL, NULL);
+	mWindow = glfwCreateWindow(mWinLengh, mWinHigh, "Hello World", NULL, NULL);
 	if (!mWindow)
 	{
 		glfwTerminate();
@@ -76,13 +77,21 @@ void Game::Loop()
 	Shader shader("Shader.shader");
 	shader.bind();
 
-	Matrix<float, 3, 3> Ortho = CreateOrthoMatrix(0, 1024, 768, 0);
-	Matrix<float, 3, 3> TranMat = CreateTranslationMatrix3(450.0f, 300.0f);
-	Matrix<float, 3, 3> ScaleMat = CreateScaleMatrix3(1.0f, 1.0f);
-	Matrix<float, 3, 3> RotMat = CreateRotationMatrix3(0);
+	float TranX = 512.0f;
+	float TranY = 384.0f;
+	float ScaleX = 1.0f;
+	float ScaleY = 1.0f;
+	float Rot = 0.0f; // 
+
+	Matrix<float, 3, 3> Ortho = CreateOrthoMatrix(0, mWinLengh, mWinHigh, 0);
+	Matrix<float, 3, 3> TranMat = CreateTranslationMatrix3(TranX, TranY);
+	Matrix<float, 3, 3> ScaleMat = CreateScaleMatrix3(ScaleX, ScaleY);
+	Matrix<float, 3, 3> RotMat = CreateRotationMatrix3(Rot);
 	Matrix<float, 3, 3> WorldTransform = ScaleMat * RotMat * TranMat;
 	Matrix<float, 3, 3> MVP = WorldTransform * Ortho;
-	shader.SetUniformMatrix3f(shader.GetUniformLocation("u_MVP"), MVP);
+
+	int mvp = shader.GetUniformLocation("u_MVP");
+	shader.SetUniformMatrix3f(mvp, MVP);
 
 	Texture texture("Resources/PS4.PNG");
 	texture.bind(0);
@@ -95,10 +104,17 @@ void Game::Loop()
 
 	Renderer renderer;
 
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGui_ImplOpenGL3_Init();
-	ImGui::StyleColorsDark();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
 
+	// Setup Platform/Renderer bindings
+	ImGui_ImplGlfw_InitForOpenGL(mWindow, true);
+	ImGui_ImplOpenGL3_Init("#version 130");
+	
+	// Setup Style
+	ImGui::StyleColorsDark();
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(mWindow))
@@ -106,7 +122,25 @@ void Game::Loop()
 		renderer.Clear();
 		
 		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+
+	
+		ImGui::Begin("OpenGL");
+		ImGui::Text("Hello World");
+		ImGui::SliderFloat("Translation X", &TranX, 0.0f, mWinLengh);
+		ImGui::SliderFloat("Translation y", &TranY, 0.0f, mWinHigh);
+		ImGui::SliderFloat("Scale X", &ScaleX, 0.0f, 100.0f);
+		ImGui::SliderFloat("Scale y", &ScaleY, 0.0f, 100.0f);
+		ImGui::SliderFloat("Rotation X", &Rot, -6.28f, 6.28f);
+		ImGui::End();
+
+			
+		WorldTransform = CreateScaleMatrix3(ScaleX, ScaleY) * CreateRotationMatrix3(Rot) * CreateTranslationMatrix3(TranX, TranY);
+		MVP = WorldTransform * Ortho;
+		
+		shader.bind();
+		shader.SetUniformMatrix3f(mvp , MVP);
 
 		renderer.Draw(va, ib, shader);
 
@@ -124,6 +158,8 @@ void Game::Loop()
 void Game::Shutdown()
 {
 	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
+	
 	glfwTerminate();
 }

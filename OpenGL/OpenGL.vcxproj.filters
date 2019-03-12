@@ -71,6 +71,9 @@
     <ClCompile Include="imgui_impl_opengl3.cpp">
       <Filter>Header Files\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="imgui_impl_glfw.cpp">
+      <Filter>Header Files\ImGui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -119,6 +122,9 @@
       <Filter>Header Files\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="imgui.h">
+      <Filter>Header Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_glfw.h">
       <Filter>Header Files\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="imgui_impl_opengl3.h">
