@@ -9,7 +9,7 @@ Matrix<float, 3, 3> CreateOrthoMatrix(const float left, const float right, const
 	return OrthoMatrix;
 }
 
-Matrix<float, 3, 3> CreateTranslationMatrix3(float xTrans, float yTrans)
+Matrix<float, 3, 3> TranslationMatrix::CreateTranslationMatrix3(float xTrans, float yTrans)
 {
 	Matrix<float, 3, 3> Tmatrix{ {1 , 0, 0 }, {0, 1, 0}, {xTrans, yTrans, 1} };
 	return Tmatrix;

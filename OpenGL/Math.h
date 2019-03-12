@@ -86,6 +86,16 @@ Vector<T, NumElem> operator*(const S scalar, const Vector<T, NumElem> vector)
 	return vector *= scalar;
 }
 
+template<class T, unsigned int VNumElem, unsigned int MNumCol>
+Vector<T, MNumCol> operator*(const Vector<T, VNumElem> vector, const Matrix<T, VNumElem, MNumCol> matrix)
+{
+	Vector<T, MNumCol> Result;
+	for (unsigned int i = 0; i < MNumCol; i++)
+		for (unsigned int j = 0; j < VNumElem; j++)
+			Result.mVector[i] += vector.mVector[j] * matrix.mMatrix[i][j];
+	return Result;
+}
+
 template<class T, unsigned int NumElem>
 std::ostream& operator<<(std::ostream& os, const Vector<T, NumElem>& vector)
 {
@@ -179,16 +189,6 @@ Matrix<T, LNumRow, RNumCol> operator*(const Matrix<T, LNumRow, LNumCol> &LMatrix
 	return Result;
 }
 
-template<class T, unsigned int VNumElem, unsigned int MNumCol>
-Vector<T, MNumCol> operator*(const Vector<T, VNumElem> vector, const Matrix<T, VNumElem, MNumCol> matrix)
-{
-	Vector<T, MNumCol> Result;
-	for (unsigned int i = 0; i < MNumCol; i++)
-		for (unsigned int j = 0; j < VNumElem; j++)
-				Result.mVector[i] += vector.mVector[j] * matrix.mMatrix[i][j];
-	return Result;
-}
-
 //sclar mutiplication
 template<class T, unsigned int NumRow, unsigned int NumCol, class S>
 Matrix<T, NumRow, NumCol> operator*(const Matrix<T, NumRow, NumCol> matrix, const S scalar)
@@ -217,6 +217,19 @@ std::ostream& operator<<(std::ostream& os, const Matrix<T, NumRow, NumCol>& matr
 	return os;
 }
 
+
+//specific Matrix
+
+class TranslationMatrix : public Matrix<float, 3, 3>
+{
+public:
+	Matrix<float, 3, 3> CreateTranslationMatrix3(float xTrans, float yTrans);
+	float GetTranX() const { return mTranX; }
+
+private: 
+	float mTranX;
+	float mTranY;
+};
 
 //Create Matrix
 

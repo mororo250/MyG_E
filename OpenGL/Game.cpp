@@ -126,8 +126,8 @@ void Game::Loop()
 		ImGui::NewFrame();
 
 	
-		ImGui::Begin("OpenGL");
-		ImGui::Text("Hello World");
+		ImGui::Begin("OpenGL"); 
+		ImGui::Text("test");
 		ImGui::SliderFloat("Translation X", &TranX, 0.0f, mWinLengh);
 		ImGui::SliderFloat("Translation y", &TranY, 0.0f, mWinHigh);
 		ImGui::SliderFloat("Scale X", &ScaleX, 0.0f, 100.0f);
