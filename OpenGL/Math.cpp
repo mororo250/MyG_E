@@ -9,18 +9,14 @@ Matrix<float, 3, 3> CreateOrthoMatrix(const float left, const float right, const
 	return OrthoMatrix;
 }
 
-Matrix<float, 3, 3> TranslationMatrix::CreateTranslationMatrix3(float xTrans, float yTrans)
-{
-	Matrix<float, 3, 3> Tmatrix{ {1 , 0, 0 }, {0, 1, 0}, {xTrans, yTrans, 1} };
-	return Tmatrix;
-}
+TranslationMatrix3::TranslationMatrix3(const float TranX, const float TranY)
+:mMatrix{ {1 , 0, 0 }, {0, 1, 0}, {xTrans, yTrans, 1} }
+{}
 
 
-Matrix<float, 4, 4> CreateTranslationMatrix4(float xTrans, float yTrans, float zTrans)
-{
-	Matrix<float, 4, 4> Tmatrix{ {1 , 0, 0, 0 }, {0, 1, 0, 0}, {0, 0, 1, 0}, {xTrans, yTrans, zTrans, 1} };
-	return Tmatrix;
-}
+TrabslationMatrix4::TrabslationMatrix4(const float xTrans, const float yTrans, const float zTrans)
+	: mMatrix{ {1 , 0, 0, 0 }, {0, 1, 0, 0}, {0, 0, 1, 0}, {xTrans, yTrans, zTrans, 1} }
+{}
 
 
 Matrix<float, 3, 3> CreateScaleMatrix3(float xScale, float yScale)

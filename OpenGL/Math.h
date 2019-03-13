@@ -220,21 +220,37 @@ std::ostream& operator<<(std::ostream& os, const Matrix<T, NumRow, NumCol>& matr
 
 //specific Matrix
 
-class TranslationMatrix : public Matrix<float, 3, 3>
+class TranslationMatrix3 
 {
 public:
-	Matrix<float, 3, 3> CreateTranslationMatrix3(float xTrans, float yTrans);
-	float GetTranX() const { return mTranX; }
+	TranslationMatrix3(const float TranX, const float TranY);
+	float GetTranX() const { return mMatrix[3][1]; }
+	float GetTranY() const { return mMatrix[3][2]; }
+	void SetTranX(const float TranX) { mMatrix[3][1] = TranX; }
+	void SetTranY(const float TranY) { mMatrix[3][2] = TranY; }
 
 private: 
-	float mTranX;
-	float mTranY;
+	Matrix<float, 3, 3> mMatrix;
+};
+
+class TrabslationMatrix4
+{
+public:
+	TranslationMatrix4(const float TranX, const float TranY, const float TranZ);
+	float GetTranX() const { return mMatrix[4][1]; }
+	float GetTranY() const { return mMatrix[4][2]; }
+	float GetTranZ() const { return mMatrix[4][3]; }
+	void SetTranX(const float TranX) { mMatrix[4][1] = TranX; }
+	void SetTranY(const float TranY) { mMatrix[4][2] = TranY; }
+	void SetTranZ(const float TranZ) { mMatrix[4][3] = TranZ; }
+
+private:
+	Matrix<float, 4, 4> mMatrix;
 };
 
 //Create Matrix
 
 Matrix<float, 3, 3> CreateOrthoMatrix(const float left, const float right, const float up, const float down);
-Matrix<float, 3, 3> CreateTranslationMatrix3(float xTrans, float yTrans);
 Matrix<float, 4, 4> CreateTranslationMatrix4(float xTrans, float yTrans, float zTrans);
 Matrix<float, 3, 3> CreateScaleMatrix3(float xScale, float yScale);
 Matrix<float, 4, 4> CreateScaleMatrix4(float xScale, float yScale, float zScale);
