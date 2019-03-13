@@ -81,11 +81,11 @@ void Game::Loop()
 	float TranY = 384.0f;
 	float ScaleX = 1.0f;
 	float ScaleY = 1.0f;
-	float Rot = 0.0f; // 
+	float Rot = 0.0f; 
 
 	Matrix<float, 3, 3> Ortho = CreateOrthoMatrix(0, mWinLengh, mWinHigh, 0);
-	Matrix<float, 3, 3> TranMat = CreateTranslationMatrix3(TranX, TranY);
-	Matrix<float, 3, 3> ScaleMat = CreateScaleMatrix3(ScaleX, ScaleY);
+	TranslationMatrix3 TranMat(TranX, TranY);
+	ScaleMatrix3 ScaleMat(ScaleX, ScaleY);
 	Matrix<float, 3, 3> RotMat = CreateRotationMatrix3(Rot);
 	Matrix<float, 3, 3> WorldTransform = ScaleMat * RotMat * TranMat;
 	Matrix<float, 3, 3> MVP = WorldTransform * Ortho;

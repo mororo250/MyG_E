@@ -195,6 +195,7 @@ Matrix<T, NumRow, NumCol> operator*(const Matrix<T, NumRow, NumCol> matrix, cons
 {
 	return matrix *= scalar;
 }
+
 template<class T, unsigned int NumRow, unsigned int NumCol, class S>
 Matrix<T, NumRow, NumCol> operator*(const S scalar, const Matrix<T, NumRow, NumCol> matrix)
 {
@@ -233,7 +234,7 @@ private:
 	Matrix<float, 3, 3> mMatrix;
 };
 
-class TrabslationMatrix4
+class TranslationMatrix4
 {
 public:
 	TranslationMatrix4(const float TranX, const float TranY, const float TranZ);
@@ -248,11 +249,35 @@ private:
 	Matrix<float, 4, 4> mMatrix;
 };
 
+class ScaleMatrix3
+{
+public:
+	ScaleMatrix3(const float ScaleX, const float ScaleY);
+	float GetTranX() const { return mMatrix[1][1]; }
+	float GetTranY() const { return mMatrix[2][2]; }
+	void SetTranX(const float TranX) { mMatrix[1][1] = TranX; }
+	void SetTranY(const float TranY) { mMatrix[2][2] = TranY; }
+
+private:
+	Matrix<float, 3, 3> mMatrix;
+};
+
+class ScaleMatrix4
+{
+public:
+	ScaleMatrix4(const float ScaleX, const float ScaleY, const float ScaleZ);
+	float GetTranX() const { return mMatrix[1][1]; }
+	float GetTranY() const { return mMatrix[2][2]; }
+	float GetTranZ() const { return mMatrix[3][3]; }
+	void SetTranX(const float TranX) { mMatrix[1][1] = TranX; }
+	void SetTranY(const float TranY) { mMatrix[2][2] = TranY; }
+
+private:
+	Matrix<float, 3, 3> mMatrix;
+};
+
 //Create Matrix
 
 Matrix<float, 3, 3> CreateOrthoMatrix(const float left, const float right, const float up, const float down);
-Matrix<float, 4, 4> CreateTranslationMatrix4(float xTrans, float yTrans, float zTrans);
-Matrix<float, 3, 3> CreateScaleMatrix3(float xScale, float yScale);
-Matrix<float, 4, 4> CreateScaleMatrix4(float xScale, float yScale, float zScale);
 Matrix<float, 3, 3> CreateRotationMatrix3(float angle);
 Matrix<float, 4, 4> CreateRotationMatrix4(float angle);
