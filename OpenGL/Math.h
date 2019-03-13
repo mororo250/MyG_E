@@ -32,12 +32,12 @@ public:
 	}
 
 
-	T* operator[](unsigned int index)
+	T operator[](unsigned int index)
 	{
 		return mVector[index];
 	}
 
-	const T* operator[](unsigned int index) const
+	const T operator[](unsigned int index) const
 	{
 		return mVector[index];
 	}
@@ -111,6 +111,8 @@ std::ostream& operator<<(std::ostream& os, const Vector<T, NumElem>& vector)
 }
 
 
+
+
 //matrix
 
 
@@ -142,6 +144,7 @@ public:
 		}
 	}
 
+	/*need to be improved
 	T* operator[](unsigned int index)
 	{
 		return mMatrix[index];
@@ -151,10 +154,11 @@ public:
 	{
 		return mMatrix[index];
 	}
+	*/
 
 	Matrix operator*=(const Matrix RMatrix)
 	{
-		return this* * RMatrix;
+		return *this * RMatrix;
 	}
 
 	template<class U>
@@ -171,10 +175,11 @@ public:
 	friend Vector<U, MNumCol> operator*(const Vector<U, VNumElem> vector, const Matrix<U, VNumElem, MNumCol> matrix);
 
 	auto GetAsPointer() const { return mMatrix; }
+	T& GetElement(const unsigned int index1, const unsigned int index2) { return mMatrix[index1][index2]; }
 	unsigned int GetNumRow() const { return NumRow; }
 	unsigned int GetNumCol() const { return NumCol; }
 
-private:
+protected:
 	T mMatrix[NumRow][NumCol];
 };
 
@@ -190,17 +195,20 @@ Matrix<T, LNumRow, RNumCol> operator*(const Matrix<T, LNumRow, LNumCol> &LMatrix
 }
 
 //sclar mutiplication
+
+/*
 template<class T, unsigned int NumRow, unsigned int NumCol, class S>
-Matrix<T, NumRow, NumCol> operator*(const Matrix<T, NumRow, NumCol> matrix, const S scalar)
+Matrix<T, NumRow, NumCol> operator*(Matrix<T, NumRow, NumCol> matrix, S scalar)
 {
 	return matrix *= scalar;
 }
 
 template<class T, unsigned int NumRow, unsigned int NumCol, class S>
-Matrix<T, NumRow, NumCol> operator*(const S scalar, const Matrix<T, NumRow, NumCol> matrix)
+Matrix<T, NumRow, NumCol> operator*(S scalar, Matrix<T, NumRow, NumCol> matrix)
 {
 	return matrix *= scalar;
 }
+*/
 
 //cout
 template<class T, unsigned int NumRow, unsigned int NumCol>
@@ -210,74 +218,76 @@ std::ostream& operator<<(std::ostream& os, const Matrix<T, NumRow, NumCol>& matr
 	for (unsigned int i = 0; i < NumRow; i++)
 		for (unsigned int j = 0; j < NumCol; j++)
 			if (j == 0)
-				os << "{\t" << matrix[i][j];
+				os << "{\t" << matrix.GetElement(i,j);
 			else if (j == aux)
-				os << ",\t" << matrix[i][j] << "\t}\n";
+				os << ",\t" << matrix.GetElement(i, j) << "\t}\n";
 			else
-				os << ",\t" << matrix[i][j];
+				os << ",\t" << matrix.GetElement(i, j);
 	return os;
 }
 
 
 //specific Matrix
 
-class TranslationMatrix3 
+class TranslationMatrix3 : public Matrix<float, 3, 3>
 {
 public:
 	TranslationMatrix3(const float TranX, const float TranY);
-	float GetTranX() const { return mMatrix[3][1]; }
-	float GetTranY() const { return mMatrix[3][2]; }
-	void SetTranX(const float TranX) { mMatrix[3][1] = TranX; }
-	void SetTranY(const float TranY) { mMatrix[3][2] = TranY; }
-
-private: 
-	Matrix<float, 3, 3> mMatrix;
+	const float GetTranX() { return GetElement(2, 0); }
+	const float GetTranY() { return GetElement(2, 1); }
+	void SetTranX(float TranX) { GetElement(2, 0) = TranX; }
+	void SetTranY(float TranY) { GetElement(2, 1) = TranY; }
 };
 
-class TranslationMatrix4
+class TranslationMatrix4 : public Matrix<float, 4, 4>
 {
 public:
 	TranslationMatrix4(const float TranX, const float TranY, const float TranZ);
-	float GetTranX() const { return mMatrix[4][1]; }
-	float GetTranY() const { return mMatrix[4][2]; }
-	float GetTranZ() const { return mMatrix[4][3]; }
-	void SetTranX(const float TranX) { mMatrix[4][1] = TranX; }
-	void SetTranY(const float TranY) { mMatrix[4][2] = TranY; }
-	void SetTranZ(const float TranZ) { mMatrix[4][3] = TranZ; }
-
-private:
-	Matrix<float, 4, 4> mMatrix;
+	const float GetTranX() { return GetElement(3, 0); }
+	const float GetTranY() { return GetElement(3, 1); }
+	const float GetTranZ() { return GetElement(3, 2); }
+	void SetTranX(const float TranX) { GetElement(3, 0) = TranX; }
+	void SetTranY(const float TranY) { GetElement(3, 1) = TranY; }
+	void SetTranZ(const float TranZ) { GetElement(3, 2) = TranZ; }
 };
 
-class ScaleMatrix3
+class ScaleMatrix3 : public Matrix<float, 3, 3>
 {
 public:
 	ScaleMatrix3(const float ScaleX, const float ScaleY);
-	float GetTranX() const { return mMatrix[1][1]; }
-	float GetTranY() const { return mMatrix[2][2]; }
-	void SetTranX(const float TranX) { mMatrix[1][1] = TranX; }
-	void SetTranY(const float TranY) { mMatrix[2][2] = TranY; }
-
-private:
-	Matrix<float, 3, 3> mMatrix;
+	const float GetScaleX() { return GetElement(0, 0); }
+	const float GetScaleY() { return GetElement(1, 1); }
+	void SetScaleX(const float &ScaleX) { GetElement(0, 0) = ScaleX; }
+	void SetScaleY(const float &ScaleY) { GetElement(1, 1) = ScaleY; }
 };
 
-class ScaleMatrix4
+class ScaleMatrix4 : public Matrix<float, 4, 4>
 {
 public:
 	ScaleMatrix4(const float ScaleX, const float ScaleY, const float ScaleZ);
-	float GetTranX() const { return mMatrix[1][1]; }
-	float GetTranY() const { return mMatrix[2][2]; }
-	float GetTranZ() const { return mMatrix[3][3]; }
-	void SetTranX(const float TranX) { mMatrix[1][1] = TranX; }
-	void SetTranY(const float TranY) { mMatrix[2][2] = TranY; }
+	const float GetScaleX() { return GetElement(0, 0); }
+	const float GetSclaeY() { return GetElement(1, 1); }
+	const float GetScaleZ() { return GetElement(2, 2); }
+	void SetScaleX(const float ScaleX) { GetElement(0, 0) = ScaleX; }
+	void SetScaleY(const float ScaleY) { GetElement(1, 1) = ScaleY; }
+	void SetScaleZ(const float ScaleZ) { GetElement(2, 2) = ScaleZ; }
+};
 
-private:
-	Matrix<float, 3, 3> mMatrix;
+class RotationMatrix3 : public Matrix<float, 3, 3>
+{
+public:
+	RotationMatrix3(float angle);
+	void SetAngle(const float angle);
+};
+
+class RotationMatrix4 : public Matrix<float, 4, 4>
+{
+public:
+	RotationMatrix4(float angle);
+	void SetAngle(const float angle);
 };
 
 //Create Matrix
 
 Matrix<float, 3, 3> CreateOrthoMatrix(const float left, const float right, const float up, const float down);
-Matrix<float, 3, 3> CreateRotationMatrix3(float angle);
 Matrix<float, 4, 4> CreateRotationMatrix4(float angle);

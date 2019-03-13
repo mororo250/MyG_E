@@ -83,7 +83,7 @@ void Game::Loop()
 	float ScaleY = 1.0f;
 	float Rot = 0.0f; 
 
-	Matrix<float, 3, 3> Ortho = CreateOrthoMatrix(0, mWinLengh, mWinHigh, 0);
+	Matrix<float, 3, 3> Ortho = CreateOrthoMatrix(Rot, mWinLengh, mWinHigh, 0);
 	TranslationMatrix3 TranMat(TranX, TranY);
 	ScaleMatrix3 ScaleMat(ScaleX, ScaleY);
 	Matrix<float, 3, 3> RotMat = CreateRotationMatrix3(Rot);
@@ -135,8 +135,12 @@ void Game::Loop()
 		ImGui::SliderFloat("Rotation X", &Rot, -6.28f, 6.28f);
 		ImGui::End();
 
-			
-		WorldTransform = CreateScaleMatrix3(ScaleX, ScaleY) * CreateRotationMatrix3(Rot) * CreateTranslationMatrix3(TranX, TranY);
+		TranMat.SetTranX(TranX);
+		TranMat.SetTranY(TranY);
+		ScaleMat.SetScaleX(ScaleX);
+		ScaleMat.SetScaleY(ScaleY);
+
+		WorldTransform = ScaleMat * CreateRotationMatrix3(Rot) * TranMat;
 		MVP = WorldTransform * Ortho;
 		
 		shader.bind();
