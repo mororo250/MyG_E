@@ -14,8 +14,8 @@ public:
 	void Shutdown();
 
 private:
-	float mWinHigh = 768.0;
-	float mWinLengh = 1024.0;
+	int mWinHigh = 768;
+	int mWinLengh = 1024;
 	GLFWwindow *mWindow;
 
 };

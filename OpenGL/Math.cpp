@@ -34,7 +34,7 @@ Matrix<float, 4, 4> CreateRotationMatrix4(float angle)
 }
 
 RotationMatrix3::RotationMatrix3(float angle)
-: Matrix<float, 3, 3>{ {cos(angle), sin(angle),  0 }, {-sin(angle), cos(angle), 0}, {0, 0, 1} };
+: Matrix<float, 3, 3>{ {cos(angle), sin(angle),  0 }, {-sin(angle), cos(angle), 0}, {0, 0, 1} }
 {}
 
 
@@ -42,10 +42,18 @@ void RotationMatrix3::SetAngle(const float angle)
 {
 	GetElement(0, 0) = cos(angle);
 	GetElement(0, 1) = sin(angle);
-	GetElement(1, 1) = -cos(angle);
+	GetElement(1, 1) = cos(angle);
 	GetElement(1, 0) = -sin(angle);
 }
 
 RotationMatrix4::RotationMatrix4(float angle)
-: Matrix<float, 4, 4>{ {1 , 0, 0, 0 }, {0, cos(angle), -sin(angle), 0}, {0, sin(angle), cos(angle), 0}, {0, 0, 0, 1} };
+: Matrix<float, 4, 4>{ {1 , 0, 0, 0 }, {0, cos(angle), -sin(angle), 0}, {0, sin(angle), cos(angle), 0}, {0, 0, 0, 1} }
 {}
+
+void RotationMatrix4::SetAngle(const float angle)
+{
+	GetElement(1, 1) = cos(angle);
+	GetElement(2, 1) = sin(angle);
+	GetElement(2, 2) = cos(angle);
+	GetElement(1, 2) = -sin(angle);
+}

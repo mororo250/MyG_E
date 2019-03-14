@@ -290,4 +290,3 @@ public:
 //Create Matrix
 
 Matrix<float, 3, 3> CreateOrthoMatrix(const float left, const float right, const float up, const float down);
-Matrix<float, 4, 4> CreateRotationMatrix4(float angle);

@@ -76,19 +76,20 @@ void Game::Loop()
 
 	Shader shader("Shader.shader");
 	shader.bind();
-
+	
+	//Variables to auxiliate with the matrices
 	float TranX = 512.0f;
 	float TranY = 384.0f;
 	float ScaleX = 1.0f;
 	float ScaleY = 1.0f;
-	float Rot = 0.0f; 
+	float angle = 0.0f; 
 
-	Matrix<float, 3, 3> Ortho = CreateOrthoMatrix(Rot, mWinLengh, mWinHigh, 0);
+	Matrix<float, 3, 3> Ortho = CreateOrthoMatrix(angle, mWinLengh, mWinHigh, 0); //Orthographic Matrix
 	TranslationMatrix3 TranMat(TranX, TranY);
 	ScaleMatrix3 ScaleMat(ScaleX, ScaleY);
-	Matrix<float, 3, 3> RotMat = CreateRotationMatrix3(Rot);
+	RotationMatrix3 RotMat(angle);
 	Matrix<float, 3, 3> WorldTransform = ScaleMat * RotMat * TranMat;
-	Matrix<float, 3, 3> MVP = WorldTransform * Ortho;
+	Matrix<float, 3, 3> MVP = WorldTransform * Ortho; //Model view projection
 
 	int mvp = shader.GetUniformLocation("u_MVP");
 	shader.SetUniformMatrix3f(mvp, MVP);
@@ -127,20 +128,21 @@ void Game::Loop()
 
 	
 		ImGui::Begin("OpenGL"); 
-		ImGui::Text("test");
+		ImGui::Text("OpenGL");
 		ImGui::SliderFloat("Translation X", &TranX, 0.0f, mWinLengh);
 		ImGui::SliderFloat("Translation y", &TranY, 0.0f, mWinHigh);
 		ImGui::SliderFloat("Scale X", &ScaleX, 0.0f, 100.0f);
 		ImGui::SliderFloat("Scale y", &ScaleY, 0.0f, 100.0f);
-		ImGui::SliderFloat("Rotation X", &Rot, -6.28f, 6.28f);
+		ImGui::SliderFloat("Rotation", &angle, -6.28f, 6.28f);
 		ImGui::End();
 
 		TranMat.SetTranX(TranX);
 		TranMat.SetTranY(TranY);
 		ScaleMat.SetScaleX(ScaleX);
 		ScaleMat.SetScaleY(ScaleY);
+		RotMat.SetAngle(angle);
 
-		WorldTransform = ScaleMat * CreateRotationMatrix3(Rot) * TranMat;
+		WorldTransform = ScaleMat * RotMat * TranMat;
 		MVP = WorldTransform * Ortho;
 		
 		shader.bind();
