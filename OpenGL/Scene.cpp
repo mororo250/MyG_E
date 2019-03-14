@@ -11,3 +11,6 @@ Scene::~Scene()
 void Scene::ImGuiRenderer()
 {
 }
+
+void Scene::Update()
+{}

@@ -150,10 +150,12 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="VertexArray.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Texture2D.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Gldebug.h" />
     <ClInclude Include="imconfig.h" />

@@ -2,12 +2,7 @@
 #include <string>
 #include <memory>
 
-#include "Gldebug.h"
 #include "Game.h"
-#include "VertexArray.h"
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
-#include "shader.h"
 #include "Renderer.h"
 #include "Texture.h"
 
@@ -15,6 +10,10 @@
 #include "imgui.h"
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_glfw.h"
+
+#include "Texture2D.h"
+#include "Menu.h"
+
 
 Game::Game()
 :mWindow(nullptr)
@@ -52,58 +51,7 @@ bool Game::Initialize()
 
 void Game::Loop()
 {
-	float positions[] = {
-		-50.0f,  -50.0f , 0.0f, 0.0f, //index 0
-		50.0f ,  -50.0f , 1.0f, 0.0f, //index 1
-		50.0f ,  50.0f, 1.0f, 1.0f, //index 2
-		-50.0f,  50.0f, 0.0f, 1.0f  //index 3
-	};
 
-	unsigned int indices[] = {
-	0, 1, 2,
-	2, 3, 0
-	};
-
-	GLcall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-	
-	VertexArray  va;
-	VertexBuffer vb(positions, 4, 4);
-	IndexBuffer  ib(indices, 6);
-
-	va.PushLayout(2, GL_FLOAT, GL_FALSE, 0);
-	va.PushLayout(2, GL_FLOAT, GL_FALSE, 2);
-	va.AddBuffer(vb);
-
-	Shader shader("Shader.shader");
-	shader.bind();
-	
-	//Variables to auxiliate with the matrices
-	float TranX = 512.0f;
-	float TranY = 384.0f;
-	float ScaleX = 1.0f;
-	float ScaleY = 1.0f;
-	float angle = 0.0f; 
-
-	Matrix<float, 3, 3> Ortho = CreateOrthoMatrix(angle, mWinLengh, mWinHigh, 0); //Orthographic Matrix
-	TranslationMatrix3 TranMat(TranX, TranY);
-	ScaleMatrix3 ScaleMat(ScaleX, ScaleY);
-	RotationMatrix3 RotMat(angle);
-	Matrix<float, 3, 3> WorldTransform = ScaleMat * RotMat * TranMat;
-	Matrix<float, 3, 3> MVP = WorldTransform * Ortho; //Model view projection
-
-	int mvp = shader.GetUniformLocation("u_MVP");
-	shader.SetUniformMatrix3f(mvp, MVP);
-
-	Texture texture("Resources/PS4.PNG");
-	texture.bind(0);
-	shader.SetUniform1i(shader.GetUniformLocation("u_texture"), 0);
-
-	va.unbind();
-	vb.unbind();
-	ib.unbind();
-	shader.unbind();
-
-	Renderer renderer;
 
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
@@ -117,42 +65,34 @@ void Game::Loop()
 	// Setup Style
 	ImGui::StyleColorsDark();
 
+	Texture2D* test = new Texture2D();
+	Scene* CurrentScene = nullptr;
+	Menu* menu = new Menu(CurrentScene);
+	CurrentScene = test;
+	menu->RegisterScne<Texture2D>("Texture2D Scene");
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(mWindow))
 	{ 
-		renderer.Clear();
 		
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
-	
-		ImGui::Begin("OpenGL"); 
-		ImGui::Text("OpenGL");
-		ImGui::SliderFloat("Translation X", &TranX, 0.0f, mWinLengh);
-		ImGui::SliderFloat("Translation y", &TranY, 0.0f, mWinHigh);
-		ImGui::SliderFloat("Scale X", &ScaleX, 0.0f, 100.0f);
-		ImGui::SliderFloat("Scale y", &ScaleY, 0.0f, 100.0f);
-		ImGui::SliderFloat("Rotation", &angle, -6.28f, 6.28f);
-		ImGui::End();
-
-		TranMat.SetTranX(TranX);
-		TranMat.SetTranY(TranY);
-		ScaleMat.SetScaleX(ScaleX);
-		ScaleMat.SetScaleY(ScaleY);
-		RotMat.SetAngle(angle);
-
-		WorldTransform = ScaleMat * RotMat * TranMat;
-		MVP = WorldTransform * Ortho;
-		
-		shader.bind();
-		shader.SetUniformMatrix3f(mvp , MVP);
-
-		renderer.Draw(va, ib, shader);
-
+		if (CurrentScene)
+		{
+			CurrentScene->Update();
+			ImGui::Begin("OpenGL");
+			if (CurrentScene != menu && ImGui::Button("<-"))
+			{
+				delete CurrentScene;
+				CurrentScene = menu;
+			}
+			CurrentScene->ImGuiRenderer();
+			ImGui::End();
+		}
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
+		
 		/* Swap front and back buffers */
 		GLcall(glfwSwapBuffers(mWindow));
 

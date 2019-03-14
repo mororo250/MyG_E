@@ -83,6 +83,9 @@
     <ClCompile Include="Menu.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="Texture2D.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -143,6 +146,9 @@
       <Filter>Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Menu.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture2D.h">
       <Filter>Scenes</Filter>
     </ClInclude>
   </ItemGroup>

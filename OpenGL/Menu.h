@@ -5,10 +5,16 @@
 
 class Menu : public Scene
 {
-	Menu();
+public:
+	Menu(Scene*& CurrentScene);
 	~Menu();
 
 	void ImGuiRenderer() override;
+	template<class T>
+	void RegisterScne(std::string name)
+	{
+		mScenes.push_back(std::make_pair(name, []() { return new T(); }));
+	}
 
 private:
 	Scene* mCurrentScene;
