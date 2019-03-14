@@ -44,6 +44,8 @@ Texture2D::Texture2D()
 	mVb->unbind();
 	mIb->unbind();
 	mShader->unbind();
+
+	mRenderer = std::make_unique<Renderer>();
 }
 
 Texture2D::~Texture2D()
@@ -63,7 +65,7 @@ void Texture2D::ImGuiRenderer()
 
 void Texture2D::Update()
 {
-	mRenderer.Clear();
+	mRenderer->Clear();
 
 	mTranMat.SetTranX(mTranX);
 	mTranMat.SetTranY(mTranY);
@@ -77,5 +79,5 @@ void Texture2D::Update()
 	mShader->bind();
 	mShader->SetUniformMatrix3f(mU_MVP, mMVP);
 
-	mRenderer.Draw(*mVa, *mIb, *mShader);
+	mRenderer->Draw(*mVa, *mIb, *mShader);
 }

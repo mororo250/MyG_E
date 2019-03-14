@@ -24,7 +24,7 @@ private:
 	std::unique_ptr<IndexBuffer>  mIb;
 	std::unique_ptr<Shader> mShader;
 	std::unique_ptr<Texture> mTexture;
-	Renderer mRenderer;
+	std::unique_ptr<Renderer> mRenderer;
 
 	Matrix<float, 3, 3> mOrtho; //Orthographic Matrix
 	TranslationMatrix3 mTranMat;

@@ -21,7 +21,7 @@
 		case GL_OUT_OF_MEMORY:                 error = "OUT_OF_MEMORY"; break;
 		case GL_INVALID_FRAMEBUFFER_OPERATION: error = "INVALID_FRAMEBUFFER_OPERATION"; break;
 		}
-		std::cout << "[" << error << "]  (" << errorCode << ") - " << file << "-\n" << function 
+		std::cout << error << " - " << errorCode << " - " << file << "-\n" << function 
 			<< " - LINE:" <<line << std::endl;
 		errorCode = glGetError();
 		check = true;

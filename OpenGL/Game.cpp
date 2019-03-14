@@ -65,12 +65,12 @@ void Game::Loop()
 	// Setup Style
 	ImGui::StyleColorsDark();
 
-	Texture2D* test = new Texture2D();
 	Scene* CurrentScene = nullptr;
 	Menu* menu = new Menu(CurrentScene);
-	CurrentScene = test;
+	CurrentScene = menu;
 	menu->RegisterScne<Texture2D>("Texture2D Scene");
 	/* Loop until the user closes the window */
+
 	while (!glfwWindowShouldClose(mWindow))
 	{ 
 		
@@ -80,15 +80,16 @@ void Game::Loop()
 
 		if (CurrentScene)
 		{
-			CurrentScene->Update();
 			ImGui::Begin("OpenGL");
 			if (CurrentScene != menu && ImGui::Button("<-"))
 			{
-				delete CurrentScene;
-				CurrentScene = menu;
+				//delete CurrentScene; //error 1281 when I delete Current Scene - Don't seam to make difference
+				CurrentScene = menu; 
 			}
+
 			CurrentScene->ImGuiRenderer();
 			ImGui::End();
+			CurrentScene->Update();
 		}
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
