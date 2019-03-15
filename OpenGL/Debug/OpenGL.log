@@ -1,2 +1,3 @@
-﻿  Game.cpp
-  OpenGL.vcxproj -> C:\Users\joao_\Desktop\Programming\codes\C++ codes\OpenGL\Debug\OpenGL.exe
+﻿  BatchRenderer.cpp
+c:\users\joao_\onedrive\área de trabalho\codes\codes\c++ codes\opengl\opengl\batchrenderer.cpp(4): error C2512: 'VertexBuffer': no appropriate default constructor available
+  c:\users\joao_\onedrive\área de trabalho\codes\codes\c++ codes\opengl\opengl\vertexbuffer.h(3): note: see declaration of 'VertexBuffer'

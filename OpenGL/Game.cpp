@@ -89,7 +89,7 @@ void Game::Loop()
 
 			CurrentScene->ImGuiRenderer();
 			ImGui::End();
-			CurrentScene->Update();
+ 			CurrentScene->Update();
 		}
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

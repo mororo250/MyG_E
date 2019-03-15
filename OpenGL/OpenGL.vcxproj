@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BatchRenderer.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Gldebug.cpp" />
     <ClCompile Include="imgui.cpp" />
@@ -155,6 +156,7 @@
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BatchRenderer.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Gldebug.h" />

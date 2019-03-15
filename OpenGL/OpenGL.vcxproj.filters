@@ -86,6 +86,9 @@
     <ClCompile Include="Texture2D.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="BatchRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -150,6 +153,9 @@
     </ClInclude>
     <ClInclude Include="Texture2D.h">
       <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="BatchRenderer.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
