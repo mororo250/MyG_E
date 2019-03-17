@@ -13,20 +13,20 @@ Texture2D::Texture2D()
 	};
 
 	unsigned int indices[] = {
-	0, 1, 2, 3
+	0, 1, 2, 2 ,3, 0
 	};
 
 	GLcall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 	
 	mVa = std::make_unique<VertexArray>();
 	mVb = std::make_unique<VertexBuffer>(positions, 4, 4);
-	mIb = std::make_unique<IndexBuffer>(indices, 4);
+	mIb = std::make_unique<IndexBuffer>(indices, 6);
 
 	mVa->PushLayout(2, GL_FLOAT, GL_FALSE, 0);
 	mVa->PushLayout(2, GL_FLOAT, GL_FALSE, 2);
 	mVa->AddBuffer(*mVb);
 	
-	mShader = std::make_unique<Shader>("Shader.shader"),
+	mShader = std::make_unique<Shader>("Shader.shader");
 	mShader->bind();
 
 	Matrix<float, 3, 3> WorldTransform = mScaleMat * mRotMat * mTranMat;

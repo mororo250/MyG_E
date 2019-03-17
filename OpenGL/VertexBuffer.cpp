@@ -5,13 +5,22 @@
 #include "Gldebug.h"
 #include "VertexBuffer.h"
 
-VertexBuffer::VertexBuffer(const float *verts, const unsigned int NumVertex, const unsigned int Stride)
+VertexBuffer::VertexBuffer(const float *verts, const unsigned int NumVertex, const unsigned int Stride, BufferUsage usage)
 :mStride(Stride)
 {
 	GLcall(glGenBuffers(1, &mVertexBuffer));
 	GLcall(glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer));
 	// Pass the Vertex data into the buffer
-	GLcall(glBufferData(GL_ARRAY_BUFFER, NumVertex * mStride * sizeof(float), verts, GL_STATIC_DRAW));
+	switch (usage)
+	{
+	case BufferUsage::STATIC:
+		GLcall(glBufferData(GL_ARRAY_BUFFER, NumVertex * mStride * sizeof(float), verts, GL_STATIC_DRAW));
+		break;
+
+	case BufferUsage::DYNAMIC:
+		GLcall(glBufferData(GL_ARRAY_BUFFER, NumVertex * mStride * sizeof(float), verts, GL_DYNAMIC_DRAW));
+		break;
+	}
 }
 
 VertexBuffer::~VertexBuffer()

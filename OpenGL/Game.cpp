@@ -13,6 +13,7 @@
 
 #include "Texture2D.h"
 #include "Menu.h"
+#include "BatchRenderScene.h"
 
 
 Game::Game()
@@ -51,8 +52,6 @@ bool Game::Initialize()
 
 void Game::Loop()
 {
-
-
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -69,11 +68,12 @@ void Game::Loop()
 	Menu* menu = new Menu(CurrentScene);
 	CurrentScene = menu;
 	menu->RegisterScne<Texture2D>("Texture2D Scene");
+	menu->RegisterScne<BatchRenderScene>("Batch Rendering Scene");
+
 	/* Loop until the user closes the window */
 
 	while (!glfwWindowShouldClose(mWindow))
 	{ 
-		
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -83,7 +83,7 @@ void Game::Loop()
 			ImGui::Begin("OpenGL");
 			if (CurrentScene != menu && ImGui::Button("<-"))
 			{
-				//delete CurrentScene; //error 1281 when I delete Current Scene - Don't seam to make difference
+				delete CurrentScene; //error 1281 when I delete Current Scene - Don't seam to make difference
 				CurrentScene = menu; 
 			}
 
@@ -100,6 +100,9 @@ void Game::Loop()
 		/* Poll for and process events */
 		GLcall(glfwPollEvents());
 	}
+	if (CurrentScene != menu)
+		delete CurrentScene;
+	delete menu;
 }
 
 void Game::Shutdown()

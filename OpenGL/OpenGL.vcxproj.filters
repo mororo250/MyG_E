@@ -89,6 +89,9 @@
     <ClCompile Include="BatchRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BatchRenderScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -157,9 +160,16 @@
     <ClInclude Include="BatchRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BatchRenderScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader.shader">
+      <Filter>Resourses Files\Shaders</Filter>
+    </None>
+    <None Include="cpp.hint" />
+    <None Include="Color.shader">
       <Filter>Resourses Files\Shaders</Filter>
     </None>
   </ItemGroup>

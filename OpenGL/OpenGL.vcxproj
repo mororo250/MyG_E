@@ -134,6 +134,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BatchRenderer.cpp" />
+    <ClCompile Include="BatchRenderScene.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Gldebug.cpp" />
     <ClCompile Include="imgui.cpp" />
@@ -157,6 +158,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BatchRenderer.h" />
+    <ClInclude Include="BatchRenderScene.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Gldebug.h" />
@@ -180,6 +182,8 @@
     <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Color.shader" />
+    <None Include="cpp.hint" />
     <None Include="Shader.shader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

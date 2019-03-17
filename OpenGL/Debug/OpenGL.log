@@ -1,3 +1,5 @@
 ﻿  BatchRenderer.cpp
-c:\users\joao_\onedrive\área de trabalho\codes\codes\c++ codes\opengl\opengl\batchrenderer.cpp(4): error C2512: 'VertexBuffer': no appropriate default constructor available
-  c:\users\joao_\onedrive\área de trabalho\codes\codes\c++ codes\opengl\opengl\vertexbuffer.h(3): note: see declaration of 'VertexBuffer'
+c:\users\joao_\onedrive\área de trabalho\codes\codes\c++ codes\opengl\opengl\batchrenderer.cpp(50): warning C4390: ';': empty controlled statement found; is this the intent?
+  Texture2D.cpp
+  Generating Code...
+  OpenGL.vcxproj -> C:\Users\joao_\OneDrive\Área de Trabalho\Codes\codes\C++ codes\OpenGL\Debug\OpenGL.exe
