@@ -49,9 +49,6 @@ BatchRenderScene::BatchRenderScene()
 		}
 		offsetY += sizeSquare;
 	}
-	mBatchRenderer->begin();
-	mBatchRenderer->add(mSprites);
-	mBatchRenderer->end();
 
 	mShader = std::make_unique<Shader>("Color.shader");
 	mShader->bind();
@@ -77,5 +74,10 @@ void BatchRenderScene::Update()
 
 	mShader->bind();
 	mShader->SetUniformMatrix3f(mU_MVP, mMVP);
+
+	mBatchRenderer->begin();
+	mBatchRenderer->add(mSprites);
+	mBatchRenderer->end();
+
 	mBatchRenderer->Render(*mShader);
 }
