@@ -138,6 +138,8 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Gldebug.cpp" />
     <ClCompile Include="imgui.cpp" />
+    <ClCompile Include="Math.cpp" />
+    <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="imgui_demo.cpp" />
@@ -147,7 +149,6 @@
     <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Math.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Sprite.cpp" />
@@ -161,6 +162,7 @@
   <ItemGroup>
     <ClInclude Include="BatchRenderer.h" />
     <ClInclude Include="BatchRenderScene.h" />
+    <ClInclude Include="Matrix.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="TestScene.h" />
     <ClInclude Include="Texture2D.h" />
@@ -182,6 +184,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Vector.h" />
     <ClInclude Include="VertexArray.h" />
     <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>

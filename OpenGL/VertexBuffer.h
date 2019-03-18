@@ -11,6 +11,13 @@ public:
 	VertexBuffer(const float *verts, const unsigned int numVertex, const unsigned int Vete, BufferUsage usage = BufferUsage::STATIC);
 	~VertexBuffer();
 	
+	template<class T>
+	void map(T*& Buffer)
+	{
+		bind();
+		GLcall(Buffer = static_cast<T*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY)));
+	}
+	void unmap() const;
 	void bind() const;
 	void unbind() const;
 

@@ -28,6 +28,12 @@ VertexBuffer::~VertexBuffer()
 	GLcall(glDeleteBuffers(1, &mVertexBuffer));
 }
 
+void VertexBuffer::unmap() const
+{
+	if (!glUnmapBuffer(GL_ARRAY_BUFFER))
+		std::cout << "The data store contents have become corrupt" << std::endl;
+}
+
 void VertexBuffer::bind() const
 {
 	GLcall(glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer));

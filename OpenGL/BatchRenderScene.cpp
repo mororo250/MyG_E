@@ -1,17 +1,21 @@
 #include "BatchRenderScene.h"
+
+#include "imgui.h"
 #include <time.h>
 
 
 BatchRenderScene::BatchRenderScene()
-	:mNumberofSprites(1000000),
-	mScaleMat(1.0f, 1.0f), 
+	:mMaxSprites(1000000),
+	mScaleMat(1.0f, 1.0f),
 	mRotMat(0.0f),
 	mTranMat(0.0f, 0.0f),
-	mOrtho(CreateOrthoMatrix(0.0f, 1024, 768, 0))
+	mOrtho(CreateOrthoMatrix(0.0f, 1024, 768, 0)),
+	mNumberofSprites(1000),
+	mGapSize(1.2)
 {
-	mBatchRenderer = std::make_unique<BatchRenderer>(mNumberofSprites, 6, 4);
+	mBatchRenderer = std::make_unique<BatchRenderer>(mMaxSprites, 6, 4);
 
-	mSprites.reserve(mNumberofSprites * 4);
+	mSprites.reserve(mMaxSprites * 4);
 
 	srand(time(NULL));
 
@@ -38,9 +42,9 @@ BatchRenderScene::BatchRenderScene()
 			aux++;
 			mSprites.push_back(*aux);
 			
-			x += (sizeSquare * 1.2f);
+			x += (sizeSquare * mGapSize);
 		}
-		y += (sizeSquare * 1.2f);
+		y += (sizeSquare * mGapSize);
 		x = sizeSquare / 2.0f;
 	}
 
@@ -67,6 +71,8 @@ BatchRenderScene::~BatchRenderScene()
 
 void BatchRenderScene::ImGuiRenderer()
 {
+	ImGui::SliderInt("Number of Triangles", &mNumberofSprites, 0, mMaxSprites);
+	ImGui::SliderFloat("Gap size:", &mGapSize, 0.0f, 3.0f);
 }
 
 void BatchRenderScene::Update()
@@ -96,9 +102,9 @@ void BatchRenderScene::Update()
 				aux++;
 				mSprites.push_back(*aux);
 
-				x += (sizeSquare * 1.2f);
+				x += (sizeSquare * mGapSize);
 			}
-			y += (sizeSquare * 1.2f);
+			y += (sizeSquare * mGapSize);
 			x = sizeSquare / 2.0f;
 		}
 	}

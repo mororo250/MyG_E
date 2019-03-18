@@ -42,14 +42,12 @@ BatchRenderer::~BatchRenderer()
 
 void BatchRenderer::begin()
 {
-	mVb->bind();
-	GLcall(mBuffer = static_cast<VertexData2C *>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY)));
+	mVb->map<VertexData2C>(mBuffer);
 }
 
 void BatchRenderer::end()
 {
-	if (!glUnmapBuffer(GL_ARRAY_BUFFER))
-		std::cout << "The data store contents have become corrupt" << std::endl;
+	mVb->unmap();
 }
 
 void BatchRenderer::add(std::vector<VertexData2C>& Sprites)
@@ -67,6 +65,7 @@ void BatchRenderer::add(std::vector<VertexData2C>& Sprites)
 void BatchRenderer::add(void *Sprites, unsigned int size)
 {
 	memcpy(mBuffer, Sprites, sizeof(VertexData2C) * size);
+	mBuffer += size;
 }
 
 

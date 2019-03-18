@@ -55,7 +55,6 @@ TestScene::~TestScene()
 
 void TestScene::ImGuiRenderer()
 {
-	ImGui::Text("OpenGL");
 	ImGui::SliderFloat("Translation X", &mTranX, 0.0f, 1024);
 	ImGui::SliderFloat("Translation y", &mTranY, 0.0f, 768);
 	ImGui::SliderFloat("Scale X", &mScaleX, 0.0f, 100.0f);

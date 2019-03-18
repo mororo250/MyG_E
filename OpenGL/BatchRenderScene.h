@@ -13,7 +13,7 @@ public:
 	void Update() override;
 
 private:
-	const unsigned int mNumberofSprites;
+	const int mMaxSprites;
 	int mU_MVP; //uniform location
 
 	Matrix<float, 3, 3> mOrtho; //Orthographic Matrix
@@ -27,4 +27,9 @@ private:
 	std::unique_ptr<Renderer> mRenderer;
 	std::unique_ptr<Shader> mShader;
 	std::unique_ptr<Texture> mTexture;
+
+	//ImGui Variables
+	int mNumberofSprites = 0;
+	float mGapSize = 0;
+
 };
