@@ -1,7 +1,6 @@
 #include "BatchRenderScene.h"
-
-#include "imgui.h"
 #include <time.h>
+#include "imgui.h"
 
 
 BatchRenderScene::BatchRenderScene()
@@ -13,18 +12,18 @@ BatchRenderScene::BatchRenderScene()
 	mNumberofSprites(1000),
 	mGapSize(1.2)
 {
-	mBatchRenderer = std::make_unique<BatchRenderer>(mMaxSprites, 6, 4);
+	mBatchRenderer = std::make_unique<BatchRenderer<VertexData2C>>(mMaxSprites, 6, 4);
 
 	mSprites.reserve(mMaxSprites * 4);
 
 	srand(time(NULL));
 
-	float sizeSquare = sqrt((1024.0f * 768.0f)/mNumberofSprites); 
+	float sizeSquare = sqrt((1024.0f * 768.0f) / mNumberofSprites);
 	unsigned int line = 1024 / sizeSquare;//number of square in one line
 	unsigned int Column = 768 / sizeSquare; //number of square in one column
 	Vector<float, 4> Color;
-	float x = sizeSquare/2.0f;
-	float y = sizeSquare/2.0f;
+	float x = sizeSquare / 2.0f;
+	float y = sizeSquare / 2.0f;
 	//create buffer of sprites
 	for (unsigned int i = 0; i < Column; i++)
 	{
@@ -41,7 +40,7 @@ BatchRenderScene::BatchRenderScene()
 			mSprites.push_back(*aux);
 			aux++;
 			mSprites.push_back(*aux);
-			
+
 			x += (sizeSquare * mGapSize);
 		}
 		y += (sizeSquare * mGapSize);
@@ -71,8 +70,8 @@ BatchRenderScene::~BatchRenderScene()
 
 void BatchRenderScene::ImGuiRenderer()
 {
-	ImGui::SliderInt("Number of Triangles", &mNumberofSprites, 0, mMaxSprites);
-	ImGui::SliderFloat("Gap size:", &mGapSize, 0.0f, 3.0f);
+	ImGui::SliderInt("Number of sprites", &mNumberofSprites, 0, mMaxSprites);
+	ImGui::SliderFloat("Size of the gap", &mGapSize, 0.0f, 3.0f);
 }
 
 void BatchRenderScene::Update()

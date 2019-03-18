@@ -1,8 +1,4 @@
 ﻿  BatchRenderScene.cpp
-c:\users\joao_\desktop\programming\codes\c++ codes\opengl\opengl\batchrenderscene.cpp(15): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\joao_\desktop\programming\codes\c++ codes\opengl\opengl\batchrenderscene.cpp(20): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\joao_\desktop\programming\codes\c++ codes\opengl\opengl\batchrenderscene.cpp(23): warning C4244: 'initializing': conversion from 'float' to 'unsigned int', possible loss of data
-c:\users\joao_\desktop\programming\codes\c++ codes\opengl\opengl\batchrenderscene.cpp(24): warning C4244: 'initializing': conversion from 'float' to 'unsigned int', possible loss of data
-c:\users\joao_\desktop\programming\codes\c++ codes\opengl\opengl\batchrenderscene.cpp(83): warning C4244: 'initializing': conversion from 'float' to 'unsigned int', possible loss of data
-c:\users\joao_\desktop\programming\codes\c++ codes\opengl\opengl\batchrenderscene.cpp(84): warning C4244: 'initializing': conversion from 'float' to 'unsigned int', possible loss of data
+c:\users\joao_\desktop\programming\codes\c++ codes\opengl\opengl\batchrenderscene.cpp(14): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\joao_\desktop\programming\codes\c++ codes\opengl\opengl\batchrenderscene.cpp(19): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   OpenGL.vcxproj -> C:\Users\joao_\Desktop\Programming\codes\C++ codes\OpenGL\Debug\OpenGL.exe

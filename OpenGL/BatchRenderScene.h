@@ -23,7 +23,7 @@ private:
 	Matrix<float, 3, 3> mMVP; //Model view projection
 
 	std::vector<VertexData2C> mSprites;
-	std::unique_ptr<BatchRenderer> mBatchRenderer;
+	std::unique_ptr<BatchRenderer<VertexData2C>> mBatchRenderer;
 	std::unique_ptr<Renderer> mRenderer;
 	std::unique_ptr<Shader> mShader;
 	std::unique_ptr<Texture> mTexture;

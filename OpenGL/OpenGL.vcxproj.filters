@@ -86,12 +86,6 @@
     <ClCompile Include="Texture2D.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="BatchRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BatchRenderScene.cpp">
-      <Filter>Scenes</Filter>
-    </ClCompile>
     <ClCompile Include="TestScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
@@ -103,6 +97,9 @@
     </ClCompile>
     <ClCompile Include="Math.cpp">
       <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="BatchRenderScene.cpp">
+      <Filter>Scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
