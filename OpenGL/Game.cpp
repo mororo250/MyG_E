@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <chrono> //time
 
 #include "Game.h"
 #include "Renderer.h"
@@ -73,9 +74,10 @@ void Game::Loop()
 	menu->RegisterScne<TestScene>("Test Scene");
 
 	/* Loop until the user closes the window */
-
+	std::chrono::duration<float> frametime;
 	while (!glfwWindowShouldClose(mWindow))
 	{ 
+		auto start = std::chrono::high_resolution_clock::now();
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -88,7 +90,7 @@ void Game::Loop()
 				delete CurrentScene; //error 1281 when I delete Current Scene - Don't seam to make difference
 				CurrentScene = menu; 
 			}
-
+			ImGui::Text("fps: %f", 1.0f/frametime.count());
 			CurrentScene->ImGuiRenderer();
 			ImGui::End();
  			CurrentScene->Update();
@@ -101,6 +103,8 @@ void Game::Loop()
 
 		/* Poll for and process events */
 		GLcall(glfwPollEvents());
+		auto end = std::chrono::high_resolution_clock::now();
+		frametime = end - start;
 	}
 	if (CurrentScene != menu)
 		delete CurrentScene;

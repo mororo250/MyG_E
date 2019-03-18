@@ -3,7 +3,7 @@
 
 
 BatchRenderScene::BatchRenderScene()
-	:mNumberofSprites(10000),
+	:mNumberofSprites(1000000),
 	mScaleMat(1.0f, 1.0f), 
 	mRotMat(0.0f),
 	mTranMat(0.0f, 0.0f),
