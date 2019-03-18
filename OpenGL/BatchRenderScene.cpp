@@ -4,12 +4,13 @@
 
 BatchRenderScene::BatchRenderScene()
 	:mNumberofSprites(10000),
-	mBatchRenderer(new BatchRenderer(mNumberofSprites, 6, 4)),
 	mScaleMat(1.0f, 1.0f), 
 	mRotMat(0.0f),
-	mTranMat(0, 0),
+	mTranMat(0.0f, 0.0f),
 	mOrtho(CreateOrthoMatrix(0.0f, 1024, 768, 0))
 {
+	mBatchRenderer = std::make_unique<BatchRenderer>(mNumberofSprites, 6, 4);
+
 	mSprites.reserve(mNumberofSprites * 4);
 
 	srand(time(NULL));
@@ -18,36 +19,29 @@ BatchRenderScene::BatchRenderScene()
 	unsigned int line = 1024 / sizeSquare;//number of square in one line
 	unsigned int Column = 768 / sizeSquare; //number of square in one column
 	Vector<float, 4> Color;
-	float offsetX = 0;
-	float offsetY = 0;
-	VertexData aux;
+	float x = sizeSquare/2.0f;
+	float y = sizeSquare/2.0f;
 	//create buffer of sprites
 	for (unsigned int i = 0; i < Column; i++)
 	{
 		for (unsigned int j = 0; j < line; j++)
 		{
+			Color = { rand() % 100 / 100.0f,  rand() % 100 / 100.0f,  rand() % 100 / 100.0f ,  1.0 };
+			Sprite sprite(x, y, sizeSquare / 2, sizeSquare / 2, Color);
+			VertexData2C* aux = static_cast<VertexData2C*>(sprite.GetData());
 
-			Color = { rand() % 1000 / 1000.0f,  rand() % 1000 / 1000.0f,  rand() % 1000 / 1000.0f ,  1.0 };
-
-			aux.Color = Color;
-			aux.Position = { offsetX, offsetY };
-			mSprites.push_back(aux);
-
-			aux.Color = Color;
-			aux.Position = { sizeSquare + offsetX, offsetY };
-			mSprites.push_back(aux);
-
-			aux.Color = Color;
-			aux.Position = { sizeSquare + offsetX, sizeSquare + offsetY };
-			mSprites.push_back(aux);
-
-			aux.Color = Color;
-			aux.Position = { offsetX, sizeSquare + offsetY };
-			mSprites.push_back(aux);
-
-			offsetX += sizeSquare;
+			mSprites.push_back(*aux);
+			aux++;
+			mSprites.push_back(*aux);
+			aux++;
+			mSprites.push_back(*aux);
+			aux++;
+			mSprites.push_back(*aux);
+			
+			x += (sizeSquare * 1.2f);
 		}
-		offsetY += sizeSquare;
+		y += (sizeSquare * 1.2f);
+		x = sizeSquare / 2.0f;
 	}
 
 	mShader = std::make_unique<Shader>("Color.shader");
@@ -58,6 +52,13 @@ BatchRenderScene::BatchRenderScene()
 
 	mU_MVP = mShader->GetUniformLocation("u_MVP");
 	mShader->SetUniformMatrix3f(mU_MVP, mMVP);
+
+	mBatchRenderer->begin();
+	mBatchRenderer->add(mSprites);
+	mBatchRenderer->end();
+
+
+	mShader->unbind();
 }
 
 BatchRenderScene::~BatchRenderScene()
@@ -70,14 +71,44 @@ void BatchRenderScene::ImGuiRenderer()
 
 void BatchRenderScene::Update()
 {
-	GLcall(glClear(GL_COLOR_BUFFER_BIT));
+	mSprites.clear();
+	{
+		float sizeSquare = sqrt((1024.0f * 768.0f) / mNumberofSprites);
+		unsigned int line = 1024 / sizeSquare;//number of square in one line
+		unsigned int Column = 768 / sizeSquare; //number of square in one column
+		Vector<float, 4> Color;
+		float x = sizeSquare / 2.0f;
+		float y = sizeSquare / 2.0f;
+		//create buffer of sprites
+		for (unsigned int i = 0; i < Column; i++)
+		{
+			for (unsigned int j = 0; j < line; j++)
+			{
+				Color = { rand() % 100 / 100.0f,  rand() % 100 / 100.0f,  rand() % 100 / 100.0f ,  1.0 };
+				Sprite sprite(x, y, sizeSquare / 2, sizeSquare / 2, Color);
+				VertexData2C* aux = static_cast<VertexData2C*>(sprite.GetData());
 
-	mShader->bind();
-	mShader->SetUniformMatrix3f(mU_MVP, mMVP);
+				mSprites.push_back(*aux);
+				aux++;
+				mSprites.push_back(*aux);
+				aux++;
+				mSprites.push_back(*aux);
+				aux++;
+				mSprites.push_back(*aux);
+
+				x += (sizeSquare * 1.2f);
+			}
+			y += (sizeSquare * 1.2f);
+			x = sizeSquare / 2.0f;
+		}
+	}
 
 	mBatchRenderer->begin();
 	mBatchRenderer->add(mSprites);
 	mBatchRenderer->end();
+
+	mShader->bind();
+	mShader->SetUniformMatrix3f(mU_MVP, mMVP);
 
 	mBatchRenderer->Render(*mShader);
 }

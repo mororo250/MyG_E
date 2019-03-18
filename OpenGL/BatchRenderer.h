@@ -3,13 +3,7 @@
 #include "Renderer.h"
 #include "Math.h"
 #include <vector>
-
-
-struct VertexData 
-{
-	Vector<float, 2> Position;
-	Vector<float, 4> Color;
-};
+#include "Sprite.h"
 
 class BatchRenderer
 {
@@ -22,7 +16,8 @@ public:
 
 	void begin();
 	void end();
-	void add(std::vector<VertexData>& Sprites);
+	void add(std::vector<VertexData2C>& Sprites);
+	void add(void* Sprites, unsigned int);
 	void Render(Shader& shader);
 
 private:
@@ -37,5 +32,5 @@ private:
 	std::unique_ptr<VertexBuffer> mVb;
 	std::unique_ptr<IndexBuffer> mIb;
 	std::unique_ptr<Renderer> mRenderer;
-	VertexData* mBuffer;
+	VertexData2C* mBuffer;
 };

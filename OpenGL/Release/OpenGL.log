@@ -1,25 +1,27 @@
 ﻿  BatchRenderer.cpp
+  BatchRenderScene.cpp
+c:\users\joao_\onedrive\área de trabalho\codes\codes\c++ codes\opengl\opengl\batchrenderscene.cpp(16): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\joao_\onedrive\área de trabalho\codes\codes\c++ codes\opengl\opengl\batchrenderscene.cpp(19): warning C4244: 'initializing': conversion from 'float' to 'unsigned int', possible loss of data
+c:\users\joao_\onedrive\área de trabalho\codes\codes\c++ codes\opengl\opengl\batchrenderscene.cpp(20): warning C4244: 'initializing': conversion from 'float' to 'unsigned int', possible loss of data
+c:\users\joao_\onedrive\área de trabalho\codes\codes\c++ codes\opengl\opengl\batchrenderscene.cpp(77): warning C4244: 'initializing': conversion from 'float' to 'unsigned int', possible loss of data
+c:\users\joao_\onedrive\área de trabalho\codes\codes\c++ codes\opengl\opengl\batchrenderscene.cpp(78): warning C4244: 'initializing': conversion from 'float' to 'unsigned int', possible loss of data
   Game.cpp
-  imgui.cpp
+  Gldebug.cpp
   Menu.cpp
-  Scene.cpp
-  imgui_demo.cpp
-  imgui_draw.cpp
-  imgui_impl_glfw.cpp
-  imgui_impl_opengl3.cpp
-  imgui_widgets.cpp
+  IndexBuffer.cpp
   Renderer.cpp
   Shader.cpp
-  stb_image.cpp
+  Sprite.cpp
+  TestScene.cpp
   Texture.cpp
   Texture2D.cpp
   VertexArray.cpp
   VertexBuffer.cpp
 LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  928 of 1728 functions (53.7%) were compiled, the rest were copied from previous compilation.
-    280 functions were new in current compilation
-    120 functions had inline decision re-evaluated but remain unchanged
+  483 of 1941 functions (24.9%) were compiled, the rest were copied from previous compilation.
+    213 functions were new in current compilation
+    101 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
 glew32s.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'C:\Users\joao_\OneDrive\Área de Trabalho\Codes\codes\C++ codes\OpenGL\Release\vc120.pdb'; linking object as if no debug info
   OpenGL.vcxproj -> C:\Users\joao_\OneDrive\Área de Trabalho\Codes\codes\C++ codes\OpenGL\Release\OpenGL.exe

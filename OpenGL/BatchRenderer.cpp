@@ -2,15 +2,15 @@
 
 BatchRenderer::BatchRenderer(unsigned int MaxSprites, unsigned int IndicesCount, unsigned int VertexCount)
 	:mMaxSprites(MaxSprites), 
-	mVertexSize(sizeof(VertexData)), 
+	mVertexSize(sizeof(VertexData2C)),
 	mIndicesSize(MaxSprites * IndicesCount), 
-	mSpriteSize(mVertexSize*VertexCount),
+	mSpriteSize(mVertexSize * VertexCount),
 	mBufferSize(MaxSprites * mSpriteSize),
 	mRenderer()
 {
 	GLcall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 	mVao = std::make_unique<VertexArray>();
-	mVb = std::make_unique<VertexBuffer>(nullptr, mBufferSize, mVertexSize/sizeof(float), BufferUsage::DYNAMIC);
+	mVb = std::make_unique<VertexBuffer>(nullptr, VertexCount * MaxSprites, mVertexSize/sizeof(float), BufferUsage::DYNAMIC);
 	
 	mVao->PushLayout(2, GL_FLOAT, GL_FALSE, 0);
 	mVao->PushLayout(4, GL_FLOAT, GL_FALSE, 2);
@@ -42,29 +42,37 @@ BatchRenderer::~BatchRenderer()
 
 void BatchRenderer::begin()
 {
-	GLcall(mBuffer = static_cast<VertexData *>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY)));
+	mVb->bind();
+	GLcall(mBuffer = static_cast<VertexData2C *>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY)));
 }
 
 void BatchRenderer::end()
 {
-	GLcall(if (!glUnmapBuffer(GL_ARRAY_BUFFER)))
+	if (!glUnmapBuffer(GL_ARRAY_BUFFER))
 		std::cout << "The data store contents have become corrupt" << std::endl;
 }
 
-void BatchRenderer::add(std::vector<VertexData>& Sprites)
+void BatchRenderer::add(std::vector<VertexData2C>& Sprites)
 {
 	unsigned int size = Sprites.size();
 	if (size > mBufferSize)
 		std::cout << "not enough room" << std::endl;
 	else
 	{
-		memmove(mBuffer, Sprites.data(), sizeof(VertexData) * size);
+		memcpy(mBuffer, Sprites.data(), sizeof(VertexData2C) * size);
 		mBuffer += size;
 	}
 }
 
+void BatchRenderer::add(void *Sprites, unsigned int size)
+{
+	memcpy(mBuffer, Sprites, sizeof(VertexData2C) * size);
+}
+
+
 void BatchRenderer::Render(Shader& shader)
 {
 	mRenderer->Clear();
+	mVb->bind();
 	mRenderer->Draw(*mVao, *mIb, shader);
 }

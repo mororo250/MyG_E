@@ -14,6 +14,7 @@
 #include "Texture2D.h"
 #include "Menu.h"
 #include "BatchRenderScene.h"
+#include "TestScene.h"
 
 
 Game::Game()
@@ -69,6 +70,7 @@ void Game::Loop()
 	CurrentScene = menu;
 	menu->RegisterScne<Texture2D>("Texture2D Scene");
 	menu->RegisterScne<BatchRenderScene>("Batch Rendering Scene");
+	menu->RegisterScne<TestScene>("Test Scene");
 
 	/* Loop until the user closes the window */
 

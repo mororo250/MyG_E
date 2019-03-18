@@ -50,7 +50,10 @@ void Shader::SetUniformMatrix3f(int Location, Matrix<float, 3, 3> matrix)
 
 int Shader::GetUniformLocation(const std::string& name) const
 {
-	return GLcall(glGetUniformLocation(mShaderProgram, name.c_str()));
+	GLcall(int UniformLocation = glGetUniformLocation(mShaderProgram, name.c_str()));
+	if (UniformLocation == -1)
+		std::cout << "There isn't any uniform named:" << name;
+	return UniformLocation;
 }
 
 //this function read the shader file and put the shader code in a string

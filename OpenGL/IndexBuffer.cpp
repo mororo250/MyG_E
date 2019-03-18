@@ -12,7 +12,6 @@ IndexBuffer::IndexBuffer(const unsigned int *indices, const unsigned int numIndi
 	GLcall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer));
 	// Pass the index data into the buffer
 	GLcall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(unsigned int), indices, GL_STATIC_DRAW));
-
 }
 
 IndexBuffer::~IndexBuffer()

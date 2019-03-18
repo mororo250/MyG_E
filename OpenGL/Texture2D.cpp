@@ -1,16 +1,20 @@
 #include "Texture2D.h"
+#include "BatchRenderer.h"
 
 Texture2D::Texture2D()
 	:mTranX(384.0f), mTranY(512.0f), mScaleX(1.0f), mScaleY(1.0f), mAngle(0.0f),
-	mScaleMat(1.0f, 1.0f), mRotMat(0.0f),
-	mOrtho(CreateOrthoMatrix(0.0f, 1024, 768, 0)), mTranMat(512.0f, 384.0f)
+	mScaleMat(1.0f, 1.0f),
+	mRotMat(0.0f),
+	mOrtho(CreateOrthoMatrix(0.0f, 1024, 768, 0)), 
+	mTranMat(512.0f, 384.0f)
 {
 	float positions[] = {
-	-50.0f,  -50.0f , 0.0f, 0.0f, //index 0
-	50.0f ,  -50.0f , 1.0f, 0.0f, //index 1
-	50.0f ,  50.0f, 1.0f, 1.0f, //index 2
-	-50.0f,  50.0f, 0.0f, 1.0f  //index 3
+	-50.0f, -50.0f, 0.0f, 0.0f, //index 0
+	50.0f, -50.0f, 1.0f, 0.0f, //index 1
+	50.0f, 50.0f, 1.0f, 1.0f, //index 2
+	-50.0f, 50.0f, 0.0f, 1.0f  //index 3
 	};
+	
 
 	unsigned int indices[] = {
 	0, 1, 2, 2 ,3, 0
@@ -25,7 +29,7 @@ Texture2D::Texture2D()
 	mVa->PushLayout(2, GL_FLOAT, GL_FALSE, 0);
 	mVa->PushLayout(2, GL_FLOAT, GL_FALSE, 2);
 	mVa->AddBuffer(*mVb);
-	
+
 	mShader = std::make_unique<Shader>("Shader.shader");
 	mShader->bind();
 
@@ -38,6 +42,7 @@ Texture2D::Texture2D()
 	mTexture = std::make_unique<Texture>("Resources/PS4.PNG");
 	mTexture->bind(0);
 	mShader->SetUniform1i(mShader->GetUniformLocation("u_texture"), 0);
+
 
 	mVa->unbind();
 	mVb->unbind();

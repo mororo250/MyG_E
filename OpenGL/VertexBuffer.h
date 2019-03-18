@@ -8,7 +8,7 @@ enum class BufferUsage
 class VertexBuffer
 {
 public:
-	VertexBuffer(const float *verts, const unsigned int numVertex, const unsigned int Stride, BufferUsage usage = BufferUsage::STATIC);
+	VertexBuffer(const float *verts, const unsigned int numVertex, const unsigned int Vete, BufferUsage usage = BufferUsage::STATIC);
 	~VertexBuffer();
 	
 	void bind() const;
@@ -18,5 +18,5 @@ public:
 
 private:
 	unsigned int mVertexBuffer;	//OpenGl Id of Index Buffer
-	unsigned int mStride; //Amount of bytes from the beginning of one element to the beginning of the following element in this case the amount of floats...
+	GLsizeiptr mStride; //Amount of bytes from the beginning of one element to the beginning of the following element in this case the amount of floats...
 };

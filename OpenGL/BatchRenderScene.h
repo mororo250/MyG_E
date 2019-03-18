@@ -1,7 +1,7 @@
 #pragma once
 #include "Scene.h"
 #include "BatchRenderer.h"
-
+#include "Texture.h"
 
 class BatchRenderScene :public Scene
 {
@@ -22,8 +22,9 @@ private:
 	RotationMatrix3 mRotMat;
 	Matrix<float, 3, 3> mMVP; //Model view projection
 
-	std::vector<VertexData> mSprites;
+	std::vector<VertexData2C> mSprites;
 	std::unique_ptr<BatchRenderer> mBatchRenderer;
 	std::unique_ptr<Renderer> mRenderer;
 	std::unique_ptr<Shader> mShader;
+	std::unique_ptr<Texture> mTexture;
 };
