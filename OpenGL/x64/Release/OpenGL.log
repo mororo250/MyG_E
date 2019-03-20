@@ -1,0 +1,9 @@
+﻿  Game.cpp
+c:\users\joao_\desktop\programming\codes\c++ codes\opengl\opengl\vertexbuffer.h(24): warning C4244: 'return': conversion from 'const GLsizeiptr' to 'unsigned int', possible loss of data
+  Main.cpp
+  Generating code
+  0 of 1983 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  OpenGL.vcxproj -> C:\Users\joao_\Desktop\Programming\codes\C++ codes\OpenGL\x64\Release\OpenGL.exe

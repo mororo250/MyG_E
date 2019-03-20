@@ -101,6 +101,9 @@
     <ClCompile Include="BatchRenderScene.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="..\Depencies\GLAD\src\glad.c">
+      <Filter>Resourses Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">

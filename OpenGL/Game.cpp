@@ -4,8 +4,6 @@
 #include <chrono> //time
 
 #include "Game.h"
-#include "Renderer.h"
-#include "Texture.h"
 
 //imgui
 #include "imgui.h"
@@ -43,8 +41,8 @@ bool Game::Initialize()
 	//sicronize with vsync
 	glfwSwapInterval(1);
 
-	if (glewInit() != GLEW_OK) {
-		std::cout << "error!";
+	if (!gladLoadGL()) {
+		printf("Something went wrong!\n");
 		return 0;
 	}
 	
