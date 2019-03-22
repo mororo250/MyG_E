@@ -139,8 +139,9 @@
     <ClCompile Include="Gldebug.cpp" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="Math.cpp" />
-    <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="Model3D.cpp" />
+    <ClCompile Include="Render3DScene.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="imgui_demo.cpp" />
     <ClCompile Include="imgui_draw.cpp" />
@@ -153,18 +154,18 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="stb_image.cpp" />
-    <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="VertexArray.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Render3DScene.h" />
+    <ClInclude Include="Model3D.h" />
     <ClInclude Include="BatchRenderer.h" />
     <ClInclude Include="BatchRenderScene.h" />
-    <ClInclude Include="Matrix.h" />
     <ClInclude Include="Sprite.h" />
-    <ClInclude Include="TestScene.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Gldebug.h" />
@@ -184,12 +185,12 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="Vector.h" />
     <ClInclude Include="VertexArray.h" />
     <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Color.shader" />
+    <None Include="Color3D.shader" />
     <None Include="cpp.hint" />
     <None Include="Shader.shader" />
   </ItemGroup>

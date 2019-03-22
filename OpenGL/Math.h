@@ -31,31 +31,46 @@ public:
 		}
 	}
 
-
-	T operator[](unsigned int index)
+	//operators
+	T& operator[](unsigned int index)
 	{
 		return mVector[index];
 	}
 
-	const T operator[](unsigned int index) const
+	const T& operator[](unsigned int index) const
 	{
 		return mVector[index];
 	}
 
-	template<class U>
-	Vector operator*=(const U scalar)
+	Vector operator*=(const T scalar)
 	{
 		for (unsigned int i = 0; i < NumElem; i++)
 			mVector[i] *= scalar;
+		return *this;
+	}
+
+	Vector operator+=(const Vector vector2)
+	{
+		for (unsigned int i = 0; i < NumElem; i++)
+			mVector[i] += vector2[i];
+		return *this;
+	}
+
+	Vector operator-=(const Vector vector2)
+	{
+		for (unsigned int i = 0; i < NumElem; i++)
+			mVector[i] -= vector2[i];
+		return *this;
 	}
 
 	template<class U, unsigned int VNumElem, unsigned int MNumCol>
 	friend Vector<U, MNumCol> operator*(const Vector<U, VNumElem> vector, const Matrix<U, VNumElem, MNumCol> matrix);
 
+	//auxiliares fuctions
 	auto GetAsPointer() const { return mVector; }
 	unsigned int GetNumElem() const { return NumElem; }
 
-	float length()
+	float Length()
 	{
 		float length = 0;
 		for (unsigned int i = 0; i < NumElem; i++)
@@ -63,28 +78,42 @@ public:
 		return sqrt(length);
 	}
 
-	void normalize()
+	Vector<T, NumElem> Normalize()
 	{
-		float L = length();
+		float L = Length();
 		for (unsigned int i = 0; i < NumElem; i++)
 			mVector[i] = mVector[i] / L;
+		return *this;
 	}
 
 private:
 	T mVector[NumElem];
 };
 
-template<class T, unsigned int NumElem, class S>
-Vector<T, NumElem> operator*(const Vector<T, NumElem> vector, const S scalar)
+template<class T, unsigned int NumElem>
+Vector<T, NumElem> operator*(const Vector<T, NumElem> vector, const T scalar)
 {
 	return vector *= scalar;
 }
 
-template<class T, unsigned int NumElem, class S>
-Vector<T, NumElem> operator*(const S scalar, const Vector<T, NumElem> vector)
+template<class T, unsigned int NumElem>
+Vector<T, NumElem> operator*(const T scalar, const Vector<T, NumElem> vector)
 {
 	return vector *= scalar;
 }
+
+template<class T, unsigned int NumElem>
+Vector<T, NumElem> operator+(Vector<T, NumElem> vector1, Vector<T, NumElem> vector2)
+{
+	return vector1 += vector2;
+}
+
+template<class T, unsigned int NumElem>
+Vector<T, NumElem> operator-(Vector<T, NumElem> vector1, Vector<T, NumElem> vector2)
+{
+	return vector1 -= vector2;
+}
+
 
 template<class T, unsigned int VNumElem, unsigned int MNumCol>
 Vector<T, MNumCol> operator*(const Vector<T, VNumElem> vector, const Matrix<T, VNumElem, MNumCol> matrix)
@@ -110,8 +139,17 @@ std::ostream& operator<<(std::ostream& os, const Vector<T, NumElem>& vector)
 	return os;
 }
 
+//Scalar product and vector product
+Vector<float, 3> Cross(Vector<float, 3> vector1, const Vector<float, 3> vector2);
 
-
+template <class T, unsigned int NumElem>
+T Dot(const Vector<T, NumElem> vector1, const Vector<T, NumElem> vector2)
+{
+	T result = 0;
+	for (unsigned int i = 0; i < NumElem; i++)
+		result+= vector1[i] * vector2[i];
+	return result;
+}
 
 //matrix
 
@@ -144,29 +182,18 @@ public:
 		}
 	}
 
-	/*need to be improved
-	T* operator[](unsigned int index)
-	{
-		return mMatrix[index];
-	}
-
-	const T* operator[](const unsigned int index) const
-	{
-		return mMatrix[index];
-	}
-	*/
 
 	Matrix operator*=(const Matrix RMatrix)
 	{
 		return *this * RMatrix;
 	}
 
-	template<class U>
-	Matrix operator*=(const U scalar)
+	Matrix operator*=(const T scalar)
 	{
 		for (unsigned int i = 0; i < NumRow; i++)
 			for (unsigned int j = 0; j < NumCol; j++)
 				mMatrix[i][j] *= scalar;
+		return *this;
 	}
 
 	template<class U, unsigned int LNumRow, unsigned int LNumCol, unsigned int RNumCol>
@@ -179,7 +206,15 @@ public:
 	unsigned int GetNumRow() const { return NumRow; }
 	unsigned int GetNumCol() const { return NumCol; }
 
-protected:
+	Matrix<T, NumRow, NumCol> Transpose()
+	{
+		for (unsigned int i = 0; i < NumRow; i++)
+			for (unsigned int j = 0; j < NumCol; j ++ )
+				mMatrix[i][j] = mMatrix[j][i];
+		return *this;
+	}
+
+private:
 	T mMatrix[NumRow][NumCol];
 };
 
@@ -196,19 +231,18 @@ Matrix<T, LNumRow, RNumCol> operator*(const Matrix<T, LNumRow, LNumCol> &LMatrix
 
 //sclar mutiplication
 
-/*
-template<class T, unsigned int NumRow, unsigned int NumCol, class S>
-Matrix<T, NumRow, NumCol> operator*(Matrix<T, NumRow, NumCol> matrix, S scalar)
+
+template<class T, unsigned int NumRow, unsigned int NumCol>
+Matrix<T, NumRow, NumCol> operator*(Matrix<T, NumRow, NumCol> matrix, T scalar)
 {
 	return matrix *= scalar;
 }
 
-template<class T, unsigned int NumRow, unsigned int NumCol, class S>
-Matrix<T, NumRow, NumCol> operator*(S scalar, Matrix<T, NumRow, NumCol> matrix)
+template<class T, unsigned int NumRow, unsigned int NumCol>
+Matrix<T, NumRow, NumCol> operator*(T scalar, Matrix<T, NumRow, NumCol> matrix)
 {
 	return matrix *= scalar;
 }
-*/
 
 //cout
 template<class T, unsigned int NumRow, unsigned int NumCol>
@@ -280,13 +314,41 @@ public:
 	void SetAngle(const float angle);
 };
 
+enum class AxisUsage
+{
+	AXIS_X, AXIS_Y, AXIS_Z
+};
+
 class RotationMatrix4 : public Matrix<float, 4, 4>
 {
 public:
-	RotationMatrix4(float angle);
+	RotationMatrix4(float angle, AxisUsage axis = AxisUsage::AXIS_Z);
 	void SetAngle(const float angle);
+private:
+	AxisUsage mAxis;
 };
 
-//Create Matrix
+class EulerAngles
+{
+public:
+	EulerAngles();
 
-Matrix<float, 3, 3> CreateOrthoMatrix(const float left, const float right, const float up, const float down);
+	void RotateX(float angle) { mRotX.SetAngle(angle); }
+	void RotateY(float angle) { mRotY.SetAngle(angle); }
+	void RotateZ(float angle) { mRotZ.SetAngle(angle); }
+	void RotateXYZ(float angleX, float angleY, float angleZ);
+
+	Matrix<float, 4, 4> GetRotation() { return mRotZ * mRotY * mRotX; }
+
+private:
+	RotationMatrix4 mRotX;
+	RotationMatrix4 mRotY;
+	RotationMatrix4 mRotZ;
+};
+
+//fuctions which create a matrix
+
+Matrix<float, 3, 3> CreateOrthoMatrix(const float left, const float right, const float top, const float bottom);
+Matrix<float, 4, 4> LookAt(const Vector<float , 3> cameraPosition, const Vector<float , 3> targetPosition, const Vector<float, 3>up);
+Matrix<float, 4, 4> CreateOrthographicMatrix(const float left, const float right, const float top, const float botton, const float _near, const float _far);
+Matrix<float, 4, 4> CreatePerspectiveMatrix(const float left, const float right, const float top, const float botton, const float _near, const float _far);

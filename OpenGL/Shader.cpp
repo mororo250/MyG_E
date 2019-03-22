@@ -48,6 +48,11 @@ void Shader::SetUniformMatrix3f(int Location, Matrix<float, 3, 3> matrix)
 	GLcall(glUniformMatrix3fv(Location, 1, GL_TRUE, reinterpret_cast<const float *>(matrix.GetAsPointer()) ));
 }
 
+void Shader::SetUniformMatrix4f(int Location, Matrix<float, 4, 4> matrix)
+{
+	GLcall(glUniformMatrix4fv(Location, 1, GL_TRUE, reinterpret_cast<const float *>(matrix.GetAsPointer()) ));
+}
+
 int Shader::GetUniformLocation(const std::string& name) const
 {
 	GLcall(int UniformLocation = glGetUniformLocation(mShaderProgram, name.c_str()));

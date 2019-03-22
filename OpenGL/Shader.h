@@ -15,6 +15,7 @@ public:
 	void SetUniform1f(int Location, float value);
 	void SetUniform4f(int Location, float v1, float v2, float v3, float v4);
 	void SetUniformMatrix3f(int Location, Matrix< float, 3, 3>);
+	void SetUniformMatrix4f(int Location, Matrix< float, 4, 4>);
 	int GetUniformLocation(const std::string& name) const;
 
 	inline unsigned int GetProgram()const { return mShaderProgram; }

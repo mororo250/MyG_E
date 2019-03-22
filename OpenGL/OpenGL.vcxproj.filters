@@ -5,27 +5,33 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="Resourses Files">
       <UniqueIdentifier>{cf42a1f8-68f3-4261-bef9-4b2db44e9c97}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resourses Files\Shaders">
       <UniqueIdentifier>{752f1bc2-3be2-4b5b-8624-52860c2295b1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\STB">
-      <UniqueIdentifier>{b46e4bca-3121-487f-905a-b9dc2a8deab9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\ImGui">
-      <UniqueIdentifier>{aae91579-d460-4933-a77f-927944d1dbbb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Scenes">
       <UniqueIdentifier>{3bfe6d45-b3a5-410f-b5d0-9604d47b9c89}</UniqueIdentifier>
     </Filter>
     <Filter Include="Math">
       <UniqueIdentifier>{dffddf30-553a-42a4-919d-5ce84f127c84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\Header">
+      <UniqueIdentifier>{d325265b-3aa3-4514-a5ed-4bc25b996aee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes\Source">
+      <UniqueIdentifier>{535ca990-0810-48cd-a1df-1e7440dc65e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\STB">
+      <UniqueIdentifier>{b46e4bca-3121-487f-905a-b9dc2a8deab9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ImGui">
+      <UniqueIdentifier>{aae91579-d460-4933-a77f-927944d1dbbb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -77,32 +83,32 @@
     <ClCompile Include="imgui_impl_glfw.cpp">
       <Filter>Header Files\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="Menu.cpp">
-      <Filter>Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture2D.cpp">
-      <Filter>Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="TestScene.cpp">
-      <Filter>Scenes</Filter>
-    </ClCompile>
     <ClCompile Include="Sprite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Matrix.cpp">
-      <Filter>Math</Filter>
+    <ClCompile Include="..\Depencies\GLAD\src\glad.c">
+      <Filter>Resourses Files</Filter>
     </ClCompile>
     <ClCompile Include="Math.cpp">
       <Filter>Math</Filter>
     </ClCompile>
-    <ClCompile Include="BatchRenderScene.cpp">
-      <Filter>Scenes</Filter>
+    <ClCompile Include="Model3D.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Depencies\GLAD\src\glad.c">
-      <Filter>Resourses Files</Filter>
+    <ClCompile Include="Render3DScene.cpp">
+      <Filter>Scenes\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="BatchRenderScene.cpp">
+      <Filter>Scenes\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>Scenes\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Scenes\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture2D.cpp">
+      <Filter>Scenes\Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -157,23 +163,8 @@
     <ClInclude Include="imgui_impl_opengl3.h">
       <Filter>Header Files\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="Menu.h">
-      <Filter>Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture2D.h">
-      <Filter>Scenes</Filter>
-    </ClInclude>
     <ClInclude Include="BatchRenderer.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BatchRenderScene.h">
-      <Filter>Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="TestScene.h">
-      <Filter>Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Sprite.h">
       <Filter>Header Files</Filter>
@@ -181,19 +172,37 @@
     <ClInclude Include="Math.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="Matrix.h">
-      <Filter>Math</Filter>
+    <ClInclude Include="Model3D.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vector.h">
-      <Filter>Math</Filter>
+    <ClInclude Include="Render3DScene.h">
+      <Filter>Scenes\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>Scenes\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="BatchRenderScene.h">
+      <Filter>Scenes\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Scenes\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture2D.h">
+      <Filter>Scenes\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader.shader">
       <Filter>Resourses Files\Shaders</Filter>
     </None>
-    <None Include="cpp.hint" />
     <None Include="Color.shader">
+      <Filter>Resourses Files\Shaders</Filter>
+    </None>
+    <None Include="cpp.hint" />
+    <None Include="Color3D.shader">
       <Filter>Resourses Files\Shaders</Filter>
     </None>
   </ItemGroup>

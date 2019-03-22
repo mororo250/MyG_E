@@ -6,15 +6,23 @@ struct Base
 {
 };
 
+
 struct VertexData2T : public Base
 {
 	Vector<float, 2> Position;
 	Vector<float, 2> Texture;
 };
 
+
 struct VertexData2C : public Base
 {
 	Vector<float, 2> Position;
+	Vector<float, 4> Color;
+};
+
+struct VertexData3C : public Base
+{
+	Vector<float, 3> Position;
 	Vector<float, 4> Color;
 };
 
