@@ -3,9 +3,9 @@
 #include <time.h>
 
 Render3DScene::Render3DScene()
-	:mPersp(CreateOrthographicMatrix(0.0f, 1024.0f, 768.0f, 0.0f, 0.1f, 800.0f)),
-	mTrans({ 512.0f, 384.0f, 0.0f }),
-	mScale({200.0f, 200.0f, 200.0f}),
+	:mPersp(CreatePerspectiveMatrix(45.0f, 1024.0f/768.0f, 0.1f, 800.0f)),
+	mTrans({ 0.0f, 0.0f, -20.0f }),
+	mScale({1.0f, 1.0f, 1.0f}),
 	mRot({0.0f, 0.0f, 0.0f})
 {
 	srand(time(NULL));
@@ -74,13 +74,12 @@ Render3DScene::~Render3DScene()
 
 void Render3DScene::ImGuiRenderer()
 {
-	//4ImGui::SliderFloat("Position ClipSpace: (%f, %f, %f)");
 	ImGui::SliderFloat("Translation X", &mTrans[0], 0.0f, 1024.0f);
 	ImGui::SliderFloat("Translation y", &mTrans[1], 0.0f, 768.0f);
-	ImGui::SliderFloat("Translation z", &mTrans[2], -400.1f, 800.0f);
-	ImGui::SliderFloat("Scale X", &mScale[0], 0.0f, 1000.0f);
-	ImGui::SliderFloat("Scale y", &mScale[1], 0.0f, 1000.0f);
-	ImGui::SliderFloat("Scale z", &mScale[2], 0.0f, 1000.0f);
+	ImGui::SliderFloat("Translation z", &mTrans[2], -400.0f, 800.0f);
+	ImGui::SliderFloat("Scale X", &mScale[0], 0.0f, 100.0f);
+	ImGui::SliderFloat("Scale y", &mScale[1], 0.0f, 100.0f);
+	ImGui::SliderFloat("Scale z", &mScale[2], 0.0f, 100.0f);
 	ImGui::SliderFloat("Rotation X", &mRot[0],-6.28f, 6.28f);
 	ImGui::SliderFloat("Rotation y", &mRot[1], -6.28f, 6.28f);
 	ImGui::SliderFloat("Rotation z", &mRot[2], -6.28f, 6.28f);

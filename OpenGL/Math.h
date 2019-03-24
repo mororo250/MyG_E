@@ -347,8 +347,9 @@ private:
 };
 
 //fuctions which create a matrix
+inline float ToRadiants(float angle);
 
 Matrix<float, 3, 3> CreateOrthoMatrix(const float left, const float right, const float top, const float bottom);
 Matrix<float, 4, 4> LookAt(const Vector<float , 3> cameraPosition, const Vector<float , 3> targetPosition, const Vector<float, 3>up);
 Matrix<float, 4, 4> CreateOrthographicMatrix(const float left, const float right, const float top, const float botton, const float _near, const float _far);
-Matrix<float, 4, 4> CreatePerspectiveMatrix(const float left, const float right, const float top, const float botton, const float _near, const float _far);
+Matrix<float, 4, 4> CreatePerspectiveMatrix(const float fov, const float aspectRatio, const float Near, const float far);

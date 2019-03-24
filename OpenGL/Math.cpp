@@ -24,6 +24,11 @@ Matrix<float, 4, 4> LookAt(const Vector<float, 3> cameraPosition, const Vector<f
 }
 
 
+inline float ToRadiants(float angle)
+{
+	return angle * 3.14 / 180;
+}
+
 Matrix<float, 3, 3> CreateOrthoMatrix(const float left, const float right, const float up, const float down)
 {
 	Matrix<float, 3, 3> OrthoMatrix{ { 2.0f / (right + left) , 0.0f , 0.0f},
@@ -41,35 +46,41 @@ Matrix<float, 4, 4> CreateOrthographicMatrix(const float left, const float right
 	return OrthoMatrix;
 }
 
-Matrix<float, 4, 4> CreatePerspectiveMatrix(const float left, const float right, const float top, const float botton, const float Near, const float far)
+Matrix<float, 4, 4> CreatePerspectiveMatrix(const float fov, const float aspectRatio, const float Near, const float far)
 {
-	Matrix<float, 4, 4> PerspectiveMatrix{ { 2 * Near / (right - left), 0, 0, 0},
-											 { 0, 2 * Near / (top - botton), 0, 0},
-											 { (right + left) / (right - left), (top + botton) / (top - botton), -(far + Near) / (far - Near), -1},
-											 { 0, 0, -(2 * far * Near) / (far - Near), 0} };
+	float fovr = ToRadiants(fov);
+	Matrix<float, 4, 4> PerspectiveMatrix{{ 1.0f / (aspectRatio * (tan(fovr/2))), 0.0f, 0.0f, 0.0f},
+											{ 0, 1.0f / tan(fovr/2), 0, 0},
+											{ 0.0f, 0.0f, -(far + Near) / (far - Near), -1.0f},
+											{ 0, 0, -(2.0f * far * Near) / (far - Near), 0.0f} };
 	return PerspectiveMatrix;
 }
 
 TranslationMatrix3::TranslationMatrix3(const float TranX, const float TranY)
 	:Matrix<float, 3, 3>{ {1 , 0, 0 }, {0, 1, 0}, {TranX, TranY, 1} }
-{}
+{
+}
 
 
 TranslationMatrix4::TranslationMatrix4(const float xTrans, const float yTrans, const float zTrans)
 	: Matrix<float, 4, 4>{ {1 , 0, 0, 0 }, {0, 1, 0, 0}, {0, 0, 1, 0}, {xTrans, yTrans, zTrans, 1} }
-{}
+{
+}
 
 ScaleMatrix3::ScaleMatrix3(const float ScaleX, const float ScaleY)
 	: Matrix<float, 3, 3>{ {ScaleX, 0, 0 }, {0, ScaleY, 0}, {0, 0, 1} }
-{}
+{
+}
 
 ScaleMatrix4::ScaleMatrix4(const float ScaleX, const float ScaleY, const float ScaleZ)
 	: Matrix<float, 4, 4>{ { {ScaleX , 0, 0, 0 }, {0, ScaleY, 0, 0}, {0, 0, ScaleZ, 0}, {0, 0, 0, 1} } }
-{}
+{
+}
 
 RotationMatrix3::RotationMatrix3(float angle)
 	: Matrix<float, 3, 3>{ {cos(angle), sin(angle),  0 }, {-sin(angle), cos(angle), 0}, {0, 0, 1} }
-{}
+{
+}
 
 
 void RotationMatrix3::SetAngle(const float angle)

@@ -1,2 +1,4 @@
-﻿  Math.cpp
+﻿  Render3DScene.cpp
+c:\users\joao_\onedrive\desktop\git\myg_e-git\opengl\vertexbuffer.h(24): warning C4244: 'return': conversion from 'const GLsizeiptr' to 'unsigned int', possible loss of data
+c:\users\joao_\onedrive\desktop\git\myg_e-git\opengl\render3dscene.cpp(11): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   OpenGL.vcxproj -> C:\Users\joao_\OneDrive\Desktop\git\MyG_E-git\x64\Debug\OpenGL.exe
