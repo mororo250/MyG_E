@@ -19,12 +19,12 @@ private:
 	std::unique_ptr<IndexBuffer>  mIb;
 	std::unique_ptr<Shader> mShader;
 	std::unique_ptr<Renderer> mRenderer;
+	std::unique_ptr<Model3D> mCube;
 
 	Matrix<float, 4, 4> mPersp; //Perspective Matrix
 	Matrix<float, 4, 4> mView;
 	Matrix<float, 4, 4> mMVP; //Model view projection
 
-	Model3D mCube;
 	int mU_MVP; //uniform location
 	Vector<float, 3> mTrans;
 	Vector<float, 3> mScale;
