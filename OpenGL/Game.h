@@ -3,7 +3,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-class Game
+//singleton class
+class Game 
 {
 public:
 
@@ -12,9 +13,19 @@ public:
 	void Loop();
 	void Shutdown();
 
-private:
-	int mWinHigh = 768;
-	int mWinLengh = 1024;
-	GLFWwindow *mWindow;
+	inline GLFWwindow* GetWindow() const { return mWindow; }
+	inline float GetDelta() const { return mDelta; }
+	inline static Game& Get() 
+	{ 
+		if (s_Instance == nullptr)
+			s_Instance = new Game();
+		return *s_Instance; 
+	}
 
+private:
+	float mDelta; //time between this frame and the last one
+	int mWinHigh;
+	int mWinLengh;
+	GLFWwindow* mWindow;
+	static Game *s_Instance;
 };

@@ -15,10 +15,20 @@
 #include "BatchRenderScene.h"
 #include "Render3DScene.h"
 
+Game* Game::s_Instance = nullptr;
 
 Game::Game()
-:mWindow(nullptr)
+	:mWinHigh(768),
+	mWinLengh(1024),
+	mDelta(1.0f)
 {
+	if (s_Instance != nullptr)
+	{
+		std::cout << "Game already existed" << std::endl;
+		__debugbreak();
+	}
+	else
+		s_Instance = this;
 }
 
 bool Game::Initialize()
@@ -88,7 +98,7 @@ void Game::Loop()
 				delete CurrentScene; //error 1281 when I delete Current Scene - Don't seam to make difference
 				CurrentScene = menu; 
 			}
-			ImGui::Text("fps: %f", 1.0f/frametime.count());
+			ImGui::Text("fps: %f", 1.0f/mDelta);
 			CurrentScene->ImGuiRenderer();
 			ImGui::End();
  			CurrentScene->Update();
@@ -103,6 +113,7 @@ void Game::Loop()
 		GLcall(glfwPollEvents());
 		auto end = std::chrono::high_resolution_clock::now();
 		frametime = end - start;
+		mDelta = frametime.count();
 	}
 	if (CurrentScene != menu)
 		delete CurrentScene;

@@ -1,12 +1,17 @@
 #include "Render3DScene.h"
+#include "Input.h"
 #include "imgui.h"
 #include <time.h>
 
 Render3DScene::Render3DScene()
-	:mPersp(CreatePerspectiveMatrix(45.0f, 1024.0f/768.0f, 0.1f, 800.0f)),
-	mTrans({ 0.0f, 0.0f, -20.0f }),
-	mScale({1.0f, 1.0f, 1.0f}),
-	mRot({0.0f, 0.0f, 0.0f})
+	:mPersp(CreatePerspectiveMatrix(45.0f, 1024.0f / 768.0f, 0.1f, 800.0f)),
+	mCameraPos({ 0.0f, 0.0f, 0.0f }),
+	mFrontCamera({ 0.0f, 0.0f, -1.0f }),
+	mSpeed(0.5f),
+	mModeAux(false),
+	mSensitivity(0.005f),
+	mMousePos(std::move(Input::Get().GetMousePosition())),
+	mMouseLastPos(std::move(Input::Get().GetMousePosition()))
 {
 	srand(time(NULL));
 
@@ -14,10 +19,21 @@ Render3DScene::Render3DScene()
 	ColorBuffer.reserve(8);
 	for (unsigned int i = 0; i < 8; i++)
 		ColorBuffer.push_back({ rand() % 100 / 100.0f,  rand() % 100 / 100.0f,  rand() % 100 / 100.0f ,  1.0 });
+	//Create the models
+	{
+		mBuffer.push_back(Model3D({ 0.5, 0.5, 0.5 }, ColorBuffer));
+		mBuffer[0].SetTranslation({0.0f, 0.0f, -30.0f}); //bug gets a black screen
+		mBuffer.push_back(Model3D({ 1.5f, 1.5f, -10.0f }));
+		mBuffer.push_back(Model3D({ -3.0f, 3.0f, -14.0f }));
+		mBuffer.push_back(Model3D({ 4.0f, -2.0f, -12.0f }));
+		mBuffer.push_back(Model3D({ -6.0f, -6.0f, -20.0f }));
+		mBuffer.push_back(Model3D({ 7.0f, 6.0f, -23.0f }));
+		mBuffer.push_back(Model3D({ -10.0f, 8.0f, -25.0f }));
+		mBuffer.push_back(Model3D({ -10.0f, -8.0f, -25.0f }));
+		mBuffer.push_back(Model3D({6.0f, -8.0f, -26.0f }));
+	}
 
-	mCube = std::make_unique<Model3D>(Vector<float, 3>({ 0.5, 0.5, 0.5 }), ColorBuffer);
-
-	mView = LookAt({ 0.0f, 0.0f, -3.0f }, mCube->GetPosition(), { 0.0f, 1.0f, 0.0f });
+	mCamera = std::make_unique<Camera>(mCameraPos, mFrontCamera);
 
 	unsigned int indices[] = {	//back
 								0, 1, 2,
@@ -40,10 +56,9 @@ Render3DScene::Render3DScene()
 
 	
 	GLcall(glEnable(GL_DEPTH_TEST));
-	GLcall(glDisable(GL_BLEND));
 
 	mVa = std::make_unique<VertexArray>();
-	mVb = std::make_unique<VertexBuffer>(reinterpret_cast<float *>(mCube->GetData()), 8, 7);
+	mVb = std::make_unique<VertexBuffer>(reinterpret_cast<float *>(mBuffer[0].GetData()), 8, 7);
 	mIb = std::make_unique<IndexBuffer>(indices, 36);
 
 	mVa->PushLayout(3, GL_FLOAT, GL_FALSE, 0);
@@ -53,10 +68,7 @@ Render3DScene::Render3DScene()
 	mShader = std::make_unique<Shader>("Color3D.shader");
 	mShader->bind();
 
-	mMVP = mView * mPersp; //Model view projection
-
 	mU_MVP = mShader->GetUniformLocation("u_MVP");
-	mShader->SetUniformMatrix4f(mU_MVP, mMVP);
 
 
 	mVa->unbind();
@@ -74,28 +86,74 @@ Render3DScene::~Render3DScene()
 
 void Render3DScene::ImGuiRenderer()
 {
-	ImGui::SliderFloat("Translation X", &mTrans[0], 0.0f, 1024.0f);
-	ImGui::SliderFloat("Translation y", &mTrans[1], 0.0f, 768.0f);
-	ImGui::SliderFloat("Translation z", &mTrans[2], -400.0f, 800.0f);
-	ImGui::SliderFloat("Scale X", &mScale[0], 0.0f, 100.0f);
-	ImGui::SliderFloat("Scale y", &mScale[1], 0.0f, 100.0f);
-	ImGui::SliderFloat("Scale z", &mScale[2], 0.0f, 100.0f);
-	ImGui::SliderFloat("Rotation X", &mRot[0],-6.28f, 6.28f);
-	ImGui::SliderFloat("Rotation y", &mRot[1], -6.28f, 6.28f);
-	ImGui::SliderFloat("Rotation z", &mRot[2], -6.28f, 6.28f);
+	ImGui::Text("Mouse Position: %f %f", mMousePos.first, mMousePos.second);
+	ImGui::Text("Press control to switch the mouse mode:");
+	ImGui::SliderFloat("Speed: ", &mSpeed, 0.0f, 10.0f);
+	ImGui::SliderFloat("Sensitivity: ", &mSensitivity, 0.010, 0.000);
 }
 
 void Render3DScene::Update()
 {
-	mCube->SetTranslation(mTrans);
-	mCube->SetScale(mScale);
-	mCube->SetRotation(mRot);
-
-	mShader->bind();
-	mShader->SetUniformMatrix4f(mU_MVP, mMVP);
-	Matrix<float, 4, 4> WorldTransform = mCube->GetScale() * mCube->GetRotation() * mCube->GetTranslation();
-	mMVP = WorldTransform * mView * mPersp; //Model view projection
+	CameraInteration();
 
 	GLcall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-	mRenderer->Draw(*mVa, *mIb, *mShader);
+
+	mCamera->Update(mCameraPos, mFrontCamera);
+
+	for (auto aux : mBuffer)
+	{
+		mShader->bind();
+		mShader->SetUniformMatrix4f(mU_MVP, mMVP);
+		mMVP = aux.GetScale() * aux.GetRotation() * aux.GetTranslation() * mCamera->GetView() * mPersp; //Model view projection
+
+		mRenderer->Draw(*mVa, *mIb, *mShader);
+	}
+}
+
+void Render3DScene::CameraInteration()
+{
+	mMousePos = Input::Get().GetMousePosition();
+
+	//switch cursor mode after press control
+	if (Input::Get().IsKeyPressed(KEY_LCRTL))
+		mModeAux = true;
+	else if (mModeAux == true)
+	{
+		if (Input::Get().GetCurrentCursorMode() == CURSOR_NORMAL)
+			Input::Get().SetCursorMode(CURSOR_CAMERA3D);
+		else
+			Input::Get().SetCursorMode(CURSOR_NORMAL);
+		mModeAux = false;
+	}
+
+	//camera direction
+	if (Input::Get().GetCurrentCursorMode() == CURSOR_CAMERA3D)
+	{
+		mPitch = RotationMatrix3((mMousePos.second - mMouseLastPos.second) * mSensitivity, AxisUsage::AXIS_X); // x axis rotation
+		mYaw = RotationMatrix3((mMousePos.first - mMouseLastPos.first) * mSensitivity, AxisUsage::AXIS_Y); //Y axis rotation
+		mFrontCamera = mFrontCamera * mYaw * mPitch;
+	}
+
+	if (Input::Get().GetCurrentCursorMode() == CURSOR_NORMAL)
+	{
+		if (Input::Get().IsMouseButtonPressed(MOUSE_MBUTTON))
+		{
+			mPitch = RotationMatrix3((mMousePos.second - mMouseLastPos.second) * -mSensitivity, AxisUsage::AXIS_X); // x axis rotation
+			mYaw = RotationMatrix3((mMousePos.first - mMouseLastPos.first) * -mSensitivity, AxisUsage::AXIS_Y);
+			mFrontCamera = mFrontCamera * mYaw * mPitch;
+		}
+	}
+	// movement keys
+
+	float speed = mSpeed * Game::Get().GetDelta() * 60;
+	if (Input::Get().IsKeyPressed(KEY_W))
+		mCameraPos += speed * mFrontCamera;
+	if (Input::Get().IsKeyPressed(KEY_S))
+		mCameraPos -= speed * mFrontCamera;
+	if (Input::Get().IsKeyPressed(KEY_A))
+		mCameraPos -= speed * Cross(mFrontCamera, {0.0f, 1.0f, 0.0f});
+	if (Input::Get().IsKeyPressed(KEY_D))
+		mCameraPos += speed * Cross(mFrontCamera, { 0.0f, 1.0f, 0.0f });
+	
+	mMouseLastPos = mMousePos;
 }

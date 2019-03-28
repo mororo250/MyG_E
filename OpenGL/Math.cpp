@@ -11,7 +11,7 @@ Vector<float, 3> Cross(Vector<float, 3> vector1, const Vector<float, 3> vector2)
 
 Matrix<float, 4, 4> LookAt(const Vector<float, 3> cameraPosition, const Vector<float, 3> targetPosition, const Vector<float, 3> up)
 {
-	Vector<float, 3> Zaxis = targetPosition - cameraPosition;
+	Vector<float, 3> Zaxis = cameraPosition - targetPosition;
 	Zaxis.Normalize();
 	Vector<float, 3> Xaxis = Cross(up, Zaxis);
 	Xaxis.Normalize();
@@ -77,18 +77,40 @@ ScaleMatrix4::ScaleMatrix4(const float ScaleX, const float ScaleY, const float S
 {
 }
 
-RotationMatrix3::RotationMatrix3(float angle)
-	: Matrix<float, 3, 3>{ {cos(angle), sin(angle),  0 }, {-sin(angle), cos(angle), 0}, {0, 0, 1} }
+RotationMatrix3::RotationMatrix3(float angle, AxisUsage axis)
+	: Matrix<float, 3, 3>{ {1, 0, 0}, { 0, 1, 0}, { 0, 0, 1} },
+	mAxis(axis)
 {
+	SetAngle(angle);
 }
 
 
 void RotationMatrix3::SetAngle(const float angle)
 {
-	GetElement(0, 0) = cos(angle);
-	GetElement(0, 1) = sin(angle);
-	GetElement(1, 1) = cos(angle);
-	GetElement(1, 0) = -sin(angle);
+	switch (mAxis)
+	{
+	case AxisUsage::AXIS_X:
+		GetElement(1, 1) = cos(angle);
+		GetElement(1, 2) = sin(angle);
+		GetElement(2, 1) = -sin(angle);
+		GetElement(2, 2) = cos(angle);
+		break;
+
+	case AxisUsage::AXIS_Y:
+		GetElement(0, 0) = cos(angle);
+		GetElement(0, 2) = -sin(angle);
+		GetElement(2, 0) = sin(angle);
+		GetElement(2, 2) = cos(angle);
+		break;
+
+	case AxisUsage::AXIS_Z:
+		GetElement(0, 0) = cos(angle);
+		GetElement(0, 1) = sin(angle);
+		GetElement(1, 1) = cos(angle);
+		GetElement(1, 0) = -sin(angle);
+		break;
+
+	}
 }
 
 

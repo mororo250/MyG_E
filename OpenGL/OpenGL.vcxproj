@@ -135,14 +135,15 @@
   <ItemGroup>
     <ClCompile Include="..\Depencies\GLAD\src\glad.c" />
     <ClCompile Include="BatchRenderScene.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Gldebug.cpp" />
     <ClCompile Include="imgui.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Model3D.cpp" />
     <ClCompile Include="Render3DScene.cpp" />
-    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="imgui_demo.cpp" />
     <ClCompile Include="imgui_draw.cpp" />
     <ClCompile Include="imgui_impl_glfw.cpp" />
@@ -161,6 +162,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Input.h" />
     <ClInclude Include="Render3DScene.h" />
     <ClInclude Include="Model3D.h" />
     <ClInclude Include="BatchRenderer.h" />

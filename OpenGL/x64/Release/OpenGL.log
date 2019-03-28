@@ -1,15 +1,9 @@
-﻿  Game.cpp
+﻿  Render3DScene.cpp
 c:\users\joao_\desktop\programming\codes\c++ codes\opengl\opengl\vertexbuffer.h(24): warning C4244: 'return': conversion from 'const GLsizeiptr' to 'unsigned int', possible loss of data
-  Render3DScene.cpp
-c:\users\joao_\desktop\programming\codes\c++ codes\opengl\opengl\vertexbuffer.h(24): warning C4244: 'return': conversion from 'const GLsizeiptr' to 'unsigned int', possible loss of data
-c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\memory(2539): error C2664: 'VertexBuffer::VertexBuffer(const VertexBuffer &)': cannot convert argument 1 from '_Ty' to 'const float *'
-          with
-          [
-              _Ty=VertexData3C *
-          ]
-  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\memory(2538): note: Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or function-style cast
-  c:\users\joao_\desktop\programming\codes\c++ codes\opengl\opengl\render3dscene.cpp(32): note: see reference to function template instantiation 'std::unique_ptr<VertexBuffer,std::default_delete<_Ty>> std::make_unique<VertexBuffer,VertexData3C*,int,int,0>(VertexData3C *&&,int &&,int &&)' being compiled
-          with
-          [
-              _Ty=VertexBuffer
-          ]
+c:\users\joao_\desktop\programming\codes\c++ codes\opengl\opengl\render3dscene.cpp(9): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Generating code
+  7 of 2276 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    2 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  OpenGL.vcxproj -> C:\Users\joao_\Desktop\Programming\codes\C++ codes\OpenGL\x64\Release\OpenGL.exe

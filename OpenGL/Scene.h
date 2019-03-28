@@ -3,9 +3,6 @@
 class Scene
 {
 public:
-	Scene();
-	virtual ~Scene();
-
-	virtual void ImGuiRenderer();
-	virtual void Update();
+	virtual void ImGuiRenderer() = 0;
+	virtual void Update() = 0;
 };

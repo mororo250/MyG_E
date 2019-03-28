@@ -1,9 +1,10 @@
 #include "Model3D.h"
 
 Model3D::Model3D(const Vector<float, 3> Dimensions, const std::vector<Vector<float, 4>> Color)
-	:mPosition({0.0f, 0.0f, 0.0f, 0.0f}),
+	:mPosition({0.0f, 0.0f, 0.0f}),
 	mTransMatrix(0.0f, 0.0f, 0.0f),
-	mScaleMatrix(1.0f, 1.0f, 1.0f)
+	mScaleMatrix(1.0f, 1.0f, 1.0f),
+	mRotationMatrix()
 {
 	mVertexData.reserve(8);
 	VertexData3C aux;
@@ -42,9 +43,10 @@ Model3D::Model3D(const Vector<float, 3> Dimensions, const std::vector<Vector<flo
 }
 
 Model3D::Model3D(const Vector<float, 3> Dimensions, const Vector<float, 4> Color)
-	:mPosition ({ 0.0f, 0.0f, 0.0f, 0.0f }),
+	:mPosition({ 0.0f, 0.0f, 0.0f}),
 	mTransMatrix(0.0f, 0.0f, 0.0f),
-	mScaleMatrix(1.0f, 1.0f, 1.0f)
+	mScaleMatrix(1.0f, 1.0f, 1.0f),
+	mRotationMatrix()
 {
 	mVertexData.reserve(8);
 	VertexData3C aux;
@@ -80,6 +82,14 @@ Model3D::Model3D(const Vector<float, 3> Dimensions, const Vector<float, 4> Color
 	aux.Position = { -Dimensions[0], Dimensions[1], Dimensions[2] };
 	aux.Color = Color;
 	mVertexData.push_back(aux);
+}
+
+Model3D::Model3D(Vector<float, 3> Position)
+	:mPosition(Position),
+	mTransMatrix(Position[0], Position[1], Position[2]),
+	mScaleMatrix(1.0f, 1.0f, 1.0f),
+	mRotationMatrix()
+{
 }
 
 void Model3D::SetTranslation(Vector<float, 3> trans)

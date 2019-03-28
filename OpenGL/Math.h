@@ -91,13 +91,13 @@ private:
 };
 
 template<class T, unsigned int NumElem>
-Vector<T, NumElem> operator*(const Vector<T, NumElem> vector, const T scalar)
+Vector<T, NumElem> operator*(Vector<T, NumElem> vector, const T scalar)
 {
 	return vector *= scalar;
 }
 
 template<class T, unsigned int NumElem>
-Vector<T, NumElem> operator*(const T scalar, const Vector<T, NumElem> vector)
+Vector<T, NumElem> operator*(const T scalar, Vector<T, NumElem> vector)
 {
 	return vector *= scalar;
 }
@@ -307,16 +307,20 @@ public:
 	void SetScaleZ(const float ScaleZ) { GetElement(2, 2) = ScaleZ; }
 };
 
-class RotationMatrix3 : public Matrix<float, 3, 3>
-{
-public:
-	RotationMatrix3(float angle);
-	void SetAngle(const float angle);
-};
-
 enum class AxisUsage
 {
 	AXIS_X, AXIS_Y, AXIS_Z
+};
+
+
+class RotationMatrix3 : public Matrix<float, 3, 3>
+{
+public:
+	RotationMatrix3(float angle, AxisUsage axis = AxisUsage::AXIS_Z);
+	void SetAngle(const float angle);
+
+private: 
+	AxisUsage mAxis;
 };
 
 class RotationMatrix4 : public Matrix<float, 4, 4>
