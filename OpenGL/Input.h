@@ -31,8 +31,9 @@ enum CursorMode
 
 class Input
 {
-public:
+private:
 	Input();
+public:
 	~Input();
 
 	bool IsKeyPressed(KeyCode keycode);

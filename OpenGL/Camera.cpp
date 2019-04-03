@@ -1,20 +1,20 @@
 #include "Camera.h"
+#include "imgui.h"
 
-
-Camera::Camera(Vector<float, 3> Position, Vector<float, 3> FrontCamera)
-	:mPosition(Position), 
-	mFrontCamera(FrontCamera)
+Camera::Camera(float speed, float sensitivity)
+	:mSpeed(speed),
+	mSensitivity(sensitivity),
+	mMousePos(std::move(Input::Get().GetMousePosition()))
 {
-	mView = LookAt(mPosition, mFrontCamera, { 0.0f, 1.0f, 0.0f });
 }
 
 Camera::~Camera()
 {
 }
 
-void Camera::Update(Vector<float, 3> position, Vector<float, 3> frontcamera)
+void Camera::ImGuiRenderer()
 {
-	mPosition = position;
-	mFrontCamera = frontcamera;
-	mView = LookAt(mPosition, mPosition + mFrontCamera, { 0.0f, 1.0f, 0.0f });
+	ImGui::Text("Mouse Position: %f %f", mMousePos.first, mMousePos.second);
+	ImGui::SliderFloat("Speed: ", &mSpeed, 0.0f, 10.0f);
+	ImGui::SliderFloat("Sensitivity: ", &mSensitivity, 0.010, 0.000);
 }

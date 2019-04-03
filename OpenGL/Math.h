@@ -42,26 +42,28 @@ public:
 		return mVector[index];
 	}
 
-	Vector operator*=(const T scalar)
+	Vector& operator*=(const T scalar)
 	{
 		for (unsigned int i = 0; i < NumElem; i++)
 			mVector[i] *= scalar;
 		return *this;
 	}
 
-	Vector operator+=(const Vector vector2)
+	Vector& operator+=(const Vector& vector2)
 	{
 		for (unsigned int i = 0; i < NumElem; i++)
-			mVector[i] += vector2[i];
+			mVector[i] += vector2.mVector[i];
 		return *this;
 	}
 
-	Vector operator-=(const Vector vector2)
+	Vector& operator-=(const Vector& vector2)
 	{
 		for (unsigned int i = 0; i < NumElem; i++)
-			mVector[i] -= vector2[i];
+			mVector[i] -= vector2.mVector[i];
 		return *this;
 	}
+
+	inline bool operator==(const Vector& other){ return std::equal(mVector, mVector + NumElem, other.mVector); }
 
 	template<class U, unsigned int VNumElem, unsigned int MNumCol>
 	friend Vector<U, MNumCol> operator*(const Vector<U, VNumElem> vector, const Matrix<U, VNumElem, MNumCol> matrix);

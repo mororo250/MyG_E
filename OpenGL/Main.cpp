@@ -3,12 +3,60 @@
 
 int main(void)
 {
-	Game game;
-	bool Success = game.Initialize();
+	bool Success = Game::Get().Initialize();
 	if (Success)
 	{
-		game.Loop();
+		Game::Get().Loop();
 	}
-	game.Shutdown();
+	Game::Get().Shutdown();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	8
 	return 0;
 }

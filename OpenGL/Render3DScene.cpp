@@ -4,14 +4,7 @@
 #include <time.h>
 
 Render3DScene::Render3DScene()
-	:mPersp(CreatePerspectiveMatrix(45.0f, 1024.0f / 768.0f, 0.1f, 800.0f)),
-	mCameraPos({ 0.0f, 0.0f, 0.0f }),
-	mFrontCamera({ 0.0f, 0.0f, -1.0f }),
-	mSpeed(0.5f),
-	mModeAux(false),
-	mSensitivity(0.005f),
-	mMousePos(std::move(Input::Get().GetMousePosition())),
-	mMouseLastPos(std::move(Input::Get().GetMousePosition()))
+	:mPersp(CreatePerspectiveMatrix(45.0f, 1024.0f / 768.0f, 0.1f, 800.0f))
 {
 	srand(time(NULL));
 
@@ -33,7 +26,7 @@ Render3DScene::Render3DScene()
 		mBuffer.push_back(Model3D({6.0f, -8.0f, -26.0f }));
 	}
 
-	mCamera = std::make_unique<Camera>(mCameraPos, mFrontCamera);
+	mCamera = std::make_unique<FPSCamera>(Vector<float, 3>({ 0.0f, 0.0f, 0.0f }), Vector<float, 3>({0.0f, 0.0f, -1.0f}));
 
 	unsigned int indices[] = {	//back
 								0, 1, 2,
@@ -86,19 +79,15 @@ Render3DScene::~Render3DScene()
 
 void Render3DScene::ImGuiRenderer()
 {
-	ImGui::Text("Mouse Position: %f %f", mMousePos.first, mMousePos.second);
-	ImGui::Text("Press control to switch the mouse mode:");
-	ImGui::SliderFloat("Speed: ", &mSpeed, 0.0f, 10.0f);
-	ImGui::SliderFloat("Sensitivity: ", &mSensitivity, 0.010, 0.000);
+	mCamera->ImGuiRenderer();
 }
 
 void Render3DScene::Update()
 {
-	CameraInteration();
+	mCamera->Update();
 
 	GLcall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-	mCamera->Update(mCameraPos, mFrontCamera);
 
 	for (auto aux : mBuffer)
 	{
@@ -108,52 +97,4 @@ void Render3DScene::Update()
 
 		mRenderer->Draw(*mVa, *mIb, *mShader);
 	}
-}
-
-void Render3DScene::CameraInteration()
-{
-	mMousePos = Input::Get().GetMousePosition();
-
-	//switch cursor mode after press control
-	if (Input::Get().IsKeyPressed(KEY_LCRTL))
-		mModeAux = true;
-	else if (mModeAux == true)
-	{
-		if (Input::Get().GetCurrentCursorMode() == CURSOR_NORMAL)
-			Input::Get().SetCursorMode(CURSOR_CAMERA3D);
-		else
-			Input::Get().SetCursorMode(CURSOR_NORMAL);
-		mModeAux = false;
-	}
-
-	//camera direction
-	if (Input::Get().GetCurrentCursorMode() == CURSOR_CAMERA3D)
-	{
-		mPitch = RotationMatrix3((mMousePos.second - mMouseLastPos.second) * mSensitivity, AxisUsage::AXIS_X); // x axis rotation
-		mYaw = RotationMatrix3((mMousePos.first - mMouseLastPos.first) * mSensitivity, AxisUsage::AXIS_Y); //Y axis rotation
-		mFrontCamera = mFrontCamera * mYaw * mPitch;
-	}
-
-	if (Input::Get().GetCurrentCursorMode() == CURSOR_NORMAL)
-	{
-		if (Input::Get().IsMouseButtonPressed(MOUSE_MBUTTON))
-		{
-			mPitch = RotationMatrix3((mMousePos.second - mMouseLastPos.second) * -mSensitivity, AxisUsage::AXIS_X); // x axis rotation
-			mYaw = RotationMatrix3((mMousePos.first - mMouseLastPos.first) * -mSensitivity, AxisUsage::AXIS_Y);
-			mFrontCamera = mFrontCamera * mYaw * mPitch;
-		}
-	}
-	// movement keys
-
-	float speed = mSpeed * Game::Get().GetDelta() * 60;
-	if (Input::Get().IsKeyPressed(KEY_W))
-		mCameraPos += speed * mFrontCamera;
-	if (Input::Get().IsKeyPressed(KEY_S))
-		mCameraPos -= speed * mFrontCamera;
-	if (Input::Get().IsKeyPressed(KEY_A))
-		mCameraPos -= speed * Cross(mFrontCamera, {0.0f, 1.0f, 0.0f});
-	if (Input::Get().IsKeyPressed(KEY_D))
-		mCameraPos += speed * Cross(mFrontCamera, { 0.0f, 1.0f, 0.0f });
-	
-	mMouseLastPos = mMousePos;
 }

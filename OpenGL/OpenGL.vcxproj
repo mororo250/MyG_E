@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -136,6 +136,7 @@
     <ClCompile Include="..\Depencies\GLAD\src\glad.c" />
     <ClCompile Include="BatchRenderScene.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="FPSCamera.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Gldebug.cpp" />
     <ClCompile Include="imgui.cpp" />
@@ -162,6 +163,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="FPSCamera.h" />
+    <ClInclude Include="EditCamera.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Render3DScene.h" />
     <ClInclude Include="Model3D.h" />

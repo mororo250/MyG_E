@@ -6,9 +6,9 @@
 //singleton class
 class Game 
 {
-public:
-
+private:
 	Game();
+public:
 	bool Initialize();
 	void Loop();
 	void Shutdown();

@@ -1,5 +1,2 @@
-﻿  Render3DScene.cpp
-c:\users\joao_\desktop\programming\codes\c++ codes\opengl\opengl\vertexbuffer.h(24): warning C4244: 'return': conversion from 'const GLsizeiptr' to 'unsigned int', possible loss of data
-c:\users\joao_\desktop\programming\codes\c++ codes\opengl\opengl\render3dscene.cpp(16): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\joao_\desktop\programming\codes\c++ codes\opengl\opengl\render3dscene.cpp(92): warning C4305: 'argument': truncation from 'double' to 'float'
+﻿  FPSCamera.cpp
   OpenGL.vcxproj -> C:\Users\joao_\Desktop\Programming\codes\C++ codes\OpenGL\x64\Debug\OpenGL.exe
