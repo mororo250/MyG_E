@@ -5,10 +5,6 @@ FPSCamera::FPSCamera(Vector<float, 3> position, Vector<float, 3> front_camera)
 	mPosition = position;
 	mFrontCamera = front_camera;
 	mView = LookAt(mPosition, mFrontCamera, { 0.0f, 1.0f, 0.0f });
-	
-	//make cursor invisile.
-	if (Input::Get().GetCurrentCursorMode() == CURSOR_NORMAL)
-		Input::Get().SetCursorMode(CURSOR_CAMERA3D);
 }
 
 FPSCamera::~FPSCamera()
@@ -25,7 +21,7 @@ void FPSCamera::Update()
 
 void FPSCamera::Rotate()
 {
-	std::pair<float, float> mouse_current_pos(Input::Get().GetMousePosition()); //get mouse current position
+	std::pair<float, float> mouse_current_pos(Input::Get().GetMousePosition()); //get current mouse position
 
 	RotationMatrix3 pitch = RotationMatrix3((mouse_current_pos.second - mMousePos.second) * mSensitivity, AxisUsage::AXIS_X); // x axis rotation
 	RotationMatrix3 yaw = RotationMatrix3((mouse_current_pos.first - mMousePos.first) * mSensitivity, AxisUsage::AXIS_Y); //Y axis rotation

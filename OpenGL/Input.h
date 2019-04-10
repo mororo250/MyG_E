@@ -35,14 +35,16 @@ private:
 	Input();
 public:
 	~Input();
-
+	
 	bool IsKeyPressed(KeyCode keycode);
 	bool IsMouseButtonPressed(MouseButtonCode mousebutton);
 	std::pair<float, float> GetMousePosition();
 
 	void SetCursorMode(CursorMode mode);
-	inline CursorMode GetCurrentCursorMode() const { 
-		return mCurrentMode; }
+	inline CursorMode GetCurrentCursorMode() const { return mCurrentMode; }
+
+	inline void SetScrollOffset(double offset) { mScrollOffset = offset; }
+	inline double GetScrollOffset() const { return mScrollOffset; }
 
 	inline static Input& Get() 
 	{ 
@@ -51,7 +53,11 @@ public:
 		return *s_Instance; 
 	}
 private:
+	void scrollCallback(GLFWwindow *window, double xoffset, double yoffset);
+
 	static Input* s_Instance;
 	CursorMode mCurrentMode;
+	GLFWwindow* mWindow;
+	double mScrollOffset;
 };
 

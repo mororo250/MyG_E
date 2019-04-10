@@ -4,6 +4,7 @@
 #include "Renderer.h"
 #include "Model3D.h"
 #include "FPSCamera.h"
+#include "EditCamera.h"
 
 class Render3DScene : public Scene
 {
@@ -20,7 +21,8 @@ private:
 	std::unique_ptr<IndexBuffer>  mIb;
 	std::unique_ptr<Shader> mShader;
 	std::unique_ptr<Renderer> mRenderer;
-	std::unique_ptr<FPSCamera> mCamera;
+	std::unique_ptr<FPSCamera> mFPSCamera;
+	std::unique_ptr<EditCamera> mEditCamera;
 	std::vector<Model3D> mBuffer;
 
 	Matrix<float, 4, 4> mPersp; //Perspective Matrix

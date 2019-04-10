@@ -24,9 +24,19 @@ Render3DScene::Render3DScene()
 		mBuffer.push_back(Model3D({ -10.0f, 8.0f, -25.0f }));
 		mBuffer.push_back(Model3D({ -10.0f, -8.0f, -25.0f }));
 		mBuffer.push_back(Model3D({6.0f, -8.0f, -26.0f }));
+
+		mBuffer.push_back(Model3D({ 1.5f, 1.5f, 10.0f }));
+		mBuffer.push_back(Model3D({ -3.0f, 3.0f, 14.0f }));
+		mBuffer.push_back(Model3D({ 4.0f, -2.0f, 12.0f }));
+		mBuffer.push_back(Model3D({ -6.0f, -6.0f, 20.0f }));
+		mBuffer.push_back(Model3D({ 7.0f, 6.0f, -23.0f }));
+		mBuffer.push_back(Model3D({ -10.0f, 8.0f, 25.0f }));
+		mBuffer.push_back(Model3D({ -10.0f, -8.0f, 25.0f }));
+		mBuffer.push_back(Model3D({ 6.0f, -8.0f, 26.0f }));
 	}
 
-	mCamera = std::make_unique<FPSCamera>(Vector<float, 3>({ 0.0f, 0.0f, 0.0f }), Vector<float, 3>({0.0f, 0.0f, -1.0f}));
+	mFPSCamera = std::make_unique<FPSCamera>(Vector<float, 3>({ 0.0f, 0.0f, 0.0f }), Vector<float, 3>({0.0f, 0.0f, -1.0f}));
+	mEditCamera = std::make_unique<EditCamera>(Vector<float, 3>({ 0.0f, 8.0f, 30.0f }), Vector<float, 3>({ 0.0f, 0.0f, 0.0f }));
 
 	unsigned int indices[] = {	//back
 								0, 1, 2,
@@ -79,12 +89,12 @@ Render3DScene::~Render3DScene()
 
 void Render3DScene::ImGuiRenderer()
 {
-	mCamera->ImGuiRenderer();
+	mEditCamera->ImGuiRenderer();
 }
 
 void Render3DScene::Update()
 {
-	mCamera->Update();
+	mEditCamera->Update();
 
 	GLcall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
@@ -93,7 +103,7 @@ void Render3DScene::Update()
 	{
 		mShader->bind();
 		mShader->SetUniformMatrix4f(mU_MVP, mMVP);
-		mMVP = aux.GetScale() * aux.GetRotation() * aux.GetTranslation() * mCamera->GetView() * mPersp; //Model view projection
+		mMVP = aux.GetScale() * aux.GetRotation() * aux.GetTranslation() * mEditCamera->GetView() * mPersp; //Model view projection
 
 		mRenderer->Draw(*mVa, *mIb, *mShader);
 	}

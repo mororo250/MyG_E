@@ -3,7 +3,8 @@
 Input* Input::s_Instance = nullptr;
 
 Input::Input()
-	:mCurrentMode(CURSOR_NORMAL)
+	:mCurrentMode(CURSOR_NORMAL),
+	mWindow(Game::Get().GetWindow())
 {
 	if (s_Instance != nullptr)
 	{
@@ -12,6 +13,12 @@ Input::Input()
 	}
 	else
 		s_Instance = this;
+
+	glfwSetScrollCallback(mWindow, 
+		[](GLFWwindow * window, double xoffset, double yoffset)
+	{
+		Input::Get().SetScrollOffset(yoffset);
+	});
 }
 
 Input::~Input()
@@ -20,15 +27,13 @@ Input::~Input()
 
 bool Input::IsKeyPressed(KeyCode keycode)
 {
-	auto window = Game::Get().GetWindow();
-	auto state = glfwGetKey(window, keycode);
+	auto state = glfwGetKey(mWindow, keycode);
 	return state == GLFW_PRESS || state == GLFW_REPEAT;
 }
 
 bool Input::IsMouseButtonPressed(MouseButtonCode mousebutton)
 {
-	auto window = Game::Get().GetWindow();
-	auto state = glfwGetMouseButton(window, mousebutton);
+	auto state = glfwGetMouseButton(mWindow, mousebutton);
 	return state == GLFW_PRESS;
 }
 
@@ -36,15 +41,19 @@ bool Input::IsMouseButtonPressed(MouseButtonCode mousebutton)
 
 std::pair<float, float> Input::GetMousePosition()
 {
-	auto window = Game::Get().GetWindow();
 	double xpos, ypos;
-	glfwGetCursorPos(window, &xpos, &ypos);
+	glfwGetCursorPos(mWindow, &xpos, &ypos);
 	return {static_cast<float>(xpos), static_cast<float>(ypos)};
 }
 
 void Input::SetCursorMode(CursorMode mode)
 {
-	auto window = Game::Get().GetWindow();
-	glfwSetInputMode(window, GLFW_CURSOR, mode);
+	glfwSetInputMode(mWindow, GLFW_CURSOR, mode);
 	mCurrentMode = mode;
 }
+
+void Input::scrollCallback(GLFWwindow * window, double xoffset, double yoffset)
+{
+	std::cout << xoffset << " : " << yoffset << std::endl;
+}
+

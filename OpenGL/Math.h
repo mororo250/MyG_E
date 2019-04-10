@@ -80,6 +80,14 @@ public:
 		return sqrt(length);
 	}
 
+	//return normalized vector but dont normalize it
+	Vector<T, NumElem> GetNormalized()
+	{
+		Vector<T, NumElem> aux = *this;
+		aux.Normalize();
+		return aux;
+	}
+
 	Vector<T, NumElem> Normalize()
 	{
 		float L = Length();

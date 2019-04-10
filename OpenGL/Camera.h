@@ -24,6 +24,7 @@ public:
 
 	virtual void ImGuiRenderer();
 	virtual void Update() = 0;
+
 protected:
 	virtual void Translate() = 0;
 	virtual void Rotate() = 0;

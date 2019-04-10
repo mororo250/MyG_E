@@ -136,6 +136,7 @@
     <ClCompile Include="..\Depencies\GLAD\src\glad.c" />
     <ClCompile Include="BatchRenderScene.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="EditCamera.cpp" />
     <ClCompile Include="FPSCamera.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Gldebug.cpp" />
