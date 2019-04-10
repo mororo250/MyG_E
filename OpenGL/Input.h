@@ -53,8 +53,6 @@ public:
 		return *s_Instance; 
 	}
 private:
-	void scrollCallback(GLFWwindow *window, double xoffset, double yoffset);
-
 	static Input* s_Instance;
 	CursorMode mCurrentMode;
 	GLFWwindow* mWindow;

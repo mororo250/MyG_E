@@ -51,9 +51,3 @@ void Input::SetCursorMode(CursorMode mode)
 	glfwSetInputMode(mWindow, GLFW_CURSOR, mode);
 	mCurrentMode = mode;
 }
-
-void Input::scrollCallback(GLFWwindow * window, double xoffset, double yoffset)
-{
-	std::cout << xoffset << " : " << yoffset << std::endl;
-}
-
