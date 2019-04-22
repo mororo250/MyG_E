@@ -18,7 +18,7 @@ public:
 
 	Vector(T vector[NumElem])
 	{
-		memcpy(mVector, vector, NumElem * sizeof(T));
+		std::memcpy(mVector, vector, NumElem * sizeof(T));
 	}
 
 	Vector(std::initializer_list<T> mat)
@@ -174,7 +174,7 @@ public:
 
 	Matrix(T mat[NumRow][NumCol])
 	{
-		memcpy(mMatrix, mat, NumRow * NumCol * sizeof(T));
+		std::memcpy(mMatrix, mat, NumRow * NumCol * sizeof(T));
 	}
 
 	Matrix(std::initializer_list<std::initializer_list<T>> mat)

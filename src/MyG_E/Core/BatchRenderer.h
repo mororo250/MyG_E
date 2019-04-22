@@ -62,18 +62,18 @@ public:
 
 	void add(std::vector<T>& Sprites)
 	{
-		unsigned int size = Sprites.size();
+		std::size_t size = Sprites.size();
 		if (size > mBufferSize)
 			std::cout << "not enough room" << std::endl;
 		else
 		{
-			memcpy(mBuffer, Sprites.data(), sizeof(T) * size);
+			std::memcpy(mBuffer, Sprites.data(), sizeof(T) * size);
 			mBuffer += size;
 		}
 	}
 	void add(void* Sprites, unsigned int size)
 	{
-		memcpy(mBuffer, Sprites, sizeof(T) * size);
+		std::memcpy(mBuffer, Sprites, sizeof(T) * size);
 		mBuffer += size;
 	}
 	void Render()
