@@ -79,11 +79,12 @@ int Shader::GetUniformLocation(const std::string& name) const
 }
 
 //this function read the shader file and put the shader code in a string
-void Shader::ReadShader_File(const std::string& filepath, std::string& VertexString, std::string& FragString)
+void Shader::ReadShader_File(const std::string& shader_name, std::string& VertexString, std::string& FragString)
 {
-	std::string temp = std::string("C:\\Users\\joao_\\Desktop\\Programming\\codes\\C++_Codes\\MyG_E\\src\\MyG_E\\Shaders") + "\\" + filepath;
-	std::cout << temp;
-	std::ifstream ShaderFile(temp);
+	// Shader directory.
+	std::string file_path = std::filesystem::current_path().parent_path().parent_path().parent_path().string(); 
+	file_path += "\\src\\MyG_E\\Shaders\\" + shader_name;
+	std::ifstream ShaderFile(file_path);
 	//test if the file was open correctly
 	if (ShaderFile.is_open())
 	{

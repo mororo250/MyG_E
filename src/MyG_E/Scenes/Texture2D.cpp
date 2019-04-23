@@ -1,5 +1,6 @@
 #include "Texture2D.h"
 #include "Core/BatchRenderer.h"
+#include <filesystem>
 
 Texture2D::Texture2D()
 	:mTranX(384.0f), mTranY(512.0f), mScaleX(3.0f), mScaleY(3.0f), mAngle(0.0f),
@@ -40,7 +41,9 @@ Texture2D::Texture2D()
 	mU_MVP = mShader->GetUniformLocation("u_MVP");
 	mShader->SetUniformMatrix3f(mU_MVP, mMVP);
 
-	mTexture = std::make_unique<Texture>("C:\\Users\\joao_\\Desktop\\Programming\\codes\\C++_Codes\\MyG_E\\src\\MyG_E\\Resources\\PS4.PNG");
+	std::string file_path = std::filesystem::current_path().parent_path().parent_path().parent_path().string();
+	file_path += "\\src\\MyG_E\\Resources\\PS4.PNG";
+	mTexture = std::make_unique<Texture>(file_path);
 	mTexture->bind(0);
 	mShader->SetUniform1i(mShader->GetUniformLocation("u_texture"), 0);
 
