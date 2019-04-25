@@ -47,6 +47,7 @@ set (foundation_source
     Foundation/Main.cpp
     Foundation/Math.cpp
     Foundation/Math.h
+    Foundation/Uncopyable.h
 )
 
 list (APPEND MyG_E_sources
