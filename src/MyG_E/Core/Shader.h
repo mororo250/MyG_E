@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Foundation/Math.h"
+#include "Foundation\Math\Vector.h"
+#include "Foundation\Math\Matrix.h"
 
 class Shader
 {

@@ -37,6 +37,20 @@ source_group ("Core" FILES
     ${core_source}
 )
 
+set (math_source
+	Foundation/Math/Matrix.cpp
+	Foundation/Math/Matrix.h
+	Foundation/Math/Vector.h
+	Foundation/Math/Vector.cpp
+)
+
+list (APPEND MyG_E_sources
+    ${math_source}
+)
+source_group ("Foundation\\Math" FILES
+    ${math_source}
+)
+
 set (foundation_source
     Foundation/Game.cpp
     Foundation/Game.h
@@ -45,8 +59,6 @@ set (foundation_source
     Foundation/Input.cpp
     Foundation/Input.h
     Foundation/Main.cpp
-    Foundation/Math.cpp
-    Foundation/Math.h
     Foundation/Uncopyable.h
 )
 

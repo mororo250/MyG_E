@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Mesh.h"
+#include "Core\Mesh.h"
+#include "Foundation\Math\Matrix.h"
 
 class Model3D
 {

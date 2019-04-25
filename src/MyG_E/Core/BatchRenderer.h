@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Renderer.h"
-#include "Math.h"
-#include <vector>
 #include "Sprite.h"
+
+#include <vector>
 
 template <class T>
 class BatchRenderer

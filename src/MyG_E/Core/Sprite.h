@@ -1,6 +1,8 @@
 #pragma once
-#include "Foundation/Math.h"
+
 #include <vector>
+
+#include "Foundation\Math\Vector.h"
 
 struct Base
 {

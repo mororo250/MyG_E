@@ -1,5 +1,6 @@
 #pragma once
-#include "Foundation/Math.h"
+
+#include "Foundation/Math/Vector.h"
 
 
 class Light

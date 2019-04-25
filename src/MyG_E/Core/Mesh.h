@@ -1,7 +1,8 @@
 #pragma once
 
+#include "Foundation/Math/Vector.h"
+
 #include "Sprite.h"
-#include "Foundation/Math.h"
 #include "VertexArray.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"

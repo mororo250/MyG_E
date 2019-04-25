@@ -4,7 +4,9 @@
 
 #include "Core/Renderer.h"
 #include "Core/Texture.h"
-#include "Foundation/Math.h"
+
+#include "Foundation\Math\Vector.h"
+#include "Foundation\Math\Matrix.h"
 
 #include "imgui.h"
 
