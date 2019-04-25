@@ -1,13 +1,16 @@
 #pragma once
 
+#include "Foundation\Uncopyable.h"
+
 #include "glad/glad.h"
+
 
 enum class BufferUsage
 {
 	STATIC, DYNAMIC
 };
 
-class VertexBuffer
+class VertexBuffer : public Uncopyable
 {
 public:
 	VertexBuffer(const float *verts, const unsigned int num_vertex, const unsigned int vetex, BufferUsage usage = BufferUsage::STATIC);

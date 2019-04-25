@@ -1,7 +1,9 @@
 #pragma once
 
-#include <iostream>
 #include "Game.h"
+#include "Foundation\Uncopyable.h"
+
+#include <iostream>
 
 
 //keycodes using glfw numbers
@@ -24,12 +26,12 @@ enum MouseButtonCode
 
 enum CursorMode
 {
-	CURSOR_NORMAL = GLFW_CURSOR_NORMAL, //makes the cursor visible and behaving normally.
-	CURSOR_HIDDEN = GLFW_CURSOR_HIDDEN, //makes the cursor invisible when it is over the client area of the window but does not restrict the cursor from leaving.
-	CURSOR_CAMERA3D = GLFW_CURSOR_DISABLED // hides and grabs the cursor, providing virtual and unlimited cursor movement
+	CURSOR_NORMAL = GLFW_CURSOR_NORMAL, // Makes the cursor visible and behaving normally.
+	CURSOR_HIDDEN = GLFW_CURSOR_HIDDEN, // Makes the cursor invisible when it is over the client area of the window but does not restrict the cursor from leaving.
+	CURSOR_CAMERA3D = GLFW_CURSOR_DISABLED // Hides and grabs the cursor, providing virtual and unlimited cursor movement
 };
 
-class Input
+class Input : public Uncopyable
 {
 private:
 	Input();

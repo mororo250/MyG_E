@@ -1,10 +1,12 @@
 #pragma once
 
+#include "Foundation\Uncopyable.h"
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 //singleton class
-class Game 
+class Game : public Uncopyable 
 {
 private:
 	Game();

@@ -1,8 +1,11 @@
 #pragma once
 
-#include <vector>
 #include "VertexBuffer.h"
 #include "Foundation/Gldebug.h"
+#include "Foundation\Uncopyable.h"
+
+#include <vector>
+
 
 struct VertexLayout
 {
@@ -12,7 +15,7 @@ struct VertexLayout
 	unsigned int offset;
 };
 
-class VertexArray
+class VertexArray : public Uncopyable
 {
 public:
 	VertexArray();

@@ -85,6 +85,7 @@ void Shader::ReadShader_File(const std::string& shader_name, std::string& Vertex
 	std::string file_path = std::filesystem::current_path().parent_path().parent_path().parent_path().string(); 
 	file_path += "\\src\\MyG_E\\Shaders\\" + shader_name;
 	std::ifstream ShaderFile(file_path);
+
 	//test if the file was open correctly
 	if (ShaderFile.is_open())
 	{

@@ -1,6 +1,8 @@
 #pragma once
 
-class IndexBuffer
+#include "Foundation\Uncopyable.h"
+
+class IndexBuffer : public Uncopyable
 {
 public:
 	IndexBuffer(const unsigned int *indices, const unsigned int numIndices);

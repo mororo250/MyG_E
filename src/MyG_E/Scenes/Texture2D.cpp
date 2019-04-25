@@ -44,9 +44,9 @@ Texture2D::Texture2D()
 	std::string file_path = std::filesystem::current_path().parent_path().parent_path().parent_path().string();
 	file_path += "\\src\\MyG_E\\Resources\\PS4.PNG";
 	mTexture = std::make_unique<Texture>(file_path);
+
 	mTexture->bind(0);
 	mShader->SetUniform1i(mShader->GetUniformLocation("u_texture"), 0);
-
 
 	mVa->unbind();
 	mVb->unbind();
