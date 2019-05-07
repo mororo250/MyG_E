@@ -19,8 +19,8 @@ BatchRenderScene::BatchRenderScene()
 	srand(time(NULL));
 
 	float sizeSquare = sqrt((1024.0f * 768.0f) / mNumberofSprites);
-	unsigned int line = 1024 / sizeSquare;//number of square in one line
-	unsigned int Column = 768 / sizeSquare; //number of square in one column
+	unsigned int line = 1024 / static_cast<unsigned int>(sizeSquare);//number of square in one line
+	unsigned int Column = 768 / static_cast<unsigned int>(sizeSquare); //number of square in one column
 	Vector<float, 4> Color;
 	float x = sizeSquare / 2.0f;
 	float y = sizeSquare / 2.0f;
@@ -79,8 +79,8 @@ void BatchRenderScene::Update()
 	mSprites.clear();
 	{
 		float sizeSquare = sqrt((1024.0f * 768.0f) / mNumberofSprites);
-		unsigned int line = 1024 / sizeSquare;//number of square in one line
-		unsigned int Column = 768 / sizeSquare; //number of square in one column
+		unsigned int line = 1024 / static_cast<unsigned int>(sizeSquare);//number of square in one line
+		unsigned int Column = 768 / static_cast<unsigned int>(sizeSquare); //number of square in one column
 		Vector<float, 4> Color;
 		float x = sizeSquare / 2.0f;
 		float y = sizeSquare / 2.0f;

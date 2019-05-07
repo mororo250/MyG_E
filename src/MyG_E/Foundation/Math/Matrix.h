@@ -49,11 +49,12 @@ public:
 
 	template<class U, unsigned int LNumRow, unsigned int LNumCol, unsigned int RNumCol>
 	friend Matrix<U, LNumRow, RNumCol> operator*(const Matrix<U, LNumRow, LNumCol> &LMatrix, const Matrix<U, LNumCol, RNumCol> &RMatrix);
-	template<class U, unsigned int VNumElem, unsigned int MNumCol>
-	friend Vector<U, MNumCol> operator*(const Vector<U, VNumElem> vector, const Matrix<U, VNumElem, MNumCol> matrix);
+	template<class T, unsigned int VNumElem, unsigned int MNumCol>
+	friend Vector<T, MNumCol> operator*(const Vector<T, VNumElem>& vector, const Matrix<T, VNumElem, MNumCol>& matrix);
 
 	auto GetAsPointer() const { return mMatrix; }
 	T& GetElement(const unsigned int index1, const unsigned int index2) { return mMatrix[index1][index2]; }
+
 	unsigned int GetNumRow() const { return NumRow; }
 	unsigned int GetNumCol() const { return NumCol; }
 
@@ -82,7 +83,6 @@ Matrix<T, LNumRow, RNumCol> operator*(const Matrix<T, LNumRow, LNumCol> &LMatrix
 
 //sclar mutiplication
 
-
 template<class T, unsigned int NumRow, unsigned int NumCol>
 Matrix<T, NumRow, NumCol> operator*(Matrix<T, NumRow, NumCol> matrix, T scalar)
 {
@@ -93,6 +93,18 @@ template<class T, unsigned int NumRow, unsigned int NumCol>
 Matrix<T, NumRow, NumCol> operator*(T scalar, Matrix<T, NumRow, NumCol> matrix)
 {
 	return matrix *= scalar;
+}
+
+// Vector and Matrix mutiplication
+
+template<class T, unsigned int VNumElem, unsigned int MNumCol>
+Vector<T, MNumCol> operator*(const Vector<T, VNumElem>& vector, const Matrix<T, VNumElem, MNumCol>& matrix)
+{
+	Vector<T, MNumCol> Result;
+	for (unsigned int i = 0; i < MNumCol; i++)
+		for (unsigned int j = 0; j < VNumElem; j++)
+			Result[i] += vector[j] * matrix.mMatrix[i][j];
+		return Result;
 }
 
 //cout
@@ -190,7 +202,7 @@ public:
 	inline void RotateX(float angle) { m_rotX.SetAngle(angle); }
 	inline void RotateY(float angle) { m_rotY.SetAngle(angle); }
 	inline void RotateZ(float angle) { m_rotZ.SetAngle(angle); }
-	inline void RotateXYZ(float angleX, float angleY, float angleZ);
+	void RotateXYZ(float angleX, float angleY, float angleZ);
 
 	inline Matrix<float, 4, 4> GetRotation() { return m_rotZ * m_rotY * m_rotX; }
 	inline float GetYaw() { return m_yaw; }

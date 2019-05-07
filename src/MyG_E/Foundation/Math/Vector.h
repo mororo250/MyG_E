@@ -111,7 +111,7 @@ public:
 
 	inline bool isNormalized()
 	{
-		return Length == 1;
+		return Length() == 1;
 	}
 
 	// Dot product
@@ -123,48 +123,33 @@ public:
 		return result;
 	}
 
-	
-	template<class U, unsigned int VNumElem, unsigned int MNumCol>
-	friend Vector<U, MNumCol> operator*(const Vector<U, VNumElem> vector, const Matrix<U, VNumElem, MNumCol> matrix);
-
 private:
 	T mVector[NumElem];
 };
 
 template<class T, unsigned int NumElem>
-Vector<T, NumElem> operator*(Vector<T, NumElem>& vector, const T scalar)
+Vector<T, NumElem> operator*(Vector<T, NumElem> vector, const T scalar)
 {
 	return vector *= scalar;
 }
 
 template<class T, unsigned int NumElem>
-Vector<T, NumElem> operator*(const T scalar, Vector<T, NumElem>& vector)
+Vector<T, NumElem> operator*(const T scalar, Vector<T, NumElem> vector)
 {
 	return vector *= scalar;
 }
 
 template<class T, unsigned int NumElem>
-Vector<T, NumElem> operator+(Vector<T, NumElem>& vector1, Vector<T, NumElem>& vector2)
+Vector<T, NumElem> operator+(Vector<T, NumElem> vector1, const Vector<T, NumElem>& vector2)
 {
 	return vector1 += vector2;
 }
 
 template<class T, unsigned int NumElem>
-Vector<T, NumElem> operator-(Vector<T, NumElem>& vector1, Vector<T, NumElem>& vector2)
+Vector<T, NumElem> operator-(Vector<T, NumElem> vector1, const Vector<T, NumElem>& vector2)
 {
 	return vector1 -= vector2;
 }
 
-
-template<class T, unsigned int VNumElem, unsigned int MNumCol>
-Vector<T, MNumCol> operator*(const Vector<T, VNumElem>& vector, const Matrix<T, VNumElem, MNumCol>& matrix)
-{
-	Vector<T, MNumCol> Result;
-	for (unsigned int i = 0; i < MNumCol; i++)
-		for (unsigned int j = 0; j < VNumElem; j++)
-			Result.mVector[i] += vector.mVector[j] * matrix.mMatrix[i][j];
-	return Result;
-}
-
 // Cross product.
-Vector<float, 3> Cross(Vector<float, 3> vector1, const Vector<float, 3> vector2);
+Vector<float, 3> Cross(const Vector<float, 3>& vector1, const Vector<float, 3>& vector2);

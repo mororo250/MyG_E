@@ -5,26 +5,29 @@
 
 class Quaternion
 {
+  public:
+	Quaternion() = default;
 	Quaternion(const float scalar, const Vector<float, 3>& vector);
-	~Quaternion();
+	~Quaternion() = default;
 
 	inline void Conjugate() { m_vector = -m_vector; }
 
 	// Aritimetics.
-	Quaternion operator+=(const Quaternion& other);
-	Quaternion operator-=(const Quaternion& other);
-	Quaternion operator*=(const Quaternion& other);
-	Quaternion operator*=(const float scalar);
+	Quaternion& operator+=(const Quaternion& other);
+	Quaternion& operator-=(const Quaternion& other);
+	Quaternion& operator*=(const Quaternion& other);
+	Quaternion& operator*=(const float scalar);
 
 	// Return Rotation Matrix.
-	Matrix<float, 4, 4> get_rotation_matrix(const Vector<float, 3>& vector);
+	Matrix<float, 3, 3> get_rotation_matrix();
 
 	// Rotation Quartenion with an exis and an angle.
 	static Quaternion make_rotate(const float angle, Vector<float, 3> axis);
 
-	static Matrix<float, 4, 4> create_rotation_matrix(const Quaternion& quat);	
-	static Matrix<float, 4, 4> create_rotation_matrix(const float angle, const Vector<float, 3>& axis);	
-	
+	static Matrix<float, 3, 3> create_rotation_matrix(const Quaternion& quat);	
+	static Matrix<float, 3, 3> create_rotation_matrix(const float angle, const Vector<float, 3>& axis);	
+
+	static Vector<float, 3> Rotate(const Quaternion& quat, Vector<float, 3> vector);
 
 private:
 	float m_scalar;
@@ -34,5 +37,5 @@ private:
 inline Quaternion operator-(Quaternion lhs, const Quaternion& rhs) { return lhs -= rhs; }
 inline Quaternion operator+(Quaternion lhs, const Quaternion& rhs) { return lhs += rhs; }
 inline Quaternion operator*(Quaternion lhs, const Quaternion& rhs) { return lhs *= rhs; }
-inline Quaternion operator*(Quaternion lhs, float rhs) { return lhs *= rhs; }
-inline Quaternion operator*(float lhs, Quaternion rhs) { return rhs *= lhs; }
+inline Quaternion operator*(Quaternion& lhs, float rhs) { return lhs *= rhs; }
+inline Quaternion operator*(float lhs, Quaternion& rhs) { return rhs *= lhs; }
