@@ -11,7 +11,7 @@ Matrix<float, 4, 4> LookAt(const Vector<float, 3> cameraPosition, const Vector<f
 	return Matrix<float, 4, 4>{ {Xaxis[0], Yaxis[0], Zaxis[0], 0},
 	{ Xaxis[1], Yaxis[1], Zaxis[1], 0 },
 	{ Xaxis[2], Yaxis[2], Zaxis[2], 0 },
-	{ -Dot(Xaxis, cameraPosition), -Dot(Yaxis, cameraPosition), -Dot(Zaxis, cameraPosition), 1 }};
+	{ -Vector<float, 3>::Dot(Xaxis, cameraPosition), -Vector<float, 3>::Dot(Yaxis, cameraPosition), -Vector<float, 3>::Dot(Zaxis, cameraPosition), 1 }};
 }
 
 
@@ -81,24 +81,24 @@ void RotationMatrix3::SetAngle(const float angle)
 	switch (mAxis)
 	{
 	case AxisUsage::AXIS_X:
-		GetElement(1, 1) = cos(angle);
-		GetElement(1, 2) = sin(angle);
-		GetElement(2, 1) = -sin(angle);
-		GetElement(2, 2) = cos(angle);
+		GetElement(1, 1) = std::cos(angle);
+		GetElement(1, 2) = std::sin(angle);
+		GetElement(2, 1) = -std::sin(angle);
+		GetElement(2, 2) = std::cos(angle);
 		break;
 
 	case AxisUsage::AXIS_Y:
-		GetElement(0, 0) = cos(angle);
-		GetElement(0, 2) = -sin(angle);
-		GetElement(2, 0) = sin(angle);
-		GetElement(2, 2) = cos(angle);
+		GetElement(0, 0) = std::cos(angle);
+		GetElement(0, 2) = -std::sin(angle);
+		GetElement(2, 0) = std::sin(angle);
+		GetElement(2, 2) = std::cos(angle);
 		break;
 
 	case AxisUsage::AXIS_Z:
-		GetElement(0, 0) = cos(angle);
-		GetElement(0, 1) = sin(angle);
-		GetElement(1, 1) = cos(angle);
-		GetElement(1, 0) = -sin(angle);
+		GetElement(0, 0) = std::cos(angle);
+		GetElement(0, 1) = std::sin(angle);
+		GetElement(1, 1) = std::cos(angle);
+		GetElement(1, 0) = -std::sin(angle);
 		break;
 
 	}
@@ -117,39 +117,45 @@ void RotationMatrix4::SetAngle(const float angle)
 	switch (mAxis)
 	{
 	case AxisUsage::AXIS_X:
-		GetElement(1, 1) = cos(angle);
-		GetElement(1, 2) = sin(angle);
-		GetElement(2, 1) = -sin(angle);
-		GetElement(2, 2) = cos(angle);
+		GetElement(1, 1) = std::cos(angle);
+		GetElement(1, 2) = std::sin(angle);
+		GetElement(2, 1) = -std::sin(angle);
+		GetElement(2, 2) = std::cos(angle);
 		break;
 
 	case AxisUsage::AXIS_Y:
-		GetElement(0, 0) = cos(angle);
-		GetElement(0, 2) = -sin(angle);
-		GetElement(2, 0) = sin(angle);
-		GetElement(2, 2) = cos(angle);
+		GetElement(0, 0) = std::cos(angle);
+		GetElement(0, 2) = -std::sin(angle);
+		GetElement(2, 0) = std::sin(angle);
+		GetElement(2, 2) = std::cos(angle);
 		break;
 
 	case AxisUsage::AXIS_Z:
-		GetElement(0, 0) = cos(angle);
-		GetElement(0, 1) = sin(angle);
-		GetElement(1, 1) = cos(angle);
-		GetElement(1, 0) = -sin(angle);
+		GetElement(0, 0) = std::cos(angle);
+		GetElement(0, 1) = std::sin(angle);
+		GetElement(1, 1) = std::cos(angle);
+		GetElement(1, 0) = -std::sin(angle);
 		break;
 
 	}
 }
 
-EulerAngles::EulerAngles()
-	:mRotX(0.0f, AxisUsage::AXIS_X),
-	mRotY(0.0f, AxisUsage::AXIS_Y),
-	mRotZ(0.0f, AxisUsage::AXIS_Z)
+EulerAngles::EulerAngles(float yaw, float pitch, float roll)
+	: m_yaw(yaw)
+	, m_pitch(pitch)
+	, m_roll(roll)
+	, m_rotX(m_yaw, AxisUsage::AXIS_X)
+	, m_rotY(m_pitch, AxisUsage::AXIS_Y)
+	, m_rotZ(m_roll, AxisUsage::AXIS_Z)
 {
 }
 
 void EulerAngles::RotateXYZ(float angleX, float angleY, float angleZ)
 {
-	mRotX.SetAngle(angleX);
-	mRotY.SetAngle(angleY);
-	mRotZ.SetAngle(angleZ);
+	m_yaw = angleX;
+	m_pitch = angleY;
+	m_roll = angleZ;
+	m_rotX.SetAngle(m_yaw);
+	m_rotY.SetAngle(m_pitch);
+	m_rotZ.SetAngle(m_roll);
 }

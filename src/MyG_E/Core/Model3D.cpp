@@ -54,9 +54,12 @@ void Model3D::SetRotation(Vector<float, 3> rotation)
 
 void Model3D::ImGuiRenderer()
 {
-
-
-	ImGui::SliderFloat3("Object Position", &mPosition[0], -50.0f, 50.0f);
+	ImGui::SliderFloat3("Translate", &mPosition[0], -50.0f, 50.0f);
+	ImGui::SliderFloat3("Scale", &mScale[0], 0.0f, 5.0f);
+	ImGui::SliderFloat3("Rotate", &mRotate[0], -6.28f, 6.28f);
+	
 	SetTranslation(mPosition);
+	SetScale(mScale);
+	SetRotation(mRotate);
 }
 

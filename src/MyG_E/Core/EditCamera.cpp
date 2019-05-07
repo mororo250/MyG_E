@@ -1,5 +1,12 @@
+// Header file.
 #include "EditCamera.h"
+
+// Interns 
+#include "Foundation\Math\Quaternion.h"
+
+// Third parties.
 #include "imgui.h"
+
 
 EditCamera::EditCamera(Vector<float, 3> position, Vector<float, 3> front_camera)
 {
@@ -12,7 +19,6 @@ EditCamera::EditCamera(Vector<float, 3> position, Vector<float, 3> front_camera)
 EditCamera::~EditCamera()
 {
 }
-
 
 void EditCamera::Update()
 {
@@ -51,3 +57,4 @@ void EditCamera::Translate()
 	
 	Input::Get().SetScrollOffset(0.0);
 }
+ 

@@ -40,6 +40,8 @@ source_group ("Core" FILES
 set (math_source
 	Foundation/Math/Matrix.cpp
 	Foundation/Math/Matrix.h
+	Foundation/Math/Quaternion.cpp
+	Foundation/Math/Quaternion.h
 	Foundation/Math/Vector.h
 	Foundation/Math/Vector.cpp
 )

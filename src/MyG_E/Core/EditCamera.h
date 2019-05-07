@@ -15,6 +15,6 @@ protected:
 	void Translate() override;
 
 private:
-	Vector<float, 3> mDirection; //vector between position and front camera 
+	Vector<float, 3> mDirection; // Vector between position and front camera. 
 };
 

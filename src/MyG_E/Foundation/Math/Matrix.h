@@ -34,7 +34,6 @@ public:
 		}
 	}
 
-
 	Matrix operator*=(const Matrix RMatrix)
 	{
 		return *this * RMatrix;
@@ -164,7 +163,6 @@ enum class AxisUsage
 	AXIS_X, AXIS_Y, AXIS_Z
 };
 
-
 class RotationMatrix3 : public Matrix<float, 3, 3>
 {
 public:
@@ -187,22 +185,31 @@ private:
 class EulerAngles
 {
 public:
-	EulerAngles();
+	EulerAngles(float yaw = 0.0f, float pitch = 0.0f, float roll = 0.0f);
 
-	void RotateX(float angle) { mRotX.SetAngle(angle); }
-	void RotateY(float angle) { mRotY.SetAngle(angle); }
-	void RotateZ(float angle) { mRotZ.SetAngle(angle); }
-	void RotateXYZ(float angleX, float angleY, float angleZ);
+	inline void RotateX(float angle) { m_rotX.SetAngle(angle); }
+	inline void RotateY(float angle) { m_rotY.SetAngle(angle); }
+	inline void RotateZ(float angle) { m_rotZ.SetAngle(angle); }
+	inline void RotateXYZ(float angleX, float angleY, float angleZ);
 
-	Matrix<float, 4, 4> GetRotation() { return mRotZ * mRotY * mRotX; }
+	inline Matrix<float, 4, 4> GetRotation() { return m_rotZ * m_rotY * m_rotX; }
+	inline float GetYaw() { return m_yaw; }
+	inline float GetPitch() { return m_pitch; }
+	inline float GetRoll() { return m_roll; }
 
 private:
-	RotationMatrix4 mRotX;
-	RotationMatrix4 mRotY;
-	RotationMatrix4 mRotZ;
+	// Angles.
+	float m_yaw;
+	float m_pitch;
+	float m_roll;
+
+	// Matrices.
+	RotationMatrix4 m_rotX;
+	RotationMatrix4 m_rotY;
+	RotationMatrix4 m_rotZ;
 };
 
-//fuctions which create a matrix
+// Fuctions that create a matrix.
 inline float ToRadiants(float angle);
 
 Matrix<float, 3, 3> CreateOrthoMatrix(const float left, const float right, const float top, const float bottom);
