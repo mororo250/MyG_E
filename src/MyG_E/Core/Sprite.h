@@ -25,6 +25,7 @@ struct VertexData2C : public Base
 struct VertexData3C : public Base
 {
 	Vector<float, 3> Position;
+	Vector<float, 3> Normals;
 	Vector<float, 4> Color;
 };
 

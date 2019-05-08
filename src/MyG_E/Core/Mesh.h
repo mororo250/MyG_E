@@ -28,8 +28,9 @@ private:
 	std::unique_ptr<IndexBuffer> mIb;
 	std::unique_ptr<VertexBuffer> mVb;
 
-	void CreateVertexPosCube(const Vector<float, 3> dimensions);
 	void CreateCubeMesh();
+	void CreateVertexPosCube(const Vector<float, 3> dimensions);
+	void CreateVertexNormals();
 	void SetVertexColor(const std::vector<Vector<float, 4>>& color);
 	void SetVertexColor(const Vector<float, 4>& color);
 };

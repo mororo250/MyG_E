@@ -33,10 +33,9 @@ void EditCamera::Update()
 	Rotate();
 
 	Quaternion aux = GetOrientation();
-	mPosition = m_focal_point + Quaternion::rotate(aux, { 0.0f, 0.0f, m_distance });
-	
-	std::cout << mPosition << std::endl;
 	mView = TranslationMatrix4(-m_focal_point) * Quaternion::create_rotation_matrix(aux) * TranslationMatrix4(-Vector<float, 3>({0.0f, 0.0f, m_distance}));
+	// Update position
+	mPosition = m_focal_point + Quaternion::rotate(aux, { 0.0f, 0.0f, m_distance });
 }
 
 void EditCamera::Rotate()
