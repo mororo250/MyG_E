@@ -6,12 +6,14 @@ Matrix<float, 4, 4> LookAt(const Vector<float, 3> cameraPosition, const Vector<f
 	Zaxis.Normalize();
 	Vector<float, 3> Xaxis = Cross(up, Zaxis);
 	Xaxis.Normalize();
-	Vector<float, 3> Yaxis = (Cross(Zaxis, Xaxis));
+	Vector<float, 3> Yaxis = Cross(Zaxis, Xaxis);
 	Yaxis.Normalize();
-	return Matrix<float, 4, 4>{ {Xaxis[0], Yaxis[0], Zaxis[0], 0},
-	{ Xaxis[1], Yaxis[1], Zaxis[1], 0 },
-	{ Xaxis[2], Yaxis[2], Zaxis[2], 0 },
-	{ -Vector<float, 3>::Dot(Xaxis, cameraPosition), -Vector<float, 3>::Dot(Yaxis, cameraPosition), -Vector<float, 3>::Dot(Zaxis, cameraPosition), 1 }};
+	return Matrix<float, 4, 4>{ 
+		{Xaxis[0], Yaxis[0], Zaxis[0], 0},
+		{ Xaxis[1], Yaxis[1], Zaxis[1], 0 },
+		{ Xaxis[2], Yaxis[2], Zaxis[2], 0 },
+		{ -Vector<float, 3>::Dot(Xaxis, cameraPosition), -Vector<float, 3>::Dot(Yaxis, cameraPosition), -Vector<float, 3>::Dot(Zaxis, cameraPosition), 1 }
+	};
 }
 
 
@@ -55,6 +57,11 @@ TranslationMatrix3::TranslationMatrix3(const float TranX, const float TranY)
 
 TranslationMatrix4::TranslationMatrix4(const float xTrans, const float yTrans, const float zTrans)
 	: Matrix<float, 4, 4>{ {1 , 0, 0, 0 }, {0, 1, 0, 0}, {0, 0, 1, 0}, {xTrans, yTrans, zTrans, 1} }
+{
+}
+
+TranslationMatrix4::TranslationMatrix4(const Vector<float, 3>& trans)
+	: TranslationMatrix4(trans[0], trans[1], trans[2])
 {
 }
 

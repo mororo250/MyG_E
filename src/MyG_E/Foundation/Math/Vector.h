@@ -71,11 +71,12 @@ public:
 		return *this;
 	}
 
-	Vector& operator-()
+	Vector operator-()
 	{
+		Vector<float, 3> aux;
 		for (unsigned int i = 0; i < NumElem; i++)
-			mVector[i] = -mVector[i];
-		return *this;
+			aux.mVector[i] = -mVector[i];
+		return aux;
 	}
 
 	inline bool operator==(const Vector& other) { return std::equal(mVector, mVector + NumElem, other.mVector); }
@@ -126,6 +127,22 @@ public:
 private:
 	T mVector[NumElem];
 };
+
+//cout
+template<class T, unsigned int NumElem>
+std::ostream& operator<<(std::ostream& os, const Vector<T, NumElem>& vector)
+{
+	for (unsigned int i = 0; i < NumElem; i++)
+	{
+		if (i == 0)
+			os << "{ " << vector[i];
+		else if (i == NumElem - 1)
+			os << ", " << vector[i] << " }";
+		else
+			os << ", " << vector[i];
+	}
+	return os;
+}
 
 template<class T, unsigned int NumElem>
 Vector<T, NumElem> operator*(Vector<T, NumElem> vector, const T scalar)

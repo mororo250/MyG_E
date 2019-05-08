@@ -3,8 +3,9 @@
 Input* Input::s_Instance = nullptr;
 
 Input::Input()
-	:mCurrentMode(CURSOR_NORMAL),
-	mWindow(Game::Get().GetWindow())
+	: mCurrentMode(CURSOR_NORMAL)
+	, mWindow(Game::Get().GetWindow())
+	, mScrollOffset(0.0)
 {
 	if (s_Instance != nullptr)
 	{

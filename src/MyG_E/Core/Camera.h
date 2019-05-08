@@ -15,9 +15,6 @@ public:
 	inline Vector<float, 3> GetPosition() const { return mPosition; }
 	inline void SetPosition(const Vector<float, 3> position) { mPosition = position; }
 	
-	inline Vector<float, 3> GetDirection() const { return mFrontCamera; }
-	void SetDirection(Vector<float, 3> front_camera) { mFrontCamera = front_camera; }
-	
 	inline float GetSpeed() const { return mSpeed; }
 	inline void SetSpeed(const float speed) { mSpeed = speed; }
 	
@@ -36,7 +33,6 @@ protected:
 
 	std::pair<float, float> mMousePos; //currenty mouse possition
 
-	Vector<float, 3> mFrontCamera;
 	Vector<float, 3> mPosition;
 	Matrix<float, 4, 4> mView;
 };

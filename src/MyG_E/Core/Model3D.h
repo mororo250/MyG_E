@@ -11,16 +11,16 @@ public:
 	~Model3D();
 
 	inline Vector<float, 3> GetPosition() const { return mPosition; };
-	inline void SetPosition(Vector<float, 3> pos) { SetTranslation(pos); }
+	inline void SetPosition(const Vector<float, 3>& pos) { SetTranslation(pos); }
 
 	inline TranslationMatrix4 GetTranslation() const { return mTransMatrix; }
-	void SetTranslation(Vector<float, 3> trans);
+	void SetTranslation(const Vector<float, 3>& trans);
 
 	inline ScaleMatrix4 GetScale() const { return mScaleMatrix; }
-	void SetScale(Vector<float, 3> Scale);
+	void SetScale(const Vector<float, 3>& Scale);
 
-	inline Matrix<float, 4, 4> GetRotation() { return mRotationMatrix.GetRotation(); }
-	void SetRotation(Vector<float, 3> Rotation);
+	inline Matrix<float, 4, 4> GetRotation() { return mRotationMatrix; }
+	void SetRotation(const Vector<float, 3>& Rotation);
 
 	inline Mesh* GetMesh() { return mMesh.get(); }
 
@@ -40,7 +40,7 @@ private:
 	//matrices
 	TranslationMatrix4 mTransMatrix;
 	ScaleMatrix4 mScaleMatrix;
-	EulerAngles mRotationMatrix;
+	Matrix<float, 4, 4> mRotationMatrix;
 	
 	std::string mObjectName;
 	static unsigned int mNumberofObjects;

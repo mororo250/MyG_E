@@ -2,7 +2,7 @@
 #include "Model3D.h"
 
 // Intern files.
-#include "Foundation\Math\Matrix.h"
+#include "Foundation\Math\Quaternion.h"
 
 // std fiels
 #include <string>
@@ -16,7 +16,8 @@ Model3D::Model3D(std::shared_ptr<Mesh> mesh)
 	:mPosition({ 0.0f, 0.0f, 0.0f }),
 	mTransMatrix(0.0f, 0.0f, 0.0f),
 	mScaleMatrix(1.0f, 1.0f, 1.0f),
-	mRotationMatrix(),
+	mScale({ 1.0f, 1.0f, 1.0f }),
+	mRotationMatrix(Matrix<float, 4, 4>::make_identity()),
 	mMesh(mesh)
 {
 	mObjectName = "Object " + std::to_string(mNumberofObjects);
@@ -27,6 +28,7 @@ Model3D::Model3D(std::shared_ptr<Mesh> mesh, const std::string& name)
 	:mPosition({ 0.0f, 0.0f, 0.0f }),
 	mTransMatrix(0.0f, 0.0f, 0.0f),
 	mScaleMatrix(1.0f, 1.0f, 1.0f),
+	mScale({1.0f, 1.0f, 1.0f}),
 	mRotationMatrix(),
 	mMesh(mesh),
 	mObjectName(name)
@@ -38,7 +40,7 @@ Model3D::~Model3D()
 {
 }
 
-void Model3D::SetTranslation(Vector<float, 3> trans)
+void Model3D::SetTranslation(const Vector<float, 3>& trans)
 {
 	mPosition = trans;
 	mTransMatrix.SetTranX(mPosition[0]);
@@ -46,7 +48,7 @@ void Model3D::SetTranslation(Vector<float, 3> trans)
 	mTransMatrix.SetTranZ(mPosition[2]);
 }
 
-void Model3D::SetScale(Vector<float, 3> scale)
+void Model3D::SetScale(const Vector<float, 3>& scale)
 {
 	mScale = scale;
 	mScaleMatrix.SetScaleX(mScale[0]);
@@ -54,10 +56,15 @@ void Model3D::SetScale(Vector<float, 3> scale)
 	mScaleMatrix.SetScaleZ(mScale[2]);
 }
 
-void Model3D::SetRotation(Vector<float, 3> rotation)
+void Model3D::SetRotation(const Vector<float, 3>& rotation)
 {
 	mRotate = rotation;
-	mRotationMatrix.RotateXYZ(mRotate[0], mRotate[1], mRotate[2]);
+	Quaternion quatx = Quaternion::make_rotate(mRotate[0], { 1.0f, 0.0f, 0.0f });
+	Quaternion quaty = Quaternion::make_rotate(mRotate[1], { 0.0f, 1.0f, 0.0f });
+	Quaternion quatz = Quaternion::make_rotate(mRotate[2], { 0.0f, 0.0f, 1.0f });
+	Quaternion quat = quatx * quaty * quatz;
+
+	mRotationMatrix = Quaternion::create_rotation_matrix(quat);
 }
 
 void Model3D::ImGuiRenderer()

@@ -58,12 +58,34 @@ public:
 	unsigned int GetNumRow() const { return NumRow; }
 	unsigned int GetNumCol() const { return NumCol; }
 
-	Matrix<T, NumRow, NumCol> Transpose()
+	Matrix Transpose()
 	{
 		for (unsigned int i = 0; i < NumRow; i++)
 			for (unsigned int j = 0; j < NumCol; j++)
 				mMatrix[i][j] = mMatrix[j][i];
 		return *this;
+	}
+
+	static Matrix make_identity()
+	{
+		Matrix matrix;
+		if (NumCol != NumRow)
+		{
+			std::cout << "Error: the matrix need to be quadratic" << std::endl;
+			return Matrix();
+		}
+		else
+		{
+			for (unsigned int i = 0; i < NumRow; i++)
+				for (unsigned int j = 0; j < NumCol; j++)
+				{
+					if (i == j)
+						matrix.mMatrix[i][j] = 1;
+					else
+						matrix.mMatrix[i][j] = 0;
+				}
+			return matrix;
+		}
 	}
 
 private:
@@ -109,7 +131,7 @@ Vector<T, MNumCol> operator*(const Vector<T, VNumElem>& vector, const Matrix<T, 
 
 //cout
 template<class T, unsigned int NumRow, unsigned int NumCol>
-std::ostream& operator<<(std::ostream& os, const Matrix<T, NumRow, NumCol>& matrix)
+std::ostream& operator<<(std::ostream& os, Matrix<T, NumRow, NumCol>& matrix)
 {
 	unsigned int aux = NumCol - 1;
 	for (unsigned int i = 0; i < NumRow; i++)
@@ -140,6 +162,7 @@ class TranslationMatrix4 : public Matrix<float, 4, 4>
 {
 public:
 	TranslationMatrix4(const float TranX, const float TranY, const float TranZ);
+	TranslationMatrix4(const Vector<float, 3>& trans);
 	const float GetTranX() { return GetElement(3, 0); }
 	const float GetTranY() { return GetElement(3, 1); }
 	const float GetTranZ() { return GetElement(3, 2); }

@@ -6,7 +6,7 @@
 #include <string>
 
 Render3DScene::Render3DScene()
-	:mPersp(CreatePerspectiveMatrix(45.0f, 1024.0f / 768.0f, 0.1f, 800.0f))
+	: mPersp(CreatePerspectiveMatrix(45.0f, 1024.0f / 768.0f, 0.1f, 800.0f))
 {
 	srand(time(NULL));
 
@@ -28,55 +28,38 @@ Render3DScene::Render3DScene()
 	{
 		mBuffer.push_back(mesh_buffer[0]);			 
 		mBuffer[0].SetPosition({0.0f, 0.0f, -30.0f});
-		mBuffer[0].SetScale({ 0.5f, 0.5f, 0.5f });
 		mBuffer.push_back(mesh_buffer[1]);	
-		mBuffer[1].SetScale({ 0.5f, 0.5f, 0.5f });
 		mBuffer[1].SetPosition({ 1.5f, 1.5f, -10.0f });
 		mBuffer.push_back(mesh_buffer[2]);
-		mBuffer[2].SetScale({ 0.5f, 0.5f, 0.5f });
 		mBuffer[2].SetPosition({ -3.0f, 3.0f, -14.0f });
 		mBuffer.push_back(mesh_buffer[3]);			 
-		mBuffer[3].SetScale({ 0.5f, 0.5f, 0.5f });
 		mBuffer[3].SetPosition({ 4.0f, -2.0f, -12.0f });
 		mBuffer.push_back(mesh_buffer[4]);
-		mBuffer[4].SetScale({ 0.5f, 0.5f, 0.5f });
 		mBuffer[4].SetPosition({ -6.0f, -6.0f, -20.0f });
 		mBuffer.push_back(mesh_buffer[5]);
-		mBuffer[5].SetScale({ 0.5f, 0.5f, 0.5f });
 		mBuffer[5].SetPosition({ 7.0f, 6.0f, -23.0f });
 		mBuffer.push_back(mesh_buffer[6]);
-		mBuffer[6].SetScale({ 0.5f, 0.5f, 0.5f });
 		mBuffer[6].SetPosition({ -10.0f, 8.0f, -25.0f });
 		mBuffer.push_back(mesh_buffer[7]);
-		mBuffer[7].SetScale({ 0.5f, 0.5f, 0.5f });
 		mBuffer[7].SetPosition({ -10.0f, -8.0f, -25.0f });
 		mBuffer.push_back(mesh_buffer[8]);
-		mBuffer[8].SetScale({ 0.5f, 0.5f, 0.5f });
 		mBuffer[8].SetPosition({ 6.0f, -8.0f, -26.0f });
-		mBuffer.push_back(mesh_buffer[9]);
 		
-		mBuffer[9].SetScale({ 0.5f, 0.5f, 0.5f });
+		mBuffer.push_back(mesh_buffer[9]);
 		mBuffer[9].SetPosition({ 1.5f, 1.5f, 10.0f });
 		mBuffer.push_back(mesh_buffer[10]);			 
-		mBuffer[10].SetScale({ 0.5f, 0.5f, 0.5f });
 		mBuffer[10].SetPosition({ -3.0f, 3.0f, 14.0f });
 		mBuffer.push_back(mesh_buffer[11]);			 
-		mBuffer[11].SetScale({ 0.5f, 0.5f, 0.5f });
 		mBuffer[11].SetPosition({ 4.0f, -2.0f, 12.0f });
 		mBuffer.push_back(mesh_buffer[12]);			
-		mBuffer[12].SetScale({ 0.5f, 0.5f, 0.5f });
 		mBuffer[12].SetPosition({ -6.0f, -6.0f, 20.0f });
 		mBuffer.push_back(mesh_buffer[13]);			 
-		mBuffer[13].SetScale({ 0.5f, 0.5f, 0.5f });
 		mBuffer[13].SetPosition({ 7.0f, 6.0f, -23.0f });
 		mBuffer.push_back(mesh_buffer[14]);
-		mBuffer[14].SetScale({ 0.5f, 0.5f, 0.5f });
 		mBuffer[14].SetPosition({ -10.0f, 8.0f, 25.0f });
 		mBuffer.push_back(mesh_buffer[15]);
-		mBuffer[15].SetScale({ 0.5f, 0.5f, 0.5f });
 		mBuffer[15].SetPosition({ -10.0f, -8.0f, 25.0f });
 		mBuffer.push_back(mesh_buffer[16]);
-		mBuffer[16].SetScale({ 0.5f, 0.5f, 0.5f });
 		mBuffer[16].SetPosition({ 6.0f, -8.0f, 26.0f });
 	}
 	
@@ -84,7 +67,7 @@ Render3DScene::Render3DScene()
 		mListboxItem.push_back(I.GetObjectName().c_str());
 	
 	mFPSCamera = std::make_unique<FPSCamera>(Vector<float, 3>({ 0.0f, 0.0f, 0.0f }), Vector<float, 3>({0.0f, 0.0f, -1.0f}));
-	mEditCamera = std::make_unique<EditCamera>(Vector<float, 3>({ 0.0f, 8.0f, 30.0f }), Vector<float, 3>({ 0.0f, 0.0f, 0.0f }));
+	mEditCamera = std::make_unique<EditCamera>(Vector<float, 3>({ 0.0f, 0.0f, 30.0f }), Vector<float, 3>({ 0.0f, 0.0f, 0.0f }));
 	
 	mLight = std::make_unique<Light>(Vector<float, 3>({ 0.0f, 12.0f, 0.0f }));
 
@@ -125,7 +108,7 @@ void Render3DScene::ImGuiRenderer()
 		mBuffer[current_object_id].ImGuiRenderer();
 
 		if (ImGui::Button("Point Camera"))
-			mEditCamera->SetDirection(mBuffer[current_object_id].GetPosition());
+			mEditCamera->SetFocalPoint(mBuffer[current_object_id].GetPosition());
 
 		if (ImGui::Button("deselect"))
 			current_object_id = -1;

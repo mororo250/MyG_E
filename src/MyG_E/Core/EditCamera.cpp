@@ -8,16 +8,23 @@
 #include "imgui.h"
 
 
-EditCamera::EditCamera(Vector<float, 3> position, Vector<float, 3> front_camera)
+EditCamera::EditCamera(const Vector<float, 3>& position, const Vector<float, 3>& focal_point)
+	: m_distance((position - focal_point).Length())
+	, m_yaw(0.0f)
+	, m_pitch(0.0f)
 {
 	mPosition = position;
-	mFrontCamera = front_camera;
-	mDirection = position - front_camera;
-	mView = LookAt(mPosition, mFrontCamera, { 0.0f, 1.0f, 0.0f });
+	m_focal_point = focal_point;
+	mView = LookAt(mPosition, m_focal_point, {0.0f, 1.0f, 0.0f});
 }
 
 EditCamera::~EditCamera()
 {
+}
+
+void EditCamera::SetFocalPoint(const Vector<float, 3>& focal_point) 
+{
+	m_focal_point = focal_point;
 }
 
 void EditCamera::Update()
@@ -25,7 +32,11 @@ void EditCamera::Update()
 	Translate();
 	Rotate();
 
-	mView = LookAt(mPosition, mFrontCamera, { 0.0f, 1.0f, 0.0f });
+	Quaternion aux = GetOrientation();
+	mPosition = m_focal_point + Quaternion::rotate(aux, { 0.0f, 0.0f, m_distance });
+	
+	std::cout << mPosition << std::endl;
+	mView = TranslationMatrix4(-m_focal_point) * Quaternion::create_rotation_matrix(aux) * TranslationMatrix4(-Vector<float, 3>({0.0f, 0.0f, m_distance}));
 }
 
 void EditCamera::Rotate()
@@ -34,27 +45,29 @@ void EditCamera::Rotate()
 	
 	if (Input::Get().IsMouseButtonPressed(MOUSE_MBUTTON))
 	{
-		RotationMatrix3 pitch = RotationMatrix3((mouse_current_pos.second - mMousePos.second) * mSensitivity, AxisUsage::AXIS_X); // x axis rotation
-		RotationMatrix3 yaw = RotationMatrix3((mouse_current_pos.first - mMousePos.first) * mSensitivity, AxisUsage::AXIS_Y); //Y axis rotation
-
-		mDirection = mDirection * yaw * pitch;
-		mPosition = mFrontCamera + mDirection;
+		// Get current up direction.
+		Vector<float, 3> up = Quaternion::rotate(GetOrientation(), { 0.0f, 1.0f, 0.0f });
+		float pitch_sign = up[1] > 0 ? 1.0f : -1.0f;
+		m_yaw += (mMousePos.second - mouse_current_pos.second) * mSensitivity;
+		m_pitch += pitch_sign * (mMousePos.first - mouse_current_pos.first) * mSensitivity;
 	}
-
 	mMousePos = mouse_current_pos;
 }
 
 void EditCamera::Translate()
 {
-	float moved_distance_length = Input::Get().GetScrollOffset() * mSpeed/10 * mDirection.Length();
-	Vector<float, 3> moved_distance = mDirection.GetNormalized() * moved_distance_length;
-	
-	if (Input::Get().GetScrollOffset() && moved_distance.Length() >= mDirection.Length()) 
-		mDirection = mDirection.GetNormalized() * 0.2f;
+	m_distance = (mPosition - m_focal_point).Length();
+	float moved_distance = Input::Get().GetScrollOffset() * mSpeed / 10.0f * m_distance;
+	if (Input::Get().GetScrollOffset() && moved_distance >= m_distance) 
+		m_distance = m_distance * 0.2f;
 	else
-		mDirection -= moved_distance;
-	mPosition = mFrontCamera + mDirection;
-	
+		m_distance -= moved_distance;
 	Input::Get().SetScrollOffset(0.0);
 }
- 
+
+Quaternion EditCamera::GetOrientation() const
+{
+	Quaternion quatx = Quaternion::make_rotate(m_yaw, { 1.0f, 0.0f, 0.0f });
+	Quaternion quaty = Quaternion::make_rotate(m_pitch, { 0.0f, 1.0f, 0.0f });
+	return quaty * quatx;
+}
