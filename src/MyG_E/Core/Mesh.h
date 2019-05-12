@@ -2,36 +2,38 @@
 
 #include "Foundation/Math/Vector.h"
 
-#include "Sprite.h"
 #include "VertexArray.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 
+enum class Shape
+{
+	CUBE,
+	SPHERE
+};
 
 class Mesh
 {
 public:
 
-	Mesh(const Vector<float, 4> &color = { 1.0f, 1.0f, 1.0f, 1.0f });
-	Mesh(const std::vector<Vector<float, 4>> &color);
-	
+	Mesh(Shape shape = Shape::CUBE);
 	~Mesh();
 	
-	inline VertexData3C* GetData() { return mVertexData.data(); }
+	inline float* GetData() { return mVertexData.data(); }
 	inline const VertexArray& GetVertexArray() { return *mVao; }
 	inline const IndexBuffer& GetIndexBuffer() { return *mIb; }
 private:
 
-	std::vector<VertexData3C> mVertexData;
+	static const std::vector<float> cube_vertices;
+	static const std::vector<unsigned int> cube_indices;
+	static const std::vector<float> sphere_vertices;
+	static const std::vector<unsigned int> sphere_indices;
+
+	std::vector<float> mVertexData;
 	std::vector<unsigned int> mIndices;
 	std::unique_ptr<VertexArray> mVao;
 	std::unique_ptr<IndexBuffer> mIb;
 	std::unique_ptr<VertexBuffer> mVb;
 
 	void CreateCubeMesh();
-	void CreateVertexPosCube(const Vector<float, 3> dimensions);
-	void CreateVertexNormals();
-	void SetVertexColor(const std::vector<Vector<float, 4>>& color);
-	void SetVertexColor(const Vector<float, 4>& color);
 };
-

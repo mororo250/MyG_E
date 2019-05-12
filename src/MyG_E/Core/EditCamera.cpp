@@ -33,7 +33,7 @@ void EditCamera::Update()
 	Rotate();
 
 	Quaternion aux = GetOrientation();
-	mView = TranslationMatrix4(-m_focal_point) * Quaternion::create_rotation_matrix(aux) * TranslationMatrix4(-Vector<float, 3>({0.0f, 0.0f, m_distance}));
+	mView = TranslationMatrix4(-m_focal_point) * Quaternion::CreateRotationMatrix(aux) * TranslationMatrix4(-Vector<float, 3>({0.0f, 0.0f, m_distance}));
 	// Update position
 	mPosition = m_focal_point + Quaternion::rotate(aux, { 0.0f, 0.0f, m_distance });
 }
@@ -66,7 +66,7 @@ void EditCamera::Translate()
 
 Quaternion EditCamera::GetOrientation() const
 {
-	Quaternion quatx = Quaternion::make_rotate(m_yaw, { 1.0f, 0.0f, 0.0f });
-	Quaternion quaty = Quaternion::make_rotate(m_pitch, { 0.0f, 1.0f, 0.0f });
+	Quaternion quatx = Quaternion::MakeRotate(m_yaw, { 1.0f, 0.0f, 0.0f });
+	Quaternion quaty = Quaternion::MakeRotate(m_pitch, { 0.0f, 1.0f, 0.0f });
 	return quaty * quatx;
 }

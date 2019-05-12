@@ -18,6 +18,7 @@ public:
 
 private:
 	std::unique_ptr<Shader> mShader;
+	std::unique_ptr<Shader> mLightShader;
 	std::unique_ptr<Renderer> mRenderer;
 	std::unique_ptr<FPSCamera> mFPSCamera;
 	std::unique_ptr<EditCamera> mEditCamera;
@@ -30,8 +31,7 @@ private:
 	Matrix<float, 4, 4> mModel;
 	Matrix<float, 4, 4> mViewProjection;
 
+	// Uniform locations
 	int m_u_Model;
-	int m_u_ViewProjection; //MVP uniform location
-	int m_u_LightColor; //light uniform location
-	int m_u_LightPos;
+	int m_u_ViewProjection;
 };

@@ -50,12 +50,12 @@ Quaternion& Quaternion::operator*=(const float scalar)
 	return *this;
 }
 
-Matrix<float, 4, 4> Quaternion::get_rotation_matrix()
+Matrix<float, 4, 4> Quaternion::GetRotationMatrix()
 {
-	return create_rotation_matrix(*this);
+	return CreateRotationMatrix(*this);
 }
 
-Quaternion Quaternion::make_rotate(const float angle, Vector<float, 3> axis)
+Quaternion Quaternion::MakeRotate(const float angle, Vector<float, 3> axis)
 {
 	if (!axis.isNormalized())
 		axis.Normalize();
@@ -63,7 +63,7 @@ Quaternion Quaternion::make_rotate(const float angle, Vector<float, 3> axis)
 	return Quaternion(std::cos(half_angle), axis * std::sin(half_angle));
 }
 
-Matrix<float, 4, 4> Quaternion::create_rotation_matrix(const Quaternion& quat)
+Matrix<float, 4, 4> Quaternion::CreateRotationMatrix(const Quaternion& quat)
 {
 	return Matrix<float, 4, 4>(
 		{	  {1.0f - 2.0f*(quat.m_vector[1]*quat.m_vector[1] + quat.m_vector[2]*quat.m_vector[2]), 2.0f*(quat.m_vector[0]*quat.m_vector[1] - quat.m_scalar*quat.m_vector[2]), 2.0f*(quat.m_vector[0]*quat.m_vector[2] + quat.m_scalar*quat.m_vector[1]), 0.0f}
@@ -73,9 +73,9 @@ Matrix<float, 4, 4> Quaternion::create_rotation_matrix(const Quaternion& quat)
 		});
 }
 
-Matrix<float, 4, 4> Quaternion::create_rotation_matrix(const float angle, const Vector<float, 3>& axis)
+Matrix<float, 4, 4> Quaternion::CreateRotationMatrix(const float angle, const Vector<float, 3>& axis)
 {
-	return create_rotation_matrix(make_rotate(angle, axis));
+	return CreateRotationMatrix(MakeRotate(angle, axis));
 }
 
 Vector<float, 3> Quaternion::rotate(const Quaternion& quat, Vector<float, 3> vector)
@@ -88,7 +88,7 @@ Vector<float, 3> Quaternion::rotate(const Quaternion& quat, Vector<float, 3> vec
 	return vector + quat.m_scalar * temp + Cross(quat.m_vector, temp);
 }
 
-Vector<float, 3> Quaternion::to_euler_angles(const Quaternion & quat)
+Vector<float, 3> Quaternion::ToEulerAngles(const Quaternion & quat)
 {
 	return Vector<float, 3> (
 		{

@@ -92,9 +92,10 @@ source_group ("Scenes" FILES
 )
 
 set (shaders_source
-    Shaders/Color.shader
-    Shaders/Color3D.shader
-    Shaders/Shader.shader
+    Shaders/Color.glsl
+    Shaders/Light.glsl
+    Shaders/Phong.glsl
+    Shaders/Shader.glsl
 )
 
 list (APPEND MyG_E_sources

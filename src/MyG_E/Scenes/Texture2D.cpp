@@ -32,7 +32,7 @@ Texture2D::Texture2D()
 	mVa->PushLayout(2, GL_FLOAT, GL_FALSE, 2);
 	mVa->AddBuffer(*mVb);
 
-	mShader = std::make_unique<Shader>("Shader.shader");
+	mShader = std::make_unique<Shader>("Shader.glsl");
 	mShader->bind();
 
 	Matrix<float, 3, 3> WorldTransform = mScaleMat * mRotMat * mTranMat;

@@ -47,7 +47,7 @@ BatchRenderScene::BatchRenderScene()
 		x = sizeSquare / 2.0f;
 	}
 
-	mShader = std::make_unique<Shader>("Color.shader");
+	mShader = std::make_unique<Shader>("Color.glsl");
 	mShader->bind();
 
 	Matrix<float, 3, 3> WorldTransform = mScaleMat * mRotMat * mTranMat;

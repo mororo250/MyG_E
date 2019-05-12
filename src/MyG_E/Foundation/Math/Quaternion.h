@@ -24,17 +24,17 @@ class Quaternion
 	Quaternion& operator*=(const float scalar);
 
 	// Return Rotation Matrix.
-	Matrix<float, 4, 4> get_rotation_matrix();
+	Matrix<float, 4, 4> GetRotationMatrix();
 
 	// Rotation Quartenion with an exis and an angle.
-	static Quaternion make_rotate(const float angle, Vector<float, 3> axis);
+	static Quaternion MakeRotate(const float angle, Vector<float, 3> axis);
 	// Return rotation Matrix
-	static Matrix<float, 4, 4> create_rotation_matrix(const Quaternion& quat);	
-	static Matrix<float, 4, 4> create_rotation_matrix(const float angle, const Vector<float, 3>& axis);	
+	static Matrix<float, 4, 4> CreateRotationMatrix(const Quaternion& quat);	
+	static Matrix<float, 4, 4> CreateRotationMatrix(const float angle, const Vector<float, 3>& axis);	
 	// Rotate Vector
 	static Vector<float, 3> rotate(const Quaternion& quat, Vector<float, 3> vector);
 
-	static Vector<float, 3> to_euler_angles(const Quaternion& quat);
+	static Vector<float, 3> ToEulerAngles(const Quaternion& quat);
 
 	friend std::ostream& operator<<(std::ostream& os, const Quaternion& quat);
 private:
