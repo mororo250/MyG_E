@@ -42,31 +42,42 @@ struct Light
 	float specular_strength;
 };
 
+#define MAX_LIGHT 10
+
 in vec4 v_Position;
 in vec3 v_Normal;
 
 uniform Material u_Material;
-uniform Light u_Light;
+uniform Light u_Light[MAX_LIGHT];
+uniform int u_NumLight;
 uniform vec3 u_ViewPos;
+
+
+vec3 point_light(int i)
+{
+	vec3 norm = normalize(v_Normal);
+	vec3 light_direction = normalize(u_Light[i].position - v_Position.xyz);
+	vec3 view_direction = normalize(u_ViewPos - v_Position.xyz);
+	vec3 reflect_direction = reflect(-light_direction, norm);
+
+// Ambient
+	vec3 ambient = u_Light[i].ambient_strength * u_Light[i].color * u_Material.ambient;
+
+	// Difuse
+	float diff = max(dot(norm, light_direction), 0.0);
+	vec3 diffuse = diff * u_Light[i].diffuse_strength * u_Light[i].color * u_Material.diffuse;
+
+	// Specular
+	float spec = pow(max(dot(view_direction, reflect_direction), 0.0), u_Material.shininess * 128);
+	vec3 specular = u_Light[i].specular_strength * spec * u_Light[i].color * u_Material.specular;
+
+	return ambient + diffuse + specular;
+}
 
 void main()
 {
-	// Ambient
-	vec3 ambient = u_Light.ambient_strength * u_Light.color * u_Material.ambient;
-
-	// Difuse
-	vec3 norm = normalize(v_Normal);
-	vec3 light_direction = normalize(u_Light.position - v_Position.xyz);
-	float diff = max(dot(norm, light_direction), 0.0);
-	vec3 diffuse = diff * u_Light.diffuse_strength * u_Light.color * u_Material.diffuse;
-
-	// Specular
-	float specular_strength = 0.5;
-	vec3 view_direction = normalize(u_ViewPos - v_Position.xyz);
-	vec3 reflect_direction = reflect(-light_direction, norm);
-	float spec = pow(max(dot(view_direction, reflect_direction), 0.0), u_Material.shininess * 128);
-	vec3 specular = u_Light.specular_strength * spec * u_Light.color * u_Material.specular;
-
-	vec3 result = (ambient + diffuse + specular);
+	vec3 result = vec3(0.0);
+	for(int i = 0; i < u_NumLight; i++)
+		result += point_light(i);
 	Frag_color = vec4(result, 1.0);
 };

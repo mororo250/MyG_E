@@ -48,14 +48,18 @@ Render3DScene::Render3DScene()
 		mBuffer[6].SetMaterial(obsidian);
 		mBuffer[7].SetMaterial(pearl);
 	}
-	
 	for (auto& I : mBuffer)
 		mListboxItem.push_back(I.GetObjectName().c_str());
-	
+
+	{
+		mLight.push_back(Vector<float, 3>({ 1.0f, 1.0f, 0.0f }));
+		mLight.push_back(Vector<float, 3>({ 1.0f, 10.0f, 10.0f }));
+		mLight.push_back(Vector<float, 3>({ 1.0f, 10.0f, -10.0f }));
+	}
+
 	mFPSCamera = std::make_unique<FPSCamera>(Vector<float, 3>({ 0.0f, 0.0f, 0.0f }), Vector<float, 3>({0.0f, 0.0f, -1.0f}));
 	mEditCamera = std::make_unique<EditCamera>(Vector<float, 3>({ 0.0f, 0.0f, 5.0f }), Vector<float, 3>({ 0.0f, 0.0f, 0.0f }));
 	
-	mLight = std::make_unique<Light>(Vector<float, 3>({ 1.0f, 1.0f, 0.0f }));
 
 	GLcall(glEnable(GL_DEPTH_TEST));
 	
@@ -83,7 +87,10 @@ void Render3DScene::ImGuiRenderer()
 	static int current_object_id = -1;
 
 	mEditCamera->ImGuiRenderer();
-	mLight->ImGuiRenderer();
+	
+	for (auto& aux : mLight)
+		aux.ImGuiRenderer();
+
 	ImGui::ListBox("ObjectList", &current_object_id, mListboxItem.data(), mListboxItem.size(), 3);	
 
 	// Create indenpendent ImGui window for selected object
@@ -110,11 +117,15 @@ void Render3DScene::Update()
 	GLcall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	
 	mShader->bind();
-	mShader->SetUniform3f(mShader->GetUniformLocation("u_Light.color"), mLight->GetLightColor());
-	mShader->SetUniform3f(mShader->GetUniformLocation("u_Light.position"), mLight->GetLightPosition());
-	mShader->SetUniform1f(mShader->GetUniformLocation("u_Light.ambient_strength"), mLight->GetAmbientStength());
-	mShader->SetUniform1f(mShader->GetUniformLocation("u_Light.diffuse_strength"), mLight->GetDiffuseStrength());
-	mShader->SetUniform1f(mShader->GetUniformLocation("u_Light.specular_strength"), mLight->GetSpecularStrength());
+	for (unsigned int i = 0; i < mLight.size(); i++ )
+	{
+		mShader->SetUniform3f(mShader->GetUniformLocation("u_Light[" + std::to_string(i) + "].color"), mLight[i].GetLightColor());
+		mShader->SetUniform3f(mShader->GetUniformLocation("u_Light[" + std::to_string(i) + "].position"), mLight[i].GetLightPosition());
+		mShader->SetUniform1f(mShader->GetUniformLocation("u_Light[" + std::to_string(i) + "].ambient_strength"), mLight[i].GetAmbientStength());
+		mShader->SetUniform1f(mShader->GetUniformLocation("u_Light[" + std::to_string(i) + "].diffuse_strength"), mLight[i].GetDiffuseStrength());
+		mShader->SetUniform1f(mShader->GetUniformLocation("u_Light[" + std::to_string(i) + "].specular_strength"), mLight[i].GetSpecularStrength());
+	}
+	mShader->SetUniform1i(mShader->GetUniformLocation("u_NumLight"), mLight.size());
 	mShader->SetUniform3f(mShader->GetUniformLocation("u_ViewPos"), mEditCamera->GetPosition());
 
 	for (auto& aux : mBuffer)
@@ -142,21 +153,24 @@ void Render3DScene::Update()
 	// Light
 	{
 		mLightShader->bind();
-		Model3D aux = mLight->GetModel();
-		if (aux.isVisible())
+		for (auto& aux : mLight)
 		{
-			mModel = aux.GetScale() * aux.GetRotation() * aux.GetTranslation(); //Model view projection
-			mViewProjection = mEditCamera->GetView() * mPersp;
+			Model3D light_model = aux.GetModel();
+			if (light_model.isVisible())
+			{
+				mModel = light_model.GetScale() * light_model.GetRotation() * light_model.GetTranslation(); //Model view projection
+				mViewProjection = mEditCamera->GetView() * mPersp;
 
-			mLightShader->SetUniformMatrix4f(mLightShader->GetUniformLocation("u_Model"), mModel);
-			mLightShader->SetUniformMatrix4f(mLightShader->GetUniformLocation("u_ViewProjection"), mViewProjection);
-			mLightShader->SetUniform3f(mLightShader->GetUniformLocation("u_Color"), mLight->GetLightColor());
+				mLightShader->SetUniformMatrix4f(mLightShader->GetUniformLocation("u_Model"), mModel);
+				mLightShader->SetUniformMatrix4f(mLightShader->GetUniformLocation("u_ViewProjection"), mViewProjection);
+				mLightShader->SetUniform3f(mLightShader->GetUniformLocation("u_Color"), aux.GetLightColor());
 
-			aux.GetMesh()->GetVertexArray().bind();
-			aux.GetMesh()->GetIndexBuffer().bind();
-			mRenderer->Draw(aux.GetMesh()->GetIndexBuffer());
-			aux.GetMesh()->GetVertexArray().unbind();
-			aux.GetMesh()->GetIndexBuffer().unbind();
+				light_model.GetMesh()->GetVertexArray().bind();
+				light_model.GetMesh()->GetIndexBuffer().bind();
+				mRenderer->Draw(light_model.GetMesh()->GetIndexBuffer());
+				light_model.GetMesh()->GetVertexArray().unbind();
+				light_model.GetMesh()->GetIndexBuffer().unbind();
+			}
 		}
 	}
 	mShader->unbind();
