@@ -25,6 +25,7 @@ private:
 	std::vector<Light> mLight;
 	std::vector<Model3D> m_buffer;
 	std::vector<const char*> mListboxItem;
+	std::vector<const char*> mListboxLight;
 
 
 	Matrix<float, 4, 4> mPersp; //Perspective Matrix

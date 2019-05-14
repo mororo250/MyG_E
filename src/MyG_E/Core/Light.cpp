@@ -19,11 +19,9 @@ Light::~Light()
 
 void Light::ImGuiRenderer()
 {
-	ImGui::Begin("Light");
 	ImGui::ColorEdit3("Light Color", &m_color[0]);
 	ImGui::SliderFloat("Ambient stength:", &m_ambient_strength, 0.0f, 1.0f);
 	ImGui::SliderFloat("Diffuse stength:", &m_diffuse_strength, 0.0f, 5.0f);
 	ImGui::SliderFloat("Specular stength:", &m_specular_strength, 0.0f, 5.0f);
 	m_model.ImGuiRenderer();
-	ImGui::End();
 }

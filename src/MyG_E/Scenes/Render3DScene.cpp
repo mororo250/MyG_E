@@ -53,8 +53,11 @@ Render3DScene::Render3DScene()
 
 	{
 		mLight.push_back(Vector<float, 3>({ 1.0f, 1.0f, 0.0f }));
+		mListboxLight.push_back("Light 1");
 		mLight.push_back(Vector<float, 3>({ 1.0f, 10.0f, 10.0f }));
+		mListboxLight.push_back("Light 2");
 		mLight.push_back(Vector<float, 3>({ 1.0f, 10.0f, -10.0f }));
+		mListboxLight.push_back("Light 3");
 	}
 
 	mFPSCamera = std::make_unique<FPSCamera>(Vector<float, 3>({ 0.0f, 0.0f, 0.0f }), Vector<float, 3>({0.0f, 0.0f, -1.0f}));
@@ -85,13 +88,12 @@ Render3DScene::~Render3DScene()
 void Render3DScene::ImGuiRenderer()
 {
 	static int current_object_id = -1;
+	static int current_light_id = - 1;
 
 	mEditCamera->ImGuiRenderer();
-	
-	for (auto& aux : mLight)
-		aux.ImGuiRenderer();
 
 	ImGui::ListBox("ObjectList", &current_object_id, mListboxItem.data(), mListboxItem.size(), 3);	
+	ImGui::ListBox("LightList", &current_light_id, mListboxLight.data(), mListboxLight.size(), 3);
 
 	// Create indenpendent ImGui window for selected object
 	if (current_object_id != -1)
@@ -108,6 +110,16 @@ void Render3DScene::ImGuiRenderer()
 		
 		ImGui::End();
 	}
+
+	if (current_light_id != -1)
+	{
+		ImGui::Begin("Light x");
+		
+		mLight[current_light_id].ImGuiRenderer();
+
+		ImGui::End();
+	}
+	
 }
 
 void Render3DScene::Update()
