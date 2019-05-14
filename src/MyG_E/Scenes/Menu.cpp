@@ -5,7 +5,7 @@
 Menu::Menu(Scene*& CurrentScene)
 :mCurrentScene(CurrentScene)
 {
-	mRenderer = std::make_unique<Renderer>();
+	m_renderer = std::make_unique<Renderer>();
 }
 
 Menu::~Menu()
@@ -23,5 +23,5 @@ void Menu::ImGuiRenderer()
 
 void Menu::Update()
 {
-	mRenderer->Clear();
+	m_renderer->Clear();
 }

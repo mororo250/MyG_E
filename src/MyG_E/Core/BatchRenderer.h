@@ -9,27 +9,27 @@ template <class T>
 class BatchRenderer
 {
 public:
-	BatchRenderer(unsigned int MaxSprites, unsigned int IndicesCount, unsigned int VertexCount)//IndicesCount - Number of indices per sprite / VertexCount - Number of Vertex per sprite  
-		:mMaxSprites(MaxSprites),
-		mVertexSize(sizeof(T)),
-		mIndicesSize(MaxSprites * IndicesCount),
-		mSpriteSize(mVertexSize * VertexCount),
-		mBufferSize(MaxSprites * mSpriteSize),
-		mRenderer()
+	BatchRenderer(unsigned int max_sprites, unsigned int indices_count, unsigned int vertex_count)//indices_count - Number of indices per sprite / vertex_count - Number of Vertex per sprite  
+		:m_max_sprites(max_sprites),
+		m_vertex_size(sizeof(T)),
+		m_indices_size(max_sprites * indices_count),
+		m_sprite_size(m_vertex_size * vertex_count),
+		m_buffer_size(max_sprites * m_sprite_size),
+		m_renderer()
 	{
 		GLcall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-		mVao = std::make_unique<VertexArray>();
-		mVb = std::make_unique<VertexBuffer>(nullptr, VertexCount * MaxSprites, mVertexSize / sizeof(float), BufferUsage::DYNAMIC);
+		m_vao = std::make_unique<VertexArray>();
+		m_vb = std::make_unique<VertexBuffer>(nullptr, vertex_count * max_sprites, m_vertex_size / sizeof(float), BufferUsage::DYNAMIC);
 
-		mVao->PushLayout(2, GL_FLOAT, GL_FALSE, 0);
-		mVao->PushLayout(4, GL_FLOAT, GL_FALSE, 2);
-		mVao->AddBuffer(*mVb);
+		m_vao->PushLayout(2, GL_FLOAT, GL_FALSE, 0);
+		m_vao->PushLayout(4, GL_FLOAT, GL_FALSE, 2);
+		m_vao->AddBuffer(*m_vb);
 
 
-		unsigned int* indices = new unsigned int[mIndicesSize];
+		unsigned int* indices = new unsigned int[m_indices_size];
 
 		int offset = 0;
-		for (unsigned int i = 0; i < mIndicesSize; i += 6)
+		for (unsigned int i = 0; i < m_indices_size; i += 6)
 		{
 			indices[i] = offset + 0;
 			indices[i + 1] = offset + 1;
@@ -42,61 +42,61 @@ public:
 			offset += 4;
 		}
 
-		mIb = std::make_unique<IndexBuffer>(indices, mIndicesSize);
+		m_ib = std::make_unique<IndexBuffer>(indices, m_indices_size);
 	}
 	~BatchRenderer()
 	{}
 
-	bool isEnoughRoom(unsigned int NumberofSprites) const { return NumberofSprites <= mMaxSprites; }
+	bool isEnoughRoom(unsigned int num_sprites) const { return num_sprites <= m_max_sprites; }
 	//int getPriority() const;
 
 	void begin()
 	{
-		mVb->map<T>(mBuffer);
+		m_vb->map<T>(m_buffer);
 		
 	}
 	void end()
 	{
-		mVb->unmap();
+		m_vb->unmap();
 	}
 
-	void add(std::vector<T>& Sprites)
+	void add(std::vector<T>& sprites)
 	{
-		std::size_t size = Sprites.size();
-		if (size > mBufferSize)
+		std::size_t size = sprites.size();
+		if (size > m_buffer_size)
 			std::cout << "not enough room" << std::endl;
 		else
 		{
-			std::memcpy(mBuffer, Sprites.data(), sizeof(T) * size);
-			mBuffer += size;
+			std::memcpy(m_buffer, sprites.data(), sizeof(T) * size);
+			m_buffer += size;
 		}
 	}
-	void add(void* Sprites, unsigned int size)
+	void add(void* sprites, unsigned int size)
 	{
-		std::memcpy(mBuffer, Sprites, sizeof(T) * size);
-		mBuffer += size;
+		std::memcpy(m_buffer, sprites, sizeof(T) * size);
+		m_buffer += size;
 	}
 	void Render()
 	{
-		mRenderer->Clear();
-		mVao->bind();
-		mIb->bind();
-		mRenderer->Draw(*mIb);
-		mVao->unbind();
-		mIb->unbind();
+		m_renderer->Clear();
+		m_vao->bind();
+		m_ib->bind();
+		m_renderer->Draw(*m_ib);
+		m_vao->unbind();
+		m_ib->unbind();
 	}
 
 private:
-	const unsigned int mMaxSprites;
-	const unsigned int mVertexSize;
-	const unsigned int mIndicesSize;
-	const unsigned int mSpriteSize;
-	const unsigned int mBufferSize;
+	const unsigned int m_max_sprites;
+	const unsigned int m_vertex_size;
+	const unsigned int m_indices_size;
+	const unsigned int m_sprite_size;
+	const unsigned int m_buffer_size;
 	
 	
-	std::unique_ptr<VertexArray> mVao;
-	std::unique_ptr<VertexBuffer> mVb;
-	std::unique_ptr<IndexBuffer> mIb;
-	std::unique_ptr<Renderer> mRenderer;
-	T* mBuffer;
+	std::unique_ptr<VertexArray> m_vao;
+	std::unique_ptr<VertexBuffer> m_vb;
+	std::unique_ptr<IndexBuffer> m_ib;
+	std::unique_ptr<Renderer> m_renderer;
+	T* m_buffer;
 };

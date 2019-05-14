@@ -19,36 +19,36 @@ Render3DScene::Render3DScene()
 	Material pearl({0.25, 0.20725, 0.20725}, {1.0, 0.829, 0.829}, {0.296648, 0.296648, 0.296648}, 0.088);
 	
 	// Create the models
-	mBuffer.reserve(8);
-	for (unsigned int i = 0; i < mBuffer.capacity()/2; i++)
-		mBuffer.push_back(cube);
-	for (unsigned int i = mBuffer.capacity() / 2; i < mBuffer.capacity(); i++)
-		mBuffer.push_back(sphere);
+	m_buffer.reserve(8);
+	for (unsigned int i = 0; i < m_buffer.capacity()/2; i++)
+		m_buffer.push_back(cube);
+	for (unsigned int i = m_buffer.capacity() / 2; i < m_buffer.capacity(); i++)
+		m_buffer.push_back(sphere);
 	{		 
-		mBuffer[0].SetPosition({0.0f, 0.0f, -3.0f});
-		mBuffer[1].SetPosition({ 1.5f, 0.0f, -3.0f });
-		mBuffer[2].SetPosition({ 0.0f, 1.5f, -3.0f });
-		mBuffer[3].SetPosition({ 1.5f, 1.5f, -3.0f });
-		mBuffer[4].SetPosition({ 0.0f, 0.0f, 3.0f });
-		mBuffer[5].SetPosition({ 1.5f, 0.0f, 3.0f });
-		mBuffer[6].SetPosition({ 0.0f, 1.5f, 3.0f });
-		mBuffer[7].SetPosition({ 1.5f, 1.5f, 3.0f });
+		m_buffer[0].SetPosition({0.0f, 0.0f, -3.0f});
+		m_buffer[1].SetPosition({ 1.5f, 0.0f, -3.0f });
+		m_buffer[2].SetPosition({ 0.0f, 1.5f, -3.0f });
+		m_buffer[3].SetPosition({ 1.5f, 1.5f, -3.0f });
+		m_buffer[4].SetPosition({ 0.0f, 0.0f, 3.0f });
+		m_buffer[5].SetPosition({ 1.5f, 0.0f, 3.0f });
+		m_buffer[6].SetPosition({ 0.0f, 1.5f, 3.0f });
+		m_buffer[7].SetPosition({ 1.5f, 1.5f, 3.0f });
 
-		mBuffer[4].SetScale({0.05f, 0.05f, 0.05f});
-		mBuffer[5].SetScale({0.05f, 0.05f, 0.05f});
-		mBuffer[6].SetScale({0.05f, 0.05f, 0.05f});
-		mBuffer[7].SetScale({0.05f, 0.05f, 0.05f});
+		m_buffer[4].SetScale({0.05f, 0.05f, 0.05f});
+		m_buffer[5].SetScale({0.05f, 0.05f, 0.05f});
+		m_buffer[6].SetScale({0.05f, 0.05f, 0.05f});
+		m_buffer[7].SetScale({0.05f, 0.05f, 0.05f});
 
-		mBuffer[0].SetMaterial(esmerald);
-		mBuffer[1].SetMaterial(jade);
-		mBuffer[2].SetMaterial(obsidian);
-		mBuffer[3].SetMaterial(pearl);
-		mBuffer[4].SetMaterial(esmerald);
-		mBuffer[5].SetMaterial(jade);
-		mBuffer[6].SetMaterial(obsidian);
-		mBuffer[7].SetMaterial(pearl);
+		m_buffer[0].SetMaterial(esmerald);
+		m_buffer[1].SetMaterial(jade);
+		m_buffer[2].SetMaterial(obsidian);
+		m_buffer[3].SetMaterial(pearl);
+		m_buffer[4].SetMaterial(esmerald);
+		m_buffer[5].SetMaterial(jade);
+		m_buffer[6].SetMaterial(obsidian);
+		m_buffer[7].SetMaterial(pearl);
 	}
-	for (auto& I : mBuffer)
+	for (auto& I : m_buffer)
 		mListboxItem.push_back(I.GetObjectName().c_str());
 
 	{
@@ -73,7 +73,7 @@ Render3DScene::Render3DScene()
 
 	mShader->unbind();
 
-	mRenderer = std::make_unique<Renderer>();
+	m_renderer = std::make_unique<Renderer>();
 }
 
 Render3DScene::~Render3DScene()
@@ -98,10 +98,10 @@ void Render3DScene::ImGuiRenderer()
 	{
 		ImGui::Begin("Object x");
 
-		mBuffer[current_object_id].ImGuiRenderer();
+		m_buffer[current_object_id].ImGuiRenderer();
 
 		if (ImGui::Button("Point Camera"))
-			mEditCamera->SetFocalPoint(mBuffer[current_object_id].GetPosition());
+			mEditCamera->SetFocalPoint(m_buffer[current_object_id].GetPosition());
 
 		if (ImGui::Button("deselect"))
 			current_object_id = -1;
@@ -128,14 +128,14 @@ void Render3DScene::Update()
 	mShader->SetUniform1i(mShader->GetUniformLocation("u_NumLight"), mLight.size());
 	mShader->SetUniform3f(mShader->GetUniformLocation("u_ViewPos"), mEditCamera->GetPosition());
 
-	for (auto& aux : mBuffer)
+	for (auto& aux : m_buffer)
 	{
 		if (aux.isVisible())
 		{
-			mModel = aux.GetScale() * aux.GetRotation() * aux.GetTranslation(); //Model view projection
+			m_model = aux.GetScale() * aux.GetRotation() * aux.GetTranslation(); //Model view projection
 			mViewProjection = mEditCamera->GetView() * mPersp;
 
-			mShader->SetUniformMatrix4f(m_u_Model, mModel);
+			mShader->SetUniformMatrix4f(m_u_Model, m_model);
 			mShader->SetUniformMatrix4f(m_u_ViewProjection, mViewProjection);
 			mShader->SetUniform3f(mShader->GetUniformLocation("u_Material.ambient"), aux.GetMaterial().ambient);
 			mShader->SetUniform3f(mShader->GetUniformLocation("u_Material.diffuse"), aux.GetMaterial().diffuse);
@@ -144,7 +144,7 @@ void Render3DScene::Update()
 
 			aux.GetMesh()->GetVertexArray().bind();
 			aux.GetMesh()->GetIndexBuffer().bind();
-			mRenderer->Draw(aux.GetMesh()->GetIndexBuffer());
+			m_renderer->Draw(aux.GetMesh()->GetIndexBuffer());
 			aux.GetMesh()->GetVertexArray().unbind();
 			aux.GetMesh()->GetIndexBuffer().unbind();
 		}
@@ -158,16 +158,16 @@ void Render3DScene::Update()
 			Model3D light_model = aux.GetModel();
 			if (light_model.isVisible())
 			{
-				mModel = light_model.GetScale() * light_model.GetRotation() * light_model.GetTranslation(); //Model view projection
+				m_model = light_model.GetScale() * light_model.GetRotation() * light_model.GetTranslation(); //Model view projection
 				mViewProjection = mEditCamera->GetView() * mPersp;
 
-				mLightShader->SetUniformMatrix4f(mLightShader->GetUniformLocation("u_Model"), mModel);
+				mLightShader->SetUniformMatrix4f(mLightShader->GetUniformLocation("u_Model"), m_model);
 				mLightShader->SetUniformMatrix4f(mLightShader->GetUniformLocation("u_ViewProjection"), mViewProjection);
 				mLightShader->SetUniform3f(mLightShader->GetUniformLocation("u_Color"), aux.GetLightColor());
 
 				light_model.GetMesh()->GetVertexArray().bind();
 				light_model.GetMesh()->GetIndexBuffer().bind();
-				mRenderer->Draw(light_model.GetMesh()->GetIndexBuffer());
+				m_renderer->Draw(light_model.GetMesh()->GetIndexBuffer());
 				light_model.GetMesh()->GetVertexArray().unbind();
 				light_model.GetMesh()->GetIndexBuffer().unbind();
 			}

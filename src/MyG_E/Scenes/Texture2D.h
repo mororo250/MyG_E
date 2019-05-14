@@ -22,11 +22,11 @@ public:
 
 private:
 	std::unique_ptr<VertexArray>  mVa;
-	std::unique_ptr<VertexBuffer> mVb;
-	std::unique_ptr<IndexBuffer>  mIb;
+	std::unique_ptr<VertexBuffer> m_vb;
+	std::unique_ptr<IndexBuffer>  m_ib;
 	std::unique_ptr<Shader> mShader;
-	std::unique_ptr<Texture> mTexture;
-	std::unique_ptr<Renderer> mRenderer;
+	std::unique_ptr<Texture> m_texture;
+	std::unique_ptr<Renderer> m_renderer;
 
 	Matrix<float, 3, 3> mOrtho; //Orthographic Matrix
 	TranslationMatrix3 mTranMat;

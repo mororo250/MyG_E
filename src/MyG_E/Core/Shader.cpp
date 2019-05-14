@@ -11,18 +11,18 @@
 
 
 Shader::Shader(const std::string& filepath)
-	: mShaderProgram(0)
+	: m_shader_program(0)
 {
 	ASSERT(!CreateShader(filepath));
 }
 
 Shader::~Shader() {
-	GLcall(glDeleteProgram(mShaderProgram))
+	GLcall(glDeleteProgram(m_shader_program))
 }
 
 void Shader::bind() const
 {
-	GLcall(glUseProgram(mShaderProgram));
+	GLcall(glUseProgram(m_shader_program));
 }
 
 void Shader::unbind() const
@@ -30,69 +30,69 @@ void Shader::unbind() const
 	GLcall(glUseProgram(0));
 }
 
-void Shader::SetUniform1i(int Location, int value)
+void Shader::SetUniform1i(int location, int value)
 {
-	GLcall(glUniform1i(Location, value));
+	GLcall(glUniform1i(location, value));
 }
 
-void Shader::SetUniform1f(int Location, float value)
+void Shader::SetUniform1f(int location, float value)
 {
-	GLcall(glUniform1f(Location, value));
+	GLcall(glUniform1f(location, value));
 }
 
-void Shader::SetUniform3f(int Location, float v1, float v2, float v3)
+void Shader::SetUniform3f(int location, float v1, float v2, float v3)
 {
-	GLcall(glUniform3f(Location, v1, v2, v3));
+	GLcall(glUniform3f(location, v1, v2, v3));
 }
 
-void Shader::SetUniform4f(int Location, float v1, float v2, float v3, float v4)
+void Shader::SetUniform4f(int location, float v1, float v2, float v3, float v4)
 {
-	GLcall(glUniform4f(Location, v1, v2, v3, v4));
+	GLcall(glUniform4f(location, v1, v2, v3, v4));
 }
 
-void Shader::SetUniform3f(int Location, Vector<float, 3> vector)
+void Shader::SetUniform3f(int location, Vector<float, 3> vector)
 {
-	GLcall(glUniform3f(Location, vector[0], vector[1], vector[2]));
+	GLcall(glUniform3f(location, vector[0], vector[1], vector[2]));
 }
 
-void Shader::SetUniform4f(int Location, Vector<float, 4> vector)
+void Shader::SetUniform4f(int location, Vector<float, 4> vector)
 {
-	GLcall(glUniform4f(Location, vector[0], vector[1], vector[2], vector[3]));
+	GLcall(glUniform4f(location, vector[0], vector[1], vector[2], vector[3]));
 }
 
-void Shader::SetUniformMatrix3f(int Location, Matrix<float, 3, 3> matrix)
+void Shader::SetUniformMatrix3f(int location, Matrix<float, 3, 3> matrix)
 {
-	GLcall(glUniformMatrix3fv(Location, 1, GL_TRUE, reinterpret_cast<const float *>(matrix.GetAsPointer()) ));
+	GLcall(glUniformMatrix3fv(location, 1, GL_TRUE, reinterpret_cast<const float *>(matrix.GetAsPointer()) ));
 }
 
-void Shader::SetUniformMatrix4f(int Location, Matrix<float, 4, 4> matrix)
+void Shader::SetUniformMatrix4f(int location, Matrix<float, 4, 4> matrix)
 {
-	GLcall(glUniformMatrix4fv(Location, 1, GL_TRUE, reinterpret_cast<const float *>(matrix.GetAsPointer()) ));
+	GLcall(glUniformMatrix4fv(location, 1, GL_TRUE, reinterpret_cast<const float *>(matrix.GetAsPointer()) ));
 }
 
 int Shader::GetUniformLocation(const std::string& name) const
 {
-	GLcall(int UniformLocation = glGetUniformLocation(mShaderProgram, name.c_str()));
-	if (UniformLocation == -1)
+	GLcall(int uniform_location = glGetUniformLocation(m_shader_program, name.c_str()));
+	if (uniform_location == -1)
 		std::cout << "There isn't any uniform named:" << name << std::endl;
-	return UniformLocation;
+	return uniform_location;
 }
 
 //this function read the shader file and put the shader code in a string
-void Shader::ReadShader_File(const std::string& shader_name, std::string& VertexString, std::string& FragString)
+void Shader::ReadShader_File(const std::string& shader_name, std::string& vertex_string, std::string& frag_string)
 {
 	// Shader directory.
 	std::string file_path = std::filesystem::current_path().parent_path().parent_path().parent_path().string(); 
 	file_path += "\\src\\MyG_E\\Shaders\\" + shader_name;
-	std::ifstream ShaderFile(file_path);
+	std::ifstream shader_file(file_path);
 
 	//test if the file was open correctly
-	if (ShaderFile.is_open())
+	if (shader_file.is_open())
 	{
 		std::string fLine;
-		ShaderType type = NONE;
+		shader_type type = NONE;
 
-		while (getline(ShaderFile, fLine))
+		while (getline(shader_file, fLine))
 		{
 			if (fLine.find("#shader") != std::string::npos)
 			{
@@ -109,11 +109,11 @@ void Shader::ReadShader_File(const std::string& shader_name, std::string& Vertex
 				switch (type)
 				{
 				case VERTEX:
-					VertexString += std::move(fLine) + "\n";
+					vertex_string += std::move(fLine) + "\n";
 					break;
 
 				case FRAGMENT:
-					FragString += std::move(fLine) + "\n";
+					frag_string += std::move(fLine) + "\n";
 					break;
 
 				default:
@@ -131,35 +131,35 @@ void Shader::ReadShader_File(const std::string& shader_name, std::string& Vertex
 
 bool Shader::CreateShader(const std::string& filepath)
 {
-	std::string VertexString("");
-	std::string FragString("");
-	ReadShader_File(filepath, VertexString, FragString);
+	std::string vertex_string("");
+	std::string frag_string("");
+	ReadShader_File(filepath, vertex_string, frag_string);
 	//create a shader program that links together the vertex/frag shaders
-	GLcall(mShaderProgram = glCreateProgram());
+	GLcall(m_shader_program = glCreateProgram());
 
 
-	unsigned int VertexShader = CompileShader(VertexString, GL_VERTEX_SHADER);
-	unsigned int FragShader = CompileShader(FragString, GL_FRAGMENT_SHADER);
+	unsigned int vertex_shader = CompileShader(vertex_string, GL_VERTEX_SHADER);
+	unsigned int frag_shader = CompileShader(frag_string, GL_FRAGMENT_SHADER);
 
 	// links together the vertex/frag shaders
-	GLcall(glAttachShader(mShaderProgram, VertexShader));
-	GLcall(glAttachShader(mShaderProgram, FragShader));
-	GLcall(glLinkProgram(mShaderProgram));
+	GLcall(glAttachShader(m_shader_program, vertex_shader));
+	GLcall(glAttachShader(m_shader_program, frag_shader));
+	GLcall(glLinkProgram(m_shader_program));
 	//checks to see whether the executables contained in program can execute given the current OpenGL state
-	GLcall(glValidateProgram(mShaderProgram));
+	GLcall(glValidateProgram(m_shader_program));
 
 	//Delete intermidiates Shaders 
-	GLcall(glDeleteShader(VertexShader));
-	GLcall(glDeleteShader(FragShader));
+	GLcall(glDeleteShader(vertex_shader));
+	GLcall(glDeleteShader(frag_shader));
 	//Testing if everything went right
 	int result;
-	GLcall(glGetProgramiv(mShaderProgram, GL_VALIDATE_STATUS, &result));
+	GLcall(glGetProgramiv(m_shader_program, GL_VALIDATE_STATUS, &result));
 	if (!result) 
 	{
 		int length;
-		GLcall(glGetProgramiv(mShaderProgram, GL_INFO_LOG_LENGTH, &length));
+		GLcall(glGetProgramiv(m_shader_program, GL_INFO_LOG_LENGTH, &length));
 		char *message = (char *)alloca(length * sizeof(char));  //Alloca is a c fuction use for alloc dinamically on stack
-		GLcall(glGetProgramInfoLog(mShaderProgram, length, &length, message));
+		GLcall(glGetProgramInfoLog(m_shader_program, length, &length, message));
 		
 		std::cout << "Failed to create Program" << std::endl;
 		return false;
@@ -168,14 +168,14 @@ bool Shader::CreateShader(const std::string& filepath)
 	return true;
 }
 
-unsigned int Shader::CompileShader(const std::string& source, const unsigned int ShaderType) 
+unsigned int Shader::CompileShader(const std::string& source, const unsigned int shader_type) 
 {
 	// Create a shader of the specified type
-	GLcall(unsigned int id = glCreateShader(ShaderType));
-	const char* C_str = source.c_str();
+	GLcall(unsigned int id = glCreateShader(shader_type));
+	const char* c_str = source.c_str();
 
 	// Set the source characters and try to compile
-	GLcall(glShaderSource(id, 1, &C_str, nullptr));
+	GLcall(glShaderSource(id, 1, &c_str, nullptr));
 	GLcall(glCompileShader(id));
 
 	//Testing if everything went right
@@ -188,7 +188,7 @@ unsigned int Shader::CompileShader(const std::string& source, const unsigned int
 		char *message = (char *)alloca(length * sizeof(char));  //Alloca is a c fuction use for alloc dinamically on stack
 		GLcall(glGetShaderInfoLog(id, length, &length, message));
 
-		std::cout << "Failed to compailed " <<(ShaderType == GL_VERTEX_SHADER ? "vertex" : "fragment" ) << "shader!" << std::endl;
+		std::cout << "Failed to compailed " <<(shader_type == GL_VERTEX_SHADER ? "vertex" : "fragment" ) << "shader!" << std::endl;
 		std::cout << message << std::endl;
 	}
 

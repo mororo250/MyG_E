@@ -10,32 +10,32 @@
 // Third Parties.
 #include "imgui.h"
 
-unsigned int Model3D::mNumberofObjects = 0;
+unsigned int Model3D::m_number_of_objects = 0;
 
 Model3D::Model3D(std::shared_ptr<Mesh> mesh)
-	: mPosition({ 0.0f, 0.0f, 0.0f })
-	, mTransMatrix(0.0f, 0.0f, 0.0f)
-	, mScaleMatrix(1.0f, 1.0f, 1.0f)
-	, mScale({ 1.0f, 1.0f, 1.0f })
-	, mRotationMatrix(Matrix<float, 4, 4>::make_identity())
-	, mMesh(mesh)
+	: m_position({ 0.0f, 0.0f, 0.0f })
+	, m_trans_matrix(0.0f, 0.0f, 0.0f)
+	, m_scale_matrix(1.0f, 1.0f, 1.0f)
+	, m_scale({ 1.0f, 1.0f, 1.0f })
+	, m_rotation_matrix(Matrix<float, 4, 4>::make_identity())
+	, m_mesh(mesh)
 	, m_is_visible(true)
 {
-	mObjectName = "Object " + std::to_string(mNumberofObjects);
-	mNumberofObjects++;
+	m_object_name = "Object " + std::to_string(m_number_of_objects);
+	m_number_of_objects++;
 }
 
 Model3D::Model3D(std::shared_ptr<Mesh> mesh, const std::string& name)
-	:mPosition({ 0.0f, 0.0f, 0.0f }),
-	mTransMatrix(0.0f, 0.0f, 0.0f),
-	mScaleMatrix(1.0f, 1.0f, 1.0f),
-	mScale({1.0f, 1.0f, 1.0f}),
-	mRotationMatrix(),
-	mMesh(mesh),
-	mObjectName(name),
+	:m_position({ 0.0f, 0.0f, 0.0f }),
+	m_trans_matrix(0.0f, 0.0f, 0.0f),
+	m_scale_matrix(1.0f, 1.0f, 1.0f),
+	m_scale({1.0f, 1.0f, 1.0f}),
+	m_rotation_matrix(),
+	m_mesh(mesh),
+	m_object_name(name),
 	m_is_visible(true)
 {
-	mNumberofObjects++;
+	m_number_of_objects++;
 }
 
 Model3D::~Model3D()
@@ -44,29 +44,29 @@ Model3D::~Model3D()
 
 void Model3D::SetTranslation(const Vector<float, 3>& trans)
 {
-	mPosition = trans;
-	mTransMatrix.SetTranX(mPosition[0]);
-	mTransMatrix.SetTranY(mPosition[1]);
-	mTransMatrix.SetTranZ(mPosition[2]);
+	m_position = trans;
+	m_trans_matrix.SetTranX(m_position[0]);
+	m_trans_matrix.SetTranY(m_position[1]);
+	m_trans_matrix.SetTranZ(m_position[2]);
 }
 
 void Model3D::SetScale(const Vector<float, 3>& scale)
 {
-	mScale = scale;
-	mScaleMatrix.SetScaleX(mScale[0]);
-	mScaleMatrix.SetScaleY(mScale[1]);
-	mScaleMatrix.SetScaleZ(mScale[2]);
+	m_scale = scale;
+	m_scale_matrix.SetScaleX(m_scale[0]);
+	m_scale_matrix.SetScaleY(m_scale[1]);
+	m_scale_matrix.SetScaleZ(m_scale[2]);
 }
 
 void Model3D::SetRotation(const Vector<float, 3>& rotation)
 {
-	mRotate = rotation;
-	Quaternion quatx = Quaternion::MakeRotate(mRotate[0], { 1.0f, 0.0f, 0.0f });
-	Quaternion quaty = Quaternion::MakeRotate(mRotate[1], { 0.0f, 1.0f, 0.0f });
-	Quaternion quatz = Quaternion::MakeRotate(mRotate[2], { 0.0f, 0.0f, 1.0f });
+	m_rotate = rotation;
+	Quaternion quatx = Quaternion::MakeRotate(m_rotate[0], { 1.0f, 0.0f, 0.0f });
+	Quaternion quaty = Quaternion::MakeRotate(m_rotate[1], { 0.0f, 1.0f, 0.0f });
+	Quaternion quatz = Quaternion::MakeRotate(m_rotate[2], { 0.0f, 0.0f, 1.0f });
 	Quaternion quat = quatx * quaty * quatz;
 
-	mRotationMatrix = Quaternion::CreateRotationMatrix(quat);
+	m_rotation_matrix = Quaternion::CreateRotationMatrix(quat);
 }
 
 void Model3D::SetMaterial(Vector<float, 3>& ambient, Vector<float, 3>& diffuse, Vector<float, 3>& specular, float shininess)
@@ -79,17 +79,17 @@ void Model3D::SetMaterial(Vector<float, 3>& ambient, Vector<float, 3>& diffuse, 
 
 void Model3D::ImGuiRenderer()
 {
-	ImGui::SliderFloat3("Translate", &mPosition[0], -50.0f, 50.0f);
-	ImGui::SliderFloat3("Scale", &mScale[0], 0.0f, 5.0f);
-	ImGui::SliderFloat3("Rotate", &mRotate[0], -6.28f, 6.28f);
+	ImGui::SliderFloat3("Translate", &m_position[0], -50.0f, 50.0f);
+	ImGui::SliderFloat3("Scale", &m_scale[0], 0.0f, 5.0f);
+	ImGui::SliderFloat3("Rotate", &m_rotate[0], -6.28f, 6.28f);
 	ImGui::ColorEdit3("Ambient", &mMaterial.ambient[0]);
 	ImGui::ColorEdit3("Diffuse", &mMaterial.diffuse[0]);
 	ImGui::ColorEdit3("Specular", &mMaterial.specular[0]);
 	ImGui::SliderFloat("shininess", &mMaterial.shininess, 0.0f, 1.0f);
 	ImGui::Checkbox("Visibility", &m_is_visible);
 
-	SetTranslation(mPosition);
-	SetScale(mScale);
-	SetRotation(mRotate);
+	SetTranslation(m_position);
+	SetScale(m_scale);
+	SetRotation(m_rotate);
 }
 

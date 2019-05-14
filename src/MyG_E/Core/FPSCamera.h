@@ -8,8 +8,8 @@ public:
 	FPSCamera(Vector<float, 3> position, Vector<float, 3> front_camera);
 	~FPSCamera();
 
-	inline Vector<float, 3> GetDirection() const { return mFrontCamera; }
-	void SetDirection(Vector<float, 3> front_camera) { mFrontCamera = front_camera; }
+	inline Vector<float, 3> GetDirection() const { return m_front_camera; }
+	void SetDirection(Vector<float, 3> front_camera) { m_front_camera = front_camera; }
 
 	void Update() override;
 
@@ -18,5 +18,5 @@ protected:
 	void Translate() override;
 
 private:
-	Vector<float, 3> mFrontCamera;
+	Vector<float, 3> m_front_camera;
 };

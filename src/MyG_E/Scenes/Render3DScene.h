@@ -19,16 +19,16 @@ public:
 private:
 	std::unique_ptr<Shader> mShader;
 	std::unique_ptr<Shader> mLightShader;
-	std::unique_ptr<Renderer> mRenderer;
+	std::unique_ptr<Renderer> m_renderer;
 	std::unique_ptr<FPSCamera> mFPSCamera;
 	std::unique_ptr<EditCamera> mEditCamera;
 	std::vector<Light> mLight;
-	std::vector<Model3D> mBuffer;
+	std::vector<Model3D> m_buffer;
 	std::vector<const char*> mListboxItem;
 
 
 	Matrix<float, 4, 4> mPersp; //Perspective Matrix
-	Matrix<float, 4, 4> mModel;
+	Matrix<float, 4, 4> m_model;
 	Matrix<float, 4, 4> mViewProjection;
 
 	// Uniform locations

@@ -4,13 +4,13 @@ Mesh::Mesh(Shape shape)
 {
 	if (shape == Shape::CUBE)
 	{
-		mVertexData = cube_vertices;
-		mIndices = cube_indices;
+		m_vertex_data = cube_vertices;
+		m_indices = cube_indices;
 	}
 	else
 	{
-		mVertexData = sphere_vertices;
-		mIndices = sphere_indices;
+		m_vertex_data = sphere_vertices;
+		m_indices = sphere_indices;
 	}
 	CreateCubeMesh();
 }
@@ -22,18 +22,18 @@ Mesh::~Mesh()
 void Mesh::CreateCubeMesh()
 {
 	const int NumAttrib = 8;
-	mVao = std::make_unique<VertexArray>();
-	mVb = std::make_unique<VertexBuffer>(reinterpret_cast<float *>(mVertexData.data()), mVertexData.size() / NumAttrib, NumAttrib);
-	mIb = std::make_unique<IndexBuffer>(mIndices.data(), mIndices.size());
+	m_vao = std::make_unique<VertexArray>();
+	m_vb = std::make_unique<VertexBuffer>(reinterpret_cast<float *>(m_vertex_data.data()), m_vertex_data.size() / NumAttrib, NumAttrib);
+	m_ib = std::make_unique<IndexBuffer>(m_indices.data(), m_indices.size());
 
-	mVao->PushLayout(3, GL_FLOAT, GL_FALSE, 0);
-	mVao->PushLayout(3, GL_FLOAT, GL_FALSE, 3);
+	m_vao->PushLayout(3, GL_FLOAT, GL_FALSE, 0);
+	m_vao->PushLayout(3, GL_FLOAT, GL_FALSE, 3);
 
-	mVao->AddBuffer(*mVb);
+	m_vao->AddBuffer(*m_vb);
 
-	mVao->unbind();
-	mVb->unbind();
-	mIb->unbind();
+	m_vao->unbind();
+	m_vb->unbind();
+	m_ib->unbind();
 }
 
 // Vertices: positiom/ tesxture. normals

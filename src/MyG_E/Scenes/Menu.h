@@ -22,5 +22,5 @@ public:
 private:
 	Scene*& mCurrentScene;
 	std::vector<std::pair<std::string, std::function<Scene*()>>> mScenes;
-	std::unique_ptr<class Renderer> mRenderer;
+	std::unique_ptr<class Renderer> m_renderer;
 };

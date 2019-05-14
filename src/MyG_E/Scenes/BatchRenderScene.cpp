@@ -4,7 +4,7 @@
 
 
 BatchRenderScene::BatchRenderScene()
-	:mMaxSprites(1000000),
+	:m_max_sprites(1000000),
 	mScaleMat(1.0f, 1.0f),
 	mRotMat(0.0f),
 	mTranMat(0.0f, 0.0f),
@@ -12,9 +12,9 @@ BatchRenderScene::BatchRenderScene()
 	mNumberofSprites(1000),
 	mGapSize(1.2)
 {
-	mBatchRenderer = std::make_unique<BatchRenderer<VertexData2C>>(mMaxSprites, 6, 4);
+	mBatchRenderer = std::make_unique<BatchRenderer<VertexData2C>>(m_max_sprites, 6, 4);
 
-	mSprites.reserve(mMaxSprites * 4);
+	mSprites.reserve(m_max_sprites * 4);
 
 	srand(time(NULL));
 
@@ -70,7 +70,7 @@ BatchRenderScene::~BatchRenderScene()
 
 void BatchRenderScene::ImGuiRenderer()
 {
-	ImGui::SliderInt("Number of sprites", &mNumberofSprites, 0, mMaxSprites);
+	ImGui::SliderInt("Number of sprites", &mNumberofSprites, 0, m_max_sprites);
 	ImGui::SliderFloat("Size of the gap", &mGapSize, 0.0f, 3.0f);
 }
 

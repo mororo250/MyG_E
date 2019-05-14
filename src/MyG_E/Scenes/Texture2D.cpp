@@ -25,12 +25,12 @@ Texture2D::Texture2D()
 	GLcall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 	
 	mVa = std::make_unique<VertexArray>();
-	mVb = std::make_unique<VertexBuffer>(positions, 4, 4);
-	mIb = std::make_unique<IndexBuffer>(indices, 6);
+	m_vb = std::make_unique<VertexBuffer>(positions, 4, 4);
+	m_ib = std::make_unique<IndexBuffer>(indices, 6);
 
 	mVa->PushLayout(2, GL_FLOAT, GL_FALSE, 0);
 	mVa->PushLayout(2, GL_FLOAT, GL_FALSE, 2);
-	mVa->AddBuffer(*mVb);
+	mVa->AddBuffer(*m_vb);
 
 	mShader = std::make_unique<Shader>("Shader.glsl");
 	mShader->bind();
@@ -43,17 +43,17 @@ Texture2D::Texture2D()
 
 	std::string file_path = std::filesystem::current_path().parent_path().parent_path().parent_path().string();
 	file_path += "\\src\\MyG_E\\Resources\\PS4.PNG";
-	mTexture = std::make_unique<Texture>(file_path);
+	m_texture = std::make_unique<Texture>(file_path);
 
-	mTexture->bind(0);
+	m_texture->bind(0);
 	mShader->SetUniform1i(mShader->GetUniformLocation("u_texture"), 0);
 
 	mVa->unbind();
-	mVb->unbind();
-	mIb->unbind();
+	m_vb->unbind();
+	m_ib->unbind();
 	mShader->unbind();
 
-	mRenderer = std::make_unique<Renderer>();
+	m_renderer = std::make_unique<Renderer>();
 }
 
 Texture2D::~Texture2D()
@@ -72,7 +72,7 @@ void Texture2D::ImGuiRenderer()
 
 void Texture2D::Update()
 {
-	mRenderer->Clear();
+	m_renderer->Clear();
 
 	mTranMat.SetTranX(mTranX);
 	mTranMat.SetTranY(mTranY);
@@ -87,9 +87,9 @@ void Texture2D::Update()
 	mShader->SetUniformMatrix3f(mU_MVP, mMVP);
 
 	mVa->bind();
-	mIb->bind();
-	mRenderer->Draw(*mIb);
+	m_ib->bind();
+	m_renderer->Draw(*m_ib);
 	mVa->unbind();
-	mIb->unbind();
+	m_ib->unbind();
 	mShader->unbind();
 }

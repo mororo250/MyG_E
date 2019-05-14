@@ -9,7 +9,7 @@
 
 struct VertexLayout
 {
-	unsigned int NumElem;
+	unsigned int num_elem;
 	unsigned int type;
 	bool normalized;
 	unsigned int offset;
@@ -22,17 +22,17 @@ public:
 	~VertexArray();
 
 	void AddBuffer(const VertexBuffer& vb);
-	void PushLayout(unsigned int NumElem, unsigned int type = GL_FLOAT, bool normalized = false, const unsigned int offset = 0);
+	void PushLayout(unsigned int num_elem, unsigned int type = GL_FLOAT, bool normalized = false, const unsigned int offset = 0);
 	void bind() const;
 	void unbind() const;
 
-	inline void EnabelVertexArray() { GLcall(glEnableVertexAttribArray(mVertexArray)); }
-	inline std::vector<VertexLayout> GetVertexLayouts() { return mLayoutVector; }
-	inline unsigned int GetVertexArray() const { return mVertexArray; }
+	inline void EnabelVertexArray() { GLcall(glEnableVertexAttribArray(m_vertex_array)); }
+	inline std::vector<VertexLayout> GetVertexLayouts() { return m_layout_vector; }
+	inline unsigned int GetVertexArray() const { return m_vertex_array; }
 	
 
 private:
 
-	unsigned int mVertexArray; 
-	std::vector<VertexLayout> mLayoutVector;
+	unsigned int m_vertex_array; 
+	std::vector<VertexLayout> m_layout_vector;
 };

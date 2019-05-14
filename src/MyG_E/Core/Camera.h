@@ -10,16 +10,16 @@ public:
 	Camera(float speed = 0.5f, float sensitivity = 0.005f);
 	virtual ~Camera();
 
-	inline Matrix<float, 4, 4>& GetView() { return mView; }
+	inline Matrix<float, 4, 4>& GetView() { return m_view; }
 
-	inline Vector<float, 3> GetPosition() const { return mPosition; }
-	inline void SetPosition(const Vector<float, 3> position) { mPosition = position; }
+	inline Vector<float, 3> GetPosition() const { return m_position; }
+	inline void SetPosition(const Vector<float, 3> position) { m_position = position; }
 	
-	inline float GetSpeed() const { return mSpeed; }
-	inline void SetSpeed(const float speed) { mSpeed = speed; }
+	inline float GetSpeed() const { return m_speed; }
+	inline void SetSpeed(const float speed) { m_speed = speed; }
 	
-	inline float GetSensitivity() const { return mSensitivity; }
-	inline void SetSensitivity(const float sensitivity) { mSensitivity = sensitivity; }
+	inline float GetSensitivity() const { return m_sensitivity; }
+	inline void SetSensitivity(const float sensitivity) { m_sensitivity = sensitivity; }
 
 	virtual void ImGuiRenderer();
 	virtual void Update() = 0;
@@ -28,11 +28,11 @@ protected:
 	virtual void Translate() = 0;
 	virtual void Rotate() = 0;
 
-	float mSpeed; //speed of camera moviment
-	float mSensitivity; //velocity in witch the camera will change front_camera
+	float m_speed; //speed of camera moviment
+	float m_sensitivity; //velocity in witch the camera will change front_camera
 
-	std::pair<float, float> mMousePos; //currenty mouse possition
+	std::pair<float, float> m_mouse_pos; //currenty mouse possition
 
-	Vector<float, 3> mPosition;
-	Matrix<float, 4, 4> mView;
+	Vector<float, 3> m_position;
+	Matrix<float, 4, 4> m_view;
 };

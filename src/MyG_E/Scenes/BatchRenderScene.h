@@ -13,7 +13,7 @@ public:
 	void Update() override;
 
 private:
-	const int mMaxSprites;
+	const int m_max_sprites;
 	int mU_MVP; //uniform location
 
 	Matrix<float, 3, 3> mOrtho; //Orthographic Matrix
@@ -24,9 +24,9 @@ private:
 
 	std::vector<VertexData2C> mSprites;
 	std::unique_ptr<BatchRenderer<VertexData2C>> mBatchRenderer;
-	std::unique_ptr<Renderer> mRenderer;
+	std::unique_ptr<Renderer> m_renderer;
 	std::unique_ptr<Shader> mShader;
-	std::unique_ptr<Texture> mTexture;
+	std::unique_ptr<Texture> m_texture;
 
 	//ImGui Variables
 	int mNumberofSprites = 0;

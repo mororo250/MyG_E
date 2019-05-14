@@ -5,23 +5,23 @@
 #include "Foundation/Gldebug.h"
 #include "IndexBuffer.h"
 
-IndexBuffer::IndexBuffer(const unsigned int *indices, const unsigned int numIndices)
-:mNumIndex(numIndices)
+IndexBuffer::IndexBuffer(const unsigned int *indices, const unsigned int num_indices)
+:m_num_index(num_indices)
 {
-	GLcall(glGenBuffers(1, &mIndexBuffer));
-	GLcall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer));
+	GLcall(glGenBuffers(1, &m_index_buffer));
+	GLcall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_buffer));
 	// Pass the index data into the buffer
-	GLcall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(unsigned int), indices, GL_STATIC_DRAW));
+	GLcall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, num_indices * sizeof(unsigned int), indices, GL_STATIC_DRAW));
 }
 
 IndexBuffer::~IndexBuffer()
 {
-	GLcall(glDeleteBuffers(1, &mIndexBuffer));
+	GLcall(glDeleteBuffers(1, &m_index_buffer));
 }
 
 void IndexBuffer::bind() const
 {
-	GLcall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer));
+	GLcall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_buffer));
 }
 
 void IndexBuffer::unbind() const
