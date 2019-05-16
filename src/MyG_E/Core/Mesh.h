@@ -8,9 +8,10 @@
 
 enum class Shape
 {
+	PLANE,
 	CUBE,
 	SPHERE,
-	PIRAMID
+	PYRAMID
 };
 
 class Mesh
@@ -25,12 +26,14 @@ public:
 	inline const IndexBuffer& GetIndexBuffer() { return *m_ib; }
 private:
 
+	static const std::vector<float> Mesh::plane_vertices;
+	static const std::vector<unsigned int> Mesh::plane_indices;
 	static const std::vector<float> cube_vertices;
 	static const std::vector<unsigned int> cube_indices;
+	static const std::vector<float> pyramid_vertices;
+	static const std::vector<unsigned int> pyramid_indices;
 	static const std::vector<float> sphere_vertices;
 	static const std::vector<unsigned int> sphere_indices;
-	static const std::vector<float> piramid_vertices;
-	static const std::vector<unsigned int> piramid_indices;
 
 	std::vector<float> m_vertex_data;
 	std::vector<unsigned int> m_indices;

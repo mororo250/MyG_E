@@ -83,7 +83,7 @@ vec3 point_light(int i)
 	vec3 reflect_direction = reflect(-light_direction, norm);
 
 // Attenuation
-	float distance = length(u_PointLight[i].position - v_Position);
+	float distance = length(u_PointLight[i].position - v_Position.xyz);
 	float attenuation = 1.0f / (u_PointLight[i].constant + u_PointLight[i].linear * distance + u_PointLight[i].quadratic * distance * distance);
 	
 // Ambient

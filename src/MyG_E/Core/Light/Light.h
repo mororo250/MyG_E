@@ -30,7 +30,6 @@ public:
 
 private:
 	Vector<float, 3> m_color;
-	std::shared_ptr<Mesh> m_mesh;
 	Model3D m_model;
 	float m_ambient_strength;
 	float m_diffuse_strength;

@@ -3,8 +3,7 @@
 
 Light::Light(const Vector<float, 3>& position, const Vector<float, 3>& color)
 	: m_color(color)
-	, m_mesh(std::make_shared<Mesh>(Shape::SPHERE))
-	, m_model(m_mesh)
+	, m_model(std::make_shared<Mesh>(Shape::SPHERE))
 	, m_ambient_strength(0.1f)
 	, m_diffuse_strength(1.0f)
 	, m_specular_strength(1.0f)

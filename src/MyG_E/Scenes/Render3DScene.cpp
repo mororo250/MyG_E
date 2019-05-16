@@ -5,6 +5,9 @@
 
 #include <string>
 
+
+// There is a big problem here
+// If we push a new item to ligttPoint or direction_light the light_list pointer become invalid
 Render3DScene::Render3DScene()
 	: mPersp(CreatePerspectiveMatrix(45.0f, 1024.0f / 768.0f, 0.1f, 800.0f))
 {
@@ -12,6 +15,7 @@ Render3DScene::Render3DScene()
 	
 	std::shared_ptr<Mesh> cube(new Mesh(Shape::CUBE));
 	std::shared_ptr<Mesh> sphere(new Mesh(Shape::SPHERE));
+	std::shared_ptr<Mesh> plane(new Mesh(Shape::PLANE));
 
 	Material esmerald({0.0215, 0.1745, 0.0215}, {0.07568, 0.61424, 0.07568}, {0.633, 0.727811, 0.633}, 0.6);
 	Material jade({0.135, 0.2225, 0.1575}, {0.54, 0.89, 0.63}, {0.316228, 0.316228, 0.316228 }, 0.1);
@@ -24,6 +28,7 @@ Render3DScene::Render3DScene()
 		m_buffer.push_back(cube);
 	for (unsigned int i = m_buffer.capacity() / 2; i < m_buffer.capacity(); i++)
 		m_buffer.push_back(sphere);
+	m_buffer.push_back(plane);
 	{		 
 		m_buffer[0].SetPosition({0.0f, 0.0f, -3.0f});
 		m_buffer[1].SetPosition({ 1.5f, 0.0f, -3.0f });
@@ -33,36 +38,44 @@ Render3DScene::Render3DScene()
 		m_buffer[5].SetPosition({ 1.5f, 0.0f, 3.0f });
 		m_buffer[6].SetPosition({ 0.0f, 1.5f, 3.0f });
 		m_buffer[7].SetPosition({ 1.5f, 1.5f, 3.0f });
+		m_buffer[8].SetPosition({ 0.0f, -1.0f, 0.0f });
 
-		// Set Scale for spheres
 		m_buffer[4].SetScale({0.05f, 0.05f, 0.05f});
 		m_buffer[5].SetScale({0.05f, 0.05f, 0.05f});
 		m_buffer[6].SetScale({0.05f, 0.05f, 0.05f});
 		m_buffer[7].SetScale({0.05f, 0.05f, 0.05f});
+		m_buffer[8].SetScale({100.0f, 0.0f, 100.0f});
 
+		// Cubes
 		m_buffer[0].SetMaterial(esmerald);
 		m_buffer[1].SetMaterial(jade);
 		m_buffer[2].SetMaterial(obsidian);
 		m_buffer[3].SetMaterial(pearl);
+		// Spheres
 		m_buffer[4].SetMaterial(esmerald);
 		m_buffer[5].SetMaterial(jade);
 		m_buffer[6].SetMaterial(obsidian);
 		m_buffer[7].SetMaterial(pearl);
+		// Plane
+		m_buffer[8].SetMaterial(obsidian);
 	}
 	for (auto& I : m_buffer)
 		mListboxItem.push_back(I.GetObjectName().c_str());
 	{
 		// Point. 
-		m_point_light.push_back(Vector<float, 3>({ 1.0f, 1.0f, -10.0f }));
+		m_point_light.push_back(Vector<float, 3>({ 1.0f, 1.0f, -40.0f }));
 		mListboxLight.push_back("Point Light 1");
-		m_light_list.push_back(&m_point_light[0]);
-		m_point_light.push_back(Vector<float, 3>({ 1.0f, 1.0f, 10.0f }));
+		m_point_light.push_back(Vector<float, 3>({ 1.0f, 1.0f, 40.0f }));
 		mListboxLight.push_back("Point Light 2");
 		m_light_list.push_back(&m_point_light[1]);
 		
-		//m_directional_light.push_back(Vector<float, 3>({ 1.0f, 1.0f, 0.0f }));
-		//mListboxLight.push_back("Directional Light 1");
-		//m_light_list.push_back(&m_directional_light[0]);
+		m_directional_light.push_back(Vector<float, 3>({ 1.0f, 1.0f, 0.0f }));
+		mListboxLight.push_back("Directional Light 1");
+		m_light_list.push_back(&m_directional_light[0]);
+
+		m_light_list.push_back(&m_point_light[0]);
+		m_light_list.push_back(&m_point_light[1]);
+		m_light_list.push_back(&m_directional_light[0]);
 	}
 
 	mFPSCamera = std::make_unique<FPSCamera>(Vector<float, 3>({ 0.0f, 0.0f, 0.0f }), Vector<float, 3>({0.0f, 0.0f, -1.0f}));

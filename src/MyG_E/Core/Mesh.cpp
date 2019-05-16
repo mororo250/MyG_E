@@ -2,21 +2,26 @@
 
 Mesh::Mesh(Shape shape)
 {
-	if (shape == Shape::CUBE)
+	switch (shape)
 	{
+	case Shape::PLANE:
+		m_vertex_data = plane_vertices;
+		m_indices = plane_indices;
+		break;
+	case Shape::CUBE:
 		m_vertex_data = cube_vertices;
 		m_indices = cube_indices;
-	}
-	else if (shape == Shape::SPHERE)
-	{
+		break;
+	case Shape::SPHERE:
 		m_vertex_data = sphere_vertices;
 		m_indices = sphere_indices;
-	}
-	else
-	{
-		m_vertex_data = piramid_vertices;
-		m_indices = piramid_indices;
-
+		break;
+	case Shape::PYRAMID:
+		m_vertex_data = pyramid_vertices;
+		m_indices = pyramid_indices;
+		break;
+	default: 
+		break;
 	}
 	CreateMesh();
 }
@@ -43,7 +48,20 @@ void Mesh::CreateMesh()
 }
 
 // Vertices: positiom/ tesxture. normals
-// Square:
+// Plane.
+const std::vector<float> Mesh::plane_vertices({
+	-0.5f, 0.0f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+	0.5f, 0.0f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+	-0.5f, 0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+	0.5f, 0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
+});
+
+const std::vector<unsigned int> Mesh::plane_indices({
+	0, 1, 2,
+	3, 2, 1
+	});
+
+// Square.
 const std::vector<float> Mesh::cube_vertices({
 			// Front.
 			-0.5, -0.5, -0.5, 0, 0, -1, 0, 0,
@@ -97,7 +115,7 @@ const std::vector<unsigned int> Mesh::cube_indices({
 		});
 
 // Piramid.
-const std::vector<float> Mesh::piramid_vertices({
+const std::vector<float> Mesh::pyramid_vertices({
 		// Botton
 		-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0, 0,
 		0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1, 0,
@@ -120,7 +138,7 @@ const std::vector<float> Mesh::piramid_vertices({
 		-0.5f, -0.5f, 0.5f, -0.894427f, 0.447214f, 0.0f, 1, 0,
 		0.0f, 0.5f, 0.0f, -0.894427f, 0.447214f, 0.0f, 1, 1
 	});
-const std::vector<unsigned int> Mesh::piramid_indices({
+const std::vector<unsigned int> Mesh::pyramid_indices({
 			0, 1, 2,
 			2, 3, 1,
 			4, 5, 6,

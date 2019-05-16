@@ -24,6 +24,8 @@ class Model3D
 public:
 	Model3D(std::shared_ptr<Mesh> mesh);
 	Model3D(std::shared_ptr<Mesh> mesh, const std::string& name);
+	Model3D(const Mesh& mesh);
+	Model3D(const Mesh& mesh, const std::string& name);
 	~Model3D();
 
 	inline Vector<float, 3> GetPosition() const { return m_position; };
