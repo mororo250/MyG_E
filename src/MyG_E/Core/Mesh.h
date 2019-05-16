@@ -9,7 +9,8 @@
 enum class Shape
 {
 	CUBE,
-	SPHERE
+	SPHERE,
+	PIRAMID
 };
 
 class Mesh
@@ -28,6 +29,8 @@ private:
 	static const std::vector<unsigned int> cube_indices;
 	static const std::vector<float> sphere_vertices;
 	static const std::vector<unsigned int> sphere_indices;
+	static const std::vector<float> piramid_vertices;
+	static const std::vector<unsigned int> piramid_indices;
 
 	std::vector<float> m_vertex_data;
 	std::vector<unsigned int> m_indices;
@@ -35,5 +38,5 @@ private:
 	std::unique_ptr<IndexBuffer> m_ib;
 	std::unique_ptr<VertexBuffer> m_vb;
 
-	void CreateCubeMesh();
+	void CreateMesh();
 };

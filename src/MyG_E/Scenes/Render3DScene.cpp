@@ -34,6 +34,7 @@ Render3DScene::Render3DScene()
 		m_buffer[6].SetPosition({ 0.0f, 1.5f, 3.0f });
 		m_buffer[7].SetPosition({ 1.5f, 1.5f, 3.0f });
 
+		// Set Scale for spheres
 		m_buffer[4].SetScale({0.05f, 0.05f, 0.05f});
 		m_buffer[5].SetScale({0.05f, 0.05f, 0.05f});
 		m_buffer[6].SetScale({0.05f, 0.05f, 0.05f});
@@ -50,14 +51,18 @@ Render3DScene::Render3DScene()
 	}
 	for (auto& I : m_buffer)
 		mListboxItem.push_back(I.GetObjectName().c_str());
-
 	{
-		mLight.push_back(Vector<float, 3>({ 1.0f, 1.0f, 0.0f }));
-		mListboxLight.push_back("Light 1");
-		mLight.push_back(Vector<float, 3>({ 1.0f, 10.0f, 10.0f }));
-		mListboxLight.push_back("Light 2");
-		mLight.push_back(Vector<float, 3>({ 1.0f, 10.0f, -10.0f }));
-		mListboxLight.push_back("Light 3");
+		// Point. 
+		m_point_light.push_back(Vector<float, 3>({ 1.0f, 1.0f, -10.0f }));
+		mListboxLight.push_back("Point Light 1");
+		m_light_list.push_back(&m_point_light[0]);
+		m_point_light.push_back(Vector<float, 3>({ 1.0f, 1.0f, 10.0f }));
+		mListboxLight.push_back("Point Light 2");
+		m_light_list.push_back(&m_point_light[1]);
+		
+		//m_directional_light.push_back(Vector<float, 3>({ 1.0f, 1.0f, 0.0f }));
+		//mListboxLight.push_back("Directional Light 1");
+		//m_light_list.push_back(&m_directional_light[0]);
 	}
 
 	mFPSCamera = std::make_unique<FPSCamera>(Vector<float, 3>({ 0.0f, 0.0f, 0.0f }), Vector<float, 3>({0.0f, 0.0f, -1.0f}));
@@ -115,7 +120,7 @@ void Render3DScene::ImGuiRenderer()
 	{
 		ImGui::Begin("Light x");
 		
-		mLight[current_light_id].ImGuiRenderer();
+		m_light_list[current_light_id]->ImGuiRenderer();
 
 		ImGui::End();
 	}
@@ -129,15 +134,35 @@ void Render3DScene::Update()
 	GLcall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	
 	mShader->bind();
-	for (unsigned int i = 0; i < mLight.size(); i++ )
+	// Light uniforms.
+	// Point Light.
+	for (unsigned int i = 0; i < m_point_light.size(); i++ )
 	{
-		mShader->SetUniform3f(mShader->GetUniformLocation("u_Light[" + std::to_string(i) + "].color"), mLight[i].GetLightColor());
-		mShader->SetUniform3f(mShader->GetUniformLocation("u_Light[" + std::to_string(i) + "].position"), mLight[i].GetLightPosition());
-		mShader->SetUniform1f(mShader->GetUniformLocation("u_Light[" + std::to_string(i) + "].ambient_strength"), mLight[i].GetAmbientStength());
-		mShader->SetUniform1f(mShader->GetUniformLocation("u_Light[" + std::to_string(i) + "].diffuse_strength"), mLight[i].GetDiffuseStrength());
-		mShader->SetUniform1f(mShader->GetUniformLocation("u_Light[" + std::to_string(i) + "].specular_strength"), mLight[i].GetSpecularStrength());
+		std::string light = "u_PointLight[" + std::to_string(i) + "]";
+		mShader->SetUniform3f(mShader->GetUniformLocation(light + ".color"), m_point_light[i].GetLightColor());
+		mShader->SetUniform3f(mShader->GetUniformLocation(light + ".position"), m_point_light[i].GetLightPosition());
+		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".ambient_strength"), m_point_light[i].GetAmbientStength());
+		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".diffuse_strength"), m_point_light[i].GetDiffuseStrength());
+		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".specular_strength"), m_point_light[i].GetSpecularStrength());
+		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".constant"), m_point_light[i].GetConstant());
+		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".linear"), m_point_light[i].GetLinear());
+		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".quadratic"), m_point_light[i].GetQuadratic());
 	}
-	mShader->SetUniform1i(mShader->GetUniformLocation("u_NumLight"), mLight.size());
+	// DirectionalLight
+	for (unsigned int i = 0; i < m_directional_light.size(); i++)
+	{
+		std::string light = "u_DirectionalLight[" + std::to_string(i) + "]";
+		mShader->SetUniform3f(mShader->GetUniformLocation(light + ".color"), m_directional_light[i].GetLightColor());
+		mShader->SetUniform3f(mShader->GetUniformLocation(light + ".position"), m_directional_light[i].GetLightPosition());
+		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".ambient_strength"), m_directional_light[i].GetAmbientStength());
+		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".diffuse_strength"), m_directional_light[i].GetDiffuseStrength());
+		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".specular_strength"), m_directional_light[i].GetSpecularStrength());
+		mShader->SetUniform3f(mShader->GetUniformLocation(light + ".directional"), m_directional_light[i].GetDirectionalLight());
+	}
+
+	// General uniforms.
+	mShader->SetUniform1i(mShader->GetUniformLocation("u_NumPointLight"), m_point_light.size());
+	mShader->SetUniform1i(mShader->GetUniformLocation("u_NumDirectionalLight"), m_directional_light.size());
 	mShader->SetUniform3f(mShader->GetUniformLocation("u_ViewPos"), mEditCamera->GetPosition());
 
 	for (auto& aux : m_buffer)
@@ -146,7 +171,8 @@ void Render3DScene::Update()
 		{
 			m_model = aux.GetScale() * aux.GetRotation() * aux.GetTranslation(); //Model view projection
 			mViewProjection = mEditCamera->GetView() * mPersp;
-
+			
+			// Materials uniforms.
 			mShader->SetUniformMatrix4f(m_u_Model, m_model);
 			mShader->SetUniformMatrix4f(m_u_ViewProjection, mViewProjection);
 			mShader->SetUniform3f(mShader->GetUniformLocation("u_Material.ambient"), aux.GetMaterial().ambient);
@@ -165,9 +191,9 @@ void Render3DScene::Update()
 	// Light
 	{
 		mLightShader->bind();
-		for (auto& aux : mLight)
+		for (auto aux : m_light_list)
 		{
-			Model3D light_model = aux.GetModel();
+			Model3D light_model = aux->GetModel();
 			if (light_model.isVisible())
 			{
 				m_model = light_model.GetScale() * light_model.GetRotation() * light_model.GetTranslation(); //Model view projection
@@ -175,7 +201,7 @@ void Render3DScene::Update()
 
 				mLightShader->SetUniformMatrix4f(mLightShader->GetUniformLocation("u_Model"), m_model);
 				mLightShader->SetUniformMatrix4f(mLightShader->GetUniformLocation("u_ViewProjection"), mViewProjection);
-				mLightShader->SetUniform3f(mLightShader->GetUniformLocation("u_Color"), aux.GetLightColor());
+				mLightShader->SetUniform3f(mLightShader->GetUniformLocation("u_Color"), aux->GetLightColor());
 
 				light_model.GetMesh()->GetVertexArray().bind();
 				light_model.GetMesh()->GetIndexBuffer().bind();
@@ -185,5 +211,6 @@ void Render3DScene::Update()
 			}
 		}
 	}
+	
 	mShader->unbind();
 }

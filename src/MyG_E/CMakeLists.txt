@@ -2,16 +2,8 @@
 
 set (core_source
     Core/BatchRenderer.h
-    Core/Camera.cpp
-    Core/Camera.h 
-    Core/EditCamera.cpp
-    Core/EditCamera.h
-    Core/FPSCamera.cpp
-    Core/FPSCamera.h
     Core/IndexBuffer.cpp
     Core/IndexBuffer.h
-    Core/Light.cpp
-    Core/Light.h
     Core/Mesh.cpp
     Core/Mesh.h
     Core/Model3D.cpp
@@ -35,6 +27,40 @@ list (APPEND MyG_E_sources
 )
 source_group ("Core" FILES
     ${core_source}
+)
+
+set (camera_source
+    Core/Camera/Camera.cpp
+    Core/Camera/Camera.h 
+    Core/Camera/EditCamera.cpp
+    Core/Camera/EditCamera.h
+    Core/Camera/FPSCamera.cpp
+    Core/Camera/FPSCamera.h
+)
+
+list (APPEND MyG_E_sources
+    ${camera_source}
+)
+source_group ("Core\\Camera" FILES
+    ${camera_source}
+)
+
+set (light_source
+    Core/Light/Light.cpp
+    Core/Light/Light.h
+    Core/Light/DirectionalLight.cpp
+    Core/Light/DirectionalLight.h
+    Core/Light/PointLight.cpp
+    Core/Light/PointLight.h
+    Core/Light/SpotLight.cpp
+    Core/Light/SpotLight.h
+)
+
+list (APPEND MyG_E_sources
+    ${light_source}
+)
+source_group ("Core\\Light" FILES
+    ${light_source}
 )
 
 set (math_source
@@ -106,7 +132,6 @@ source_group ("Shaders" FILES
 )
 
 #Executable
-
 add_executable (MyG_E
     ${MyG_E_sources}
 )
@@ -131,5 +156,4 @@ target_include_directories (MyG_E PUBLIC ${OPENGL_INCLUDE_DIR})
 target_link_libraries (MyG_E ${OPENGL_gl_LIBRARY})
 
 #install
-
 install (TARGETS MyG_E DESTINATION bin)

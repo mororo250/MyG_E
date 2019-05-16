@@ -6,8 +6,8 @@
 class Light
 {
 public:
-	Light(Vector<float, 3> position, Vector<float, 3> color = { 1.0f, 1.0f, 1.0f });
-	~Light();
+	Light(const Vector<float, 3>& position, const Vector<float, 3>& color);
+	virtual ~Light() = default;
 
 	inline Vector<float, 3> GetLightPosition() const { return m_model.GetPosition(); }
 	inline void SetLightPosition(const Vector<float, 3>& position) { m_model.SetPosition(position); }
@@ -26,7 +26,7 @@ public:
 
 	inline Model3D GetModel() const { return m_model; }
 
-	void ImGuiRenderer();
+	virtual void ImGuiRenderer();
 
 private:
 	Vector<float, 3> m_color;

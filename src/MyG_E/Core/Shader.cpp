@@ -50,22 +50,22 @@ void Shader::SetUniform4f(int location, float v1, float v2, float v3, float v4)
 	GLcall(glUniform4f(location, v1, v2, v3, v4));
 }
 
-void Shader::SetUniform3f(int location, Vector<float, 3> vector)
+void Shader::SetUniform3f(int location, const Vector<float, 3>& vector)
 {
 	GLcall(glUniform3f(location, vector[0], vector[1], vector[2]));
 }
 
-void Shader::SetUniform4f(int location, Vector<float, 4> vector)
+void Shader::SetUniform4f(int location, const Vector<float, 4>& vector)
 {
 	GLcall(glUniform4f(location, vector[0], vector[1], vector[2], vector[3]));
 }
 
-void Shader::SetUniformMatrix3f(int location, Matrix<float, 3, 3> matrix)
+void Shader::SetUniformMatrix3f(int location, const Matrix<float, 3, 3>& matrix)
 {
 	GLcall(glUniformMatrix3fv(location, 1, GL_TRUE, reinterpret_cast<const float *>(matrix.GetAsPointer()) ));
 }
 
-void Shader::SetUniformMatrix4f(int location, Matrix<float, 4, 4> matrix)
+void Shader::SetUniformMatrix4f(int location, const Matrix<float, 4, 4>& matrix)
 {
 	GLcall(glUniformMatrix4fv(location, 1, GL_TRUE, reinterpret_cast<const float *>(matrix.GetAsPointer()) ));
 }

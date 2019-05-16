@@ -17,11 +17,11 @@ public:
 	void SetUniform3f(int location, float v1, float v2, float v3);
 	void SetUniform4f(int location, float v1, float v2, float v3, float v4);
 
-	void SetUniform3f(int location, Vector<float, 3>vector3);
-	void SetUniform4f(int location, Vector<float, 4>vector4);
+	void SetUniform3f(int location, const Vector<float, 3>& vector3);
+	void SetUniform4f(int location, const Vector<float, 4>& vector4);
 
-	void SetUniformMatrix3f(int location, Matrix< float, 3, 3>);
-	void SetUniformMatrix4f(int location, Matrix< float, 4, 4>);
+	void SetUniformMatrix3f(int location, const Matrix< float, 3, 3>& matrix);
+	void SetUniformMatrix4f(int location, const Matrix< float, 4, 4>& matrix);
 	int GetUniformLocation(const std::string& name) const;
 
 	inline unsigned int GetProgram()const { return m_shader_program; }
