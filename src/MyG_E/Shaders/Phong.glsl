@@ -33,14 +33,18 @@ struct Material
 	float shininess;
 };
 
-struct PointLight 
+struct Light
 {
-	// Gneral.
-	vec3 position;
 	vec3 color;
 	float ambient_strength;
 	float diffuse_strength;
 	float specular_strength;
+};
+
+struct PointLight 
+{
+	vec3 position;
+	Light light;
 
 	// Attenuation.
 	float constant;
@@ -48,76 +52,86 @@ struct PointLight
 	float quadratic;
 };
 
+struct SpotLight
+{
+	vec3 position;
+	Light light;
+
+	float in_angle;
+	float out_angle;
+	vec3 direction;
+};
+
 struct DirectionalLight 
 {
-	// Gneral.
-	vec3 position;
-	vec3 color;
-	float ambient_strength;
-	float diffuse_strength;
-	float specular_strength;
-
-	// Directional
+	Light light;
 	vec3 directional;
 };
 
-#define MAX_POINT_LIGHT 10
-#define MAX_DIRECTIONAL_LIGHT 10
+#define MAX_LIGHT 10
 
 in vec4 v_Position;
 in vec3 v_Normal;
 
 uniform Material u_Material;
-uniform int u_NumPointLight;
-uniform int u_NumDirectionalLight;
 uniform vec3 u_ViewPos;
 
-uniform PointLight u_PointLight[MAX_POINT_LIGHT];
-uniform DirectionalLight u_DirectionalLight[MAX_DIRECTIONAL_LIGHT];
+// Lights:
+uniform int u_NumPointLight;
+uniform int u_NumSpotLight;
+uniform int u_NumDirectionalLight;
+uniform PointLight u_PointLight[MAX_LIGHT];
+uniform SpotLight u_SpotLight[MAX_LIGHT];
+uniform DirectionalLight u_DirectionalLight[MAX_LIGHT];
 
-vec3 point_light(int i)
+vec3 light(Light light, vec3 ray_direction)
 {
 	vec3 norm = normalize(v_Normal);
-	vec3 light_direction = normalize(u_PointLight[i].position - v_Position.xyz);
 	vec3 view_direction = normalize(u_ViewPos - v_Position.xyz);
-	vec3 reflect_direction = reflect(-light_direction, norm);
+	vec3 reflect_direction = reflect(ray_direction, norm);
+
+	// Ambient
+	vec3 ambient = light.ambient_strength * light.color * u_Material.ambient;
+
+// Difuse
+	float diff = max(dot(norm, -ray_direction), 0.0);
+	vec3 diffuse = diff * light.diffuse_strength * light.color * u_Material.diffuse;
+
+// Specular
+	float spec = pow(max(dot(view_direction, reflect_direction), 0.0), u_Material.shininess * 128);
+	vec3 specular = light.specular_strength * spec * light.color * u_Material.specular;
+
+	return ambient + diffuse + specular;
+}
+
+vec3 point_light(const int i)
+{
+	vec3 light_direction = normalize(u_PointLight[i].position - v_Position.xyz);
 
 // Attenuation
 	float distance = length(u_PointLight[i].position - v_Position.xyz);
 	float attenuation = 1.0f / (u_PointLight[i].constant + u_PointLight[i].linear * distance + u_PointLight[i].quadratic * distance * distance);
 	
-// Ambient
-	vec3 ambient = u_PointLight[i].ambient_strength * u_PointLight[i].color * u_Material.ambient;
-
-// Difuse
-	float diff = max(dot(norm, light_direction), 0.0);
-	vec3 diffuse = diff * u_PointLight[i].diffuse_strength * u_PointLight[i].color * u_Material.diffuse;
-
-// Specular
-	float spec = pow(max(dot(view_direction, reflect_direction), 0.0), u_Material.shininess * 128);
-	vec3 specular = u_PointLight[i].specular_strength * spec * u_PointLight[i].color * u_Material.specular;
-
-	return (ambient + diffuse + specular) * attenuation;
+	vec3 light = light(u_PointLight[i].light, -light_direction);
+	return light * attenuation;
 }
 
-vec3 directional_light(int i)
+vec3 spot_light(const int i)
 {
-	vec3 norm = normalize(v_Normal);
-	vec3 view_direction = normalize(u_ViewPos - v_Position.xyz);
-	vec3 reflect_direction = reflect(u_DirectionalLight[i].directional, norm);
+	vec3 light_direction = normalize(u_SpotLight[i].position - v_Position.xyz);
+	
+	float theta = dot(u_SpotLight[i].direction, -light_direction);
+	float epsilon = (u_SpotLight[i].in_angle - u_SpotLight[i].out_angle);
+	float intensity = clamp((theta - u_SpotLight[i].out_angle)/ epsilon , 0.0, 1.0);
+	
+	vec3 light = light(u_SpotLight[i].light, -light_direction);
+	return light * intensity;
+}
 
-// Ambient
-	vec3 ambient = u_DirectionalLight[i].ambient_strength * u_DirectionalLight[i].color * u_Material.ambient;
-
-// Difuse
-	float diff = max(dot(norm, -u_DirectionalLight[i].directional), 0.0);
-	vec3 diffuse = diff * u_DirectionalLight[i].diffuse_strength * u_DirectionalLight[i].color * u_Material.diffuse;
-
-// Specular
-	float spec = pow(max(dot(view_direction, reflect_direction), 0.0), u_Material.shininess * 128);
-	vec3 specular = u_DirectionalLight[i].specular_strength * spec * u_DirectionalLight[i].color * u_Material.specular;
-
-	return (ambient + diffuse + specular);
+vec3 directional_light(const int i)
+{
+	vec3 light = light(u_DirectionalLight[i].light, u_DirectionalLight[i].directional);
+	return light;
 }
 
 void main()
@@ -127,5 +141,7 @@ void main()
 		result += point_light(i);
 	for(int i = 0; i < u_NumDirectionalLight; i++)
 		result += directional_light(i);
+	for(int i = 0; i < u_NumSpotLight; i++)
+		result += spot_light(i);
 	Frag_color = vec4(result, 1.0);
 };
