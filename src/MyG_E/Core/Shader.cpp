@@ -145,13 +145,13 @@ bool Shader::CreateShader(const std::string& filepath)
 	GLcall(glAttachShader(m_shader_program, vertex_shader));
 	GLcall(glAttachShader(m_shader_program, frag_shader));
 	GLcall(glLinkProgram(m_shader_program));
-	//checks to see whether the executables contained in program can execute given the current OpenGL state
+	// Checks whether the executables contained in the program can execute given the current OpenGL state
 	GLcall(glValidateProgram(m_shader_program));
 
-	//Delete intermidiates Shaders 
+	// Delete intermidiates Shaders 
 	GLcall(glDeleteShader(vertex_shader));
 	GLcall(glDeleteShader(frag_shader));
-	//Testing if everything went right
+	// Testing if everything went right
 	int result;
 	GLcall(glGetProgramiv(m_shader_program, GL_VALIDATE_STATUS, &result));
 	if (!result) 
@@ -178,7 +178,7 @@ unsigned int Shader::CompileShader(const std::string& source, const unsigned int
 	GLcall(glShaderSource(id, 1, &c_str, nullptr));
 	GLcall(glCompileShader(id));
 
-	//Testing if everything went right
+	// Testing if everything went right.
 	int result;
 	GLcall(glGetShaderiv(id, GL_COMPILE_STATUS, &result));
 	if (!result)

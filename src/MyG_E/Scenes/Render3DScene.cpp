@@ -222,6 +222,7 @@ void Render3DScene::Update()
 			aux.GetMesh()->GetIndexBuffer().unbind();
 		}
 	}
+	mShader->unbind();
 
 	// Light
 	{
@@ -245,7 +246,6 @@ void Render3DScene::Update()
 				light_model.GetMesh()->GetIndexBuffer().unbind();
 			}
 		}
+		mLightShader->unbind();
 	}
-	
-	mShader->unbind();
 }
