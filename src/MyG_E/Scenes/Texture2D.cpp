@@ -53,7 +53,7 @@ Texture2D::Texture2D()
 	m_ib->unbind();
 	mShader->unbind();
 
-	m_renderer = std::make_unique<Renderer>();
+	m_renderer = std::make_unique<Renderer2D>();
 }
 
 Texture2D::~Texture2D()

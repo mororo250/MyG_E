@@ -38,6 +38,9 @@ bool Game::Initialize()
 	if (!glfwInit())
 		return 0;
 
+	/* use a multisample buffer with N samples instead of a normal color buffer */
+	glfwWindowHint(GLFW_SAMPLES, 4);
+
 	/* Create a windowed mode window and its OpenGL context */
 	mWindow = glfwCreateWindow(mWinLengh, mWinHigh, "Hello World", NULL, NULL);
 	if (!mWindow)
@@ -62,6 +65,9 @@ bool Game::Initialize()
 
 void Game::Loop()
 {
+	// Setup some opengl cofiguration
+	GLcall(glEnable(GL_MULTISAMPLE));
+
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -107,10 +113,10 @@ void Game::Loop()
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		
 		/* Swap front and back buffers */
-		GLcall(glfwSwapBuffers(mWindow));
+		glfwSwapBuffers(mWindow);
 
 		/* Poll for and process events */
-		GLcall(glfwPollEvents());
+		glfwPollEvents();
 		auto end = std::chrono::high_resolution_clock::now();
 		frametime = end - start;
 		mDelta = frametime.count();

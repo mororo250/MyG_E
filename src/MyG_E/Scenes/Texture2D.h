@@ -2,7 +2,7 @@
 
 #include "Scene.h"
 
-#include "Core/Renderer.h"
+#include "Core/Renderer2D.h"
 #include "Core/Texture.h"
 
 #include "Foundation\Math\Vector.h"

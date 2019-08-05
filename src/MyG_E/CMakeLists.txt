@@ -8,8 +8,11 @@ set (core_source
     Core/Mesh.h
     Core/Model3D.cpp
     Core/Model3D.h
-    Core/Renderer.cpp
     Core/Renderer.h
+	Core/Renderer2D.cpp
+	Core/Renderer2D.h
+	Core/Renderer3D.cpp
+	Core/Renderer3D.h
     Core/Shader.cpp
     Core/Shader.h
     Core/Sprite.cpp

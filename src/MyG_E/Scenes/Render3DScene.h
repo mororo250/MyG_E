@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Scene.h"
-#include "Core/Renderer.h"
+#include "Core/Renderer3D.h"
 #include "Core/Model3D.h"
 #include "Core/Camera/FPSCamera.h"
 #include "Core/Camera/EditCamera.h"
@@ -25,9 +25,6 @@ private:
 	std::unique_ptr<FPSCamera> mFPSCamera;
 	std::unique_ptr<EditCamera> mEditCamera;
 	std::vector<Light*> m_light_list;
-	std::vector<PointLight> m_point_light;
-	std::vector<SpotLight> m_spot_light;
-	std::vector<DirectionalLight> m_directional_light;
 	std::vector<Model3D> m_buffer;
 	std::vector<const char*> mListboxItem;
 	std::vector<const char*> mListboxLight;

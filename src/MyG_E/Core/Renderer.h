@@ -11,6 +11,9 @@
 class Renderer
 {
 public:
-	void Draw(const IndexBuffer& ib) const;
-	void Clear() const;
+	Renderer() = default;
+	virtual ~Renderer() = default;
+	 
+	virtual void Draw(const IndexBuffer& ib) const = 0;
+	virtual void Clear() const = 0;
 };

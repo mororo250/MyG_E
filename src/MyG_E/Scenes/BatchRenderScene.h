@@ -24,7 +24,6 @@ private:
 
 	std::vector<VertexData2C> mSprites;
 	std::unique_ptr<BatchRenderer<VertexData2C>> mBatchRenderer;
-	std::unique_ptr<Renderer> m_renderer;
 	std::unique_ptr<Shader> mShader;
 	std::unique_ptr<Texture> m_texture;
 

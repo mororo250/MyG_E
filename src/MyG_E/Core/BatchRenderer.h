@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Renderer.h"
+#include "Renderer2D.h"
 #include "Sprite.h"
 
 #include <vector>
@@ -97,6 +97,6 @@ private:
 	std::unique_ptr<VertexArray> m_vao;
 	std::unique_ptr<VertexBuffer> m_vb;
 	std::unique_ptr<IndexBuffer> m_ib;
-	std::unique_ptr<Renderer> m_renderer;
+	std::unique_ptr<Renderer2D> m_renderer;
 	T* m_buffer;
 };

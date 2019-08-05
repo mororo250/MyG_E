@@ -61,37 +61,29 @@ Render3DScene::Render3DScene()
 	}
 	for (auto& I : m_buffer)
 		mListboxItem.push_back(I.GetObjectName().c_str());
+	
+	// Create Lights
 	{
-		// Point. 
-		m_point_light.push_back(Vector<float, 3>({ 1.0f, 1.0f, -40.0f }));
-		m_point_light[0].SetAmbientStength(0.0f);
-		mListboxLight.push_back("Point Light 1");
-		m_point_light.push_back(Vector<float, 3>({ 1.0f, 1.0f, 40.0f }));
-		m_point_light[1].SetAmbientStength(0.0f);
-		mListboxLight.push_back("Point Light 2");
-		// Spot.
-		m_spot_light.push_back(Vector<float, 3>({40.0f, 5.0f, 0.0f}));
-		m_spot_light[0].SetAmbientStength(0.0f);
-		mListboxLight.push_back("Spot Light 1");
-		m_spot_light.push_back(Vector<float, 3>({-40.0f, 5.0f, 0.0f}));
-		m_point_light[1].SetAmbientStength(0.0f);
-		mListboxLight.push_back("Spot Light 2");
-		// Directional
-		m_directional_light.push_back(Vector<float, 3>({ 1.0f, 1.0f, 0.0f }));
-		mListboxLight.push_back("Directional Light 1");
+		m_light_list.push_back(new PointLight(Vector<float, 3>({ 1.0f, 1.0f, -40.0f })));
+		m_light_list[0]->SetAmbientStength(0.0f);
+		m_light_list.push_back(new PointLight(Vector<float, 3>({ 1.0f, 1.0f, 40.0f })));
+		m_light_list[1]->SetAmbientStength(0.0f);
+		m_light_list.push_back(new SpotLight(Vector<float, 3>({ 40.0f, 5.0f, 0.0f})));
+		m_light_list[2]->SetAmbientStength(0.0f);
+		m_light_list.push_back(new SpotLight(Vector<float, 3>({ -40.0f, 5.0f, 0.0f })));
+		m_light_list[3]->SetAmbientStength(0.0f);
+		m_light_list.push_back(new DirectionalLight(Vector<float, 3>({ 1.0f, 1.0f, 0.0f })));
 
-		m_light_list.push_back(&m_point_light[0]);
-		m_light_list.push_back(&m_point_light[1]);
-		m_light_list.push_back(&m_spot_light[0]);
-		m_light_list.push_back(&m_spot_light[1]);
-		m_light_list.push_back(&m_directional_light[0]);
+		mListboxLight.push_back("Point Light 1");
+		mListboxLight.push_back("Point Light 2");
+		mListboxLight.push_back("Spot Light 1");
+		mListboxLight.push_back("Spot Light 2");
+		mListboxLight.push_back("Directional Light 1");
 	}
 
+	// Create Camera
 	mFPSCamera = std::make_unique<FPSCamera>(Vector<float, 3>({ 0.0f, 0.0f, 0.0f }), Vector<float, 3>({0.0f, 0.0f, -1.0f}));
 	mEditCamera = std::make_unique<EditCamera>(Vector<float, 3>({ 0.0f, 0.0f, 5.0f }), Vector<float, 3>({ 0.0f, 0.0f, 0.0f }));
-	
-
-	GLcall(glEnable(GL_DEPTH_TEST));
 	
 
 	mLightShader = std::make_unique<Shader>("Light.glsl");
@@ -103,13 +95,13 @@ Render3DScene::Render3DScene()
 
 	mShader->unbind();
 
-	m_renderer = std::make_unique<Renderer>();
+	m_renderer = std::make_unique<Renderer3D>();
 }
 
 Render3DScene::~Render3DScene()
 {
-	GLcall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-	GLcall(glDisable(GL_DEPTH_TEST));
+	for (auto& aux : m_light_list)
+		delete aux;
 }
 
 void Render3DScene::ImGuiRenderer()
@@ -153,51 +145,17 @@ void Render3DScene::Update()
 {
 	mEditCamera->Update();
 
-	GLcall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+	m_renderer->Clear();
 	
 	mShader->bind();
-	// Light uniforms.
-	// Point Light.
-	for (unsigned int i = 0; i < m_point_light.size(); i++ )
-	{
-		std::string light = "u_PointLight[" + std::to_string(i) + "]";
-		mShader->SetUniform3f(mShader->GetUniformLocation(light + ".light.color"), m_point_light[i].GetLightColor());
-		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".light.ambient_strength"), m_point_light[i].GetAmbientStength());
-		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".light.diffuse_strength"), m_point_light[i].GetDiffuseStrength());
-		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".light.specular_strength"), m_point_light[i].GetSpecularStrength());
-		mShader->SetUniform3f(mShader->GetUniformLocation(light + ".position"), m_point_light[i].GetLightPosition());
-		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".constant"), m_point_light[i].GetConstant());
-		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".linear"), m_point_light[i].GetLinear());
-		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".quadratic"), m_point_light[i].GetQuadratic());
-	}
-	// SpotLight
-	for (unsigned int i = 0; i < m_spot_light.size(); i++)
-	{
-		std::string light = "u_SpotLight[" + std::to_string(i) + "]";
-		mShader->SetUniform3f(mShader->GetUniformLocation(light + ".light.color"), m_spot_light[i].GetLightColor());
-		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".light.ambient_strength"), m_spot_light[i].GetAmbientStength());
-		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".light.diffuse_strength"), m_spot_light[i].GetDiffuseStrength());
-		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".light.specular_strength"), m_spot_light[i].GetSpecularStrength());
-		mShader->SetUniform3f(mShader->GetUniformLocation(light + ".position"), m_spot_light[i].GetLightPosition());
-		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".in_angle"), std::cos(m_spot_light[i].GetInAngle()));
-		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".out_angle"), std::cos(m_spot_light[i].GetOutAngle()));
-		mShader->SetUniform3f(mShader->GetUniformLocation(light + ".direction"), m_spot_light[i].GetDirection());
-	}
-	// DirectionalLight
-	for (unsigned int i = 0; i < m_directional_light.size(); i++)
-	{
-		std::string light = "u_DirectionalLight[" + std::to_string(i) + "]";
-		mShader->SetUniform3f(mShader->GetUniformLocation(light + ".light.color"), m_directional_light[i].GetLightColor());
-		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".light.ambient_strength"), m_directional_light[i].GetAmbientStength());
-		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".light.diffuse_strength"), m_directional_light[i].GetDiffuseStrength());
-		mShader->SetUniform1f(mShader->GetUniformLocation(light + ".light.specular_strength"), m_directional_light[i].GetSpecularStrength());
-		mShader->SetUniform3f(mShader->GetUniformLocation(light + ".directional"), m_directional_light[i].GetDirectionalLight());
-	}
+
+	for (unsigned int i = 0; i < m_light_list.size(); i++)
+		m_light_list[i]->SetUniform(mShader.get());
 
 	// General uniforms.
-	mShader->SetUniform1i(mShader->GetUniformLocation("u_NumPointLight"), m_point_light.size());
-	mShader->SetUniform1i(mShader->GetUniformLocation("u_NumSpotLight"), m_spot_light.size());
-	mShader->SetUniform1i(mShader->GetUniformLocation("u_NumDirectionalLight"), m_directional_light.size());
+	mShader->SetUniform1i(mShader->GetUniformLocation("u_NumPointLight"), 2);
+	mShader->SetUniform1i(mShader->GetUniformLocation("u_NumSpotLight"), 2);
+	mShader->SetUniform1i(mShader->GetUniformLocation("u_NumDirectionalLight"), 1);
 	mShader->SetUniform3f(mShader->GetUniformLocation("u_ViewPos"), mEditCamera->GetPosition());
 
 	for (auto& aux : m_buffer)
@@ -227,9 +185,9 @@ void Render3DScene::Update()
 	// Light
 	{
 		mLightShader->bind();
-		for (auto aux : m_light_list)
+		for (unsigned int i = 0; i < m_light_list.size(); i++)
 		{
-			Model3D light_model = aux->GetModel();
+			Model3D light_model = m_light_list[i]->GetModel();
 			if (light_model.isVisible())
 			{
 				m_model = light_model.GetScale() * light_model.GetRotation() * light_model.GetTranslation(); //Model view projection
@@ -237,7 +195,7 @@ void Render3DScene::Update()
 
 				mLightShader->SetUniformMatrix4f(mLightShader->GetUniformLocation("u_Model"), m_model);
 				mLightShader->SetUniformMatrix4f(mLightShader->GetUniformLocation("u_ViewProjection"), mViewProjection);
-				mLightShader->SetUniform3f(mLightShader->GetUniformLocation("u_Color"), aux->GetLightColor());
+				mLightShader->SetUniform3f(mLightShader->GetUniformLocation("u_Color"), m_light_list[i]->GetLightColor());
 
 				light_model.GetMesh()->GetVertexArray().bind();
 				light_model.GetMesh()->GetIndexBuffer().bind();

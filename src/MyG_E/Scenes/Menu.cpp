@@ -1,11 +1,11 @@
 #include "Menu.h"
 #include "imgui.h"
-#include "Core/Renderer.h"
+#include "Core/Renderer2D.h"
 
 Menu::Menu(Scene*& CurrentScene)
 :mCurrentScene(CurrentScene)
 {
-	m_renderer = std::make_unique<Renderer>();
+	m_renderer = std::make_unique<Renderer2D>();
 }
 
 Menu::~Menu()

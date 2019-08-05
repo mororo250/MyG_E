@@ -27,6 +27,7 @@ public:
 	inline Model3D GetModel() const { return m_model; }
 
 	virtual void ImGuiRenderer();
+	virtual void SetUniform(class Shader* shader) = 0;
 
 private:
 	Vector<float, 3> m_color;
