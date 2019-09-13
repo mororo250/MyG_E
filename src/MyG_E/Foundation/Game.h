@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Foundation\Uncopyable.h"
+#include "Foundation\LayerCollection.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -17,6 +18,9 @@ public:
 
 	inline GLFWwindow* GetWindow() const { return mWindow; }
 	inline float GetDelta() const { return mDelta; }
+	inline int GetHeight() const { return mWinHeight; }
+	inline int GetWidth() const { return mWinWidth; }
+
 	inline static Game& Get() 
 	{ 
 		if (s_Instance == nullptr)
@@ -26,8 +30,10 @@ public:
 
 private:
 	float mDelta; //time between this frame and the last one
-	int mWinHigh;
-	int mWinLengh;
+	int mWinHeight;
+	int mWinWidth;
 	GLFWwindow* mWindow;
 	static Game *s_Instance;
+
+	LayerCollection m_layer_collection;
 };

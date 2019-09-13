@@ -4,6 +4,8 @@ set (core_source
     Core/BatchRenderer.h
     Core/IndexBuffer.cpp
     Core/IndexBuffer.h
+	Core/MasterController.cpp
+	Core/MasterController.h
     Core/Mesh.cpp
     Core/Mesh.h
     Core/Model3D.cpp
@@ -86,9 +88,14 @@ set (foundation_source
     Foundation/Game.cpp
     Foundation/Game.h
     Foundation/Gldebug.cpp
-    Foundation/Gldebug.h 
+    Foundation/Gldebug.h
+	Foundation/ImGuiLayer.cpp
+	Foundation/ImGuiLayer.h
     Foundation/Input.cpp
     Foundation/Input.h
+	Foundation/Layer.h
+	Foundation/LayerCollection.cpp
+	Foundation/LayerCollection.h
     Foundation/Main.cpp
     Foundation/Uncopyable.h
 )

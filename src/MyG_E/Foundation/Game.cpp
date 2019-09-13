@@ -10,16 +10,21 @@
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_glfw.h"
 
+// Scenes
 #include "Scenes/Texture2D.h"
 #include "Scenes/Menu.h"
 #include "Scenes/BatchRenderScene.h"
 #include "Scenes/Render3DScene.h"
 
+// Layers
+#include "Foundation/Layer.h"
+#include "Foundation/ImGuiLayer.h"
+
 Game* Game::s_Instance = nullptr;
 
 Game::Game()
-	:mWinHigh(768),
-	mWinLengh(1024),
+	:mWinHeight(768),
+	mWinWidth(1024),
 	mDelta(1.0f)
 {
 	if (s_Instance != nullptr)
@@ -42,7 +47,7 @@ bool Game::Initialize()
 	glfwWindowHint(GLFW_SAMPLES, 4);
 
 	/* Create a windowed mode window and its OpenGL context */
-	mWindow = glfwCreateWindow(mWinLengh, mWinHigh, "Hello World", NULL, NULL);
+	mWindow = glfwCreateWindow(mWinWidth, mWinHeight, "Hello World", NULL, NULL);
 	if (!mWindow)
 	{
 		glfwTerminate();
@@ -68,6 +73,10 @@ void Game::Loop()
 	// Setup some opengl cofiguration
 	GLcall(glEnable(GL_MULTISAMPLE));
 
+
+	m_layer_collection.push_layer(new ImGuiLayer());
+	
+	/*
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -86,11 +95,21 @@ void Game::Loop()
 	menu->RegisterScne<Texture2D>("Texture2D Scene");
 	menu->RegisterScne<BatchRenderScene>("Batch Rendering Scene");
 	menu->RegisterScne<Render3DScene>("render3D Scene");
-
+	*/
 	/* Loop until the user closes the window */
 	std::chrono::duration<float> frametime;
 	while (!glfwWindowShouldClose(mWindow))
 	{ 
+		for (auto& aux : m_layer_collection)
+			aux->update();
+
+		// Swap front and back buffers 
+		glfwSwapBuffers(mWindow);
+
+		// Poll for and process events 
+		glfwPollEvents();
+			
+		/*
 		auto start = std::chrono::high_resolution_clock::now();
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -112,25 +131,29 @@ void Game::Loop()
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		
-		/* Swap front and back buffers */
+		// Swap front and back buffers 
 		glfwSwapBuffers(mWindow);
 
-		/* Poll for and process events */
+		// Poll for and process events 
 		glfwPollEvents();
 		auto end = std::chrono::high_resolution_clock::now();
 		frametime = end - start;
 		mDelta = frametime.count();
+		*/
 	}
+	/*
 	if (CurrentScene != menu)
 		delete CurrentScene;
 	delete menu;
+	*/
 }
 
 void Game::Shutdown()
 {
+	/*
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
-	
+	*/
 	glfwTerminate();
 }

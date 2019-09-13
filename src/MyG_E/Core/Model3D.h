@@ -55,6 +55,7 @@ public:
 	void ImGuiRenderer();
 
 	static unsigned int GetNumberofObjects() { return m_number_of_objects; }
+
 private:
 	std::shared_ptr<Mesh> m_mesh;
 	Material mMaterial;
