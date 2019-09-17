@@ -10,7 +10,18 @@
 enum KeyCode 
 {
 	KEY_A = 65,
+	KEY_B = 66,
+	KEY_C = 67,
 	KEY_D = 68,
+	KEY_E = 69,
+	KEY_F = 70,
+	KEY_G = 71,
+	KEY_H = 72,
+	KEY_I = 73,
+	KEY_J = 74,
+	KEY_K = 75,
+	KEY_L = 76,
+	KEY_M = 77,
 	KEY_S = 83,
 	KEY_W = 87,
 	KEY_LSHIFT = 340,

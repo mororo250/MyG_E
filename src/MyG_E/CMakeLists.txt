@@ -4,8 +4,8 @@ set (core_source
     Core/BatchRenderer.h
     Core/IndexBuffer.cpp
     Core/IndexBuffer.h
-	Core/MasterController.cpp
-	Core/MasterController.h
+	Core/ProjectController.cpp
+	Core/ProjectController.h
     Core/Mesh.cpp
     Core/Mesh.h
     Core/Model3D.cpp
@@ -84,6 +84,18 @@ source_group ("Foundation\\Math" FILES
     ${math_source}
 )
 
+set (project_source
+	Foundation/Project/ProjectFileReader.h
+	Foundation/Project/ProjectFileReader.cpp
+)
+
+list (APPEND MyG_E_sources
+    ${project_source}
+)
+source_group ("Foundation\\Project" FILES
+    ${project_source}
+)
+
 set (foundation_source
     Foundation/Game.cpp
     Foundation/Game.h
@@ -154,6 +166,7 @@ target_link_libraries (MyG_E
     glad
     imgui
     imstb
+    rapidjson
 )
 
 target_link_libraries (MyG_E     

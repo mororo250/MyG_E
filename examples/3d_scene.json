@@ -1,0 +1,70 @@
+{
+    "camera":
+    {
+        "model": "edit_camera",
+        "position":
+        {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 5.0
+        },
+        "focus_point":
+        {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        }
+    },
+    "object_buffer":[
+        {
+            "name": "object1",
+            "model": "plane",
+            "position":
+            {
+                "x": 0.0,
+                "y": -1.0,
+                "z": 0.0
+            },
+            "scale":
+            {
+                "x": 100.0,
+                "y": 0.0,
+                "z": 100.0
+            },
+            "material":
+            {
+                "ambient":
+                {
+                    "x": 0.05375,
+                    "y": 0.05,
+                    "z": 0.06625
+                },
+                "diffuse":
+                {
+                    "x": 0.07568,
+                    "y": 0.61424,
+                    "z": 0.07568
+                },
+                "specular":
+                {
+                    "x": 0.633,
+                    "y": 0.727811,
+                    "z": 0.633
+                },
+                "shininess": 0.6
+            }
+        }
+    ],
+    "light_buffer":[
+        {
+            "name": "light1",
+            "model": "point_light",
+            "position":
+            {
+                "x": 1.0,
+                "y": 1.0,
+                "z": -40.0
+            }
+        }
+    ]
+}

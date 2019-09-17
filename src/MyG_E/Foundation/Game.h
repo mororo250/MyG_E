@@ -36,4 +36,6 @@ private:
 	static Game *s_Instance;
 
 	LayerCollection m_layer_collection;
+	class ImGuiLayer* m_imgui_layer;
+	class ProjectController* m_project_controller;
 };

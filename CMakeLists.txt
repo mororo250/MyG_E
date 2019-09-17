@@ -21,11 +21,13 @@ include_directories (
     src/ThirdParty/glad/include
     src/ThirdParty/ImGui/include
     src/ThirdParty/imstb/include
+    src/TrirdParty/rapidjson/include
 )
 
 add_subdirectory (src/ThirdParty/glad)
 add_subdirectory (src/ThirdParty/ImGui)
 add_subdirectory (src/ThirdParty/imstb)
+add_subdirectory (src/ThirdParty/rapidjson)
 
 #Project subdirectory
 

@@ -19,6 +19,10 @@
 // Layers
 #include "Foundation/Layer.h"
 #include "Foundation/ImGuiLayer.h"
+#include "Core/ProjectController.h"
+
+// Others
+#include "Foundation/Project/ProjectFileReader.h"
 
 Game* Game::s_Instance = nullptr;
 
@@ -73,87 +77,43 @@ void Game::Loop()
 	// Setup some opengl cofiguration
 	GLcall(glEnable(GL_MULTISAMPLE));
 
+	ProjectFileReader* test = new ProjectFileReader();
+	if (test->read_file(std::string("..\\..\\..\\examples\\3d_scene.json")))
+		std::cout << "SUCCESS" << std::endl;
+	else
+		std::cout << "ERROR" << std::endl;
 
-	m_layer_collection.push_layer(new ImGuiLayer());
-	
-	/*
-	// Setup Dear ImGui context
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	// layers
+	m_imgui_layer = new ImGuiLayer();
+	m_project_controller = new ProjectController();
 
-	// Setup Platform/Renderer bindings
-	ImGui_ImplGlfw_InitForOpenGL(mWindow, true);
-	ImGui_ImplOpenGL3_Init("#version 130");
-	
-	// Setup Style
-	ImGui::StyleColorsDark();
+	m_layer_collection.push_layer(m_imgui_layer);
+	m_layer_collection.push_layer(m_project_controller);
 
-	Scene* CurrentScene = nullptr;
-	Menu* menu = new Menu(CurrentScene);
-	CurrentScene = menu;
-	menu->RegisterScne<Texture2D>("Texture2D Scene");
-	menu->RegisterScne<BatchRenderScene>("Batch Rendering Scene");
-	menu->RegisterScne<Render3DScene>("render3D Scene");
-	*/
 	/* Loop until the user closes the window */
 	std::chrono::duration<float> frametime;
 	while (!glfwWindowShouldClose(mWindow))
-	{ 
+	{
+		GLcall(glClear(GL_COLOR_BUFFER_BIT));
+		m_imgui_layer->begin();
+
 		for (auto& aux : m_layer_collection)
 			aux->update();
 
+		for (auto& aux : m_layer_collection)
+			aux->imgui_renderer();
+
+		m_imgui_layer->end();
+
 		// Swap front and back buffers 
 		glfwSwapBuffers(mWindow);
 
 		// Poll for and process events 
 		glfwPollEvents();
-			
-		/*
-		auto start = std::chrono::high_resolution_clock::now();
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-
-		if (CurrentScene)
-		{
-			ImGui::Begin("OpenGL");
-			if (CurrentScene != menu && ImGui::Button("<-"))
-			{
-				delete CurrentScene; //error 1281 when I delete Current Scene - Don't seam to make difference
-				CurrentScene = menu; 
-			}
-			ImGui::Text("fps: %f", 1.0f/mDelta);
-			CurrentScene->ImGuiRenderer();
-			ImGui::End();
- 			CurrentScene->Update();
-		}
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-		
-		// Swap front and back buffers 
-		glfwSwapBuffers(mWindow);
-
-		// Poll for and process events 
-		glfwPollEvents();
-		auto end = std::chrono::high_resolution_clock::now();
-		frametime = end - start;
-		mDelta = frametime.count();
-		*/
 	}
-	/*
-	if (CurrentScene != menu)
-		delete CurrentScene;
-	delete menu;
-	*/
 }
 
 void Game::Shutdown()
 {
-	/*
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
-	*/
 	glfwTerminate();
 }

@@ -1,7 +1,6 @@
 #ImGui directory CMake file
 
 set (sources
-    include/imconfig.1.h
     include/imconfig.h
     include/imgui.h
     include/imgui_impl_glfw.h

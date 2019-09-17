@@ -24,7 +24,7 @@ private:
 	std::unique_ptr<Renderer> m_renderer;
 	std::unique_ptr<FPSCamera> mFPSCamera;
 	std::unique_ptr<EditCamera> mEditCamera;
-	std::vector<Light*> m_light_list;
+	std::vector<Light*> m_light_buffer;
 	std::vector<Model3D> m_buffer;
 	std::vector<const char*> mListboxItem;
 	std::vector<const char*> mListboxLight;

@@ -8,13 +8,16 @@
 #include "Core\Light\SpotLight.h"
 #include "Core\Light\DirectionalLight.h"
 
-class MasterController
+class ProjectController : public Layer
 {
 public:
-	MasterController();
-	~MasterController();
+	ProjectController();
+	~ProjectController();
 
 	void Update();
+	void event() {}
+	
+	void ImGuiRenderer();
 
 private:
 	std::unique_ptr<Shader> m_shader;

@@ -64,15 +64,15 @@ Render3DScene::Render3DScene()
 	
 	// Create Lights
 	{
-		m_light_list.push_back(new PointLight(Vector<float, 3>({ 1.0f, 1.0f, -40.0f })));
-		m_light_list[0]->SetAmbientStength(0.0f);
-		m_light_list.push_back(new PointLight(Vector<float, 3>({ 1.0f, 1.0f, 40.0f })));
-		m_light_list[1]->SetAmbientStength(0.0f);
-		m_light_list.push_back(new SpotLight(Vector<float, 3>({ 40.0f, 5.0f, 0.0f})));
-		m_light_list[2]->SetAmbientStength(0.0f);
-		m_light_list.push_back(new SpotLight(Vector<float, 3>({ -40.0f, 5.0f, 0.0f })));
-		m_light_list[3]->SetAmbientStength(0.0f);
-		m_light_list.push_back(new DirectionalLight(Vector<float, 3>({ 1.0f, 1.0f, 0.0f })));
+		m_light_buffer.push_back(new PointLight(Vector<float, 3>({ 1.0f, 1.0f, -40.0f })));
+		m_light_buffer[0]->SetAmbientStength(0.0f);
+		m_light_buffer.push_back(new PointLight(Vector<float, 3>({ 1.0f, 1.0f, 40.0f })));
+		m_light_buffer[1]->SetAmbientStength(0.0f);
+		m_light_buffer.push_back(new SpotLight(Vector<float, 3>({ 40.0f, 5.0f, 0.0f})));
+		m_light_buffer[2]->SetAmbientStength(0.0f);
+		m_light_buffer.push_back(new SpotLight(Vector<float, 3>({ -40.0f, 5.0f, 0.0f })));
+		m_light_buffer[3]->SetAmbientStength(0.0f);
+		m_light_buffer.push_back(new DirectionalLight(Vector<float, 3>({ 1.0f, 1.0f, 0.0f })));
 
 		mListboxLight.push_back("Point Light 1");
 		mListboxLight.push_back("Point Light 2");
@@ -100,7 +100,7 @@ Render3DScene::Render3DScene()
 
 Render3DScene::~Render3DScene()
 {
-	for (auto& aux : m_light_list)
+	for (auto& aux : m_light_buffer)
 		delete aux;
 }
 
@@ -134,7 +134,7 @@ void Render3DScene::ImGuiRenderer()
 	{
 		ImGui::Begin("Light x");
 		
-		m_light_list[current_light_id]->ImGuiRenderer();
+		m_light_buffer[current_light_id]->ImGuiRenderer();
 
 		ImGui::End();
 	}
@@ -149,8 +149,8 @@ void Render3DScene::Update()
 	
 	mShader->bind();
 
-	for (unsigned int i = 0; i < m_light_list.size(); i++)
-		m_light_list[i]->SetUniform(mShader.get());
+	for (unsigned int i = 0; i < m_light_buffer.size(); i++)
+		m_light_buffer[i]->SetUniform(mShader.get());
 
 	// General uniforms.
 	mShader->SetUniform1i(mShader->GetUniformLocation("u_NumPointLight"), 2);
@@ -185,9 +185,9 @@ void Render3DScene::Update()
 	// Light
 	{
 		mLightShader->bind();
-		for (unsigned int i = 0; i < m_light_list.size(); i++)
+		for (unsigned int i = 0; i < m_light_buffer.size(); i++)
 		{
-			Model3D light_model = m_light_list[i]->GetModel();
+			Model3D light_model = m_light_buffer[i]->GetModel();
 			if (light_model.isVisible())
 			{
 				m_model = light_model.GetScale() * light_model.GetRotation() * light_model.GetTranslation(); //Model view projection
@@ -195,7 +195,7 @@ void Render3DScene::Update()
 
 				mLightShader->SetUniformMatrix4f(mLightShader->GetUniformLocation("u_Model"), m_model);
 				mLightShader->SetUniformMatrix4f(mLightShader->GetUniformLocation("u_ViewProjection"), mViewProjection);
-				mLightShader->SetUniform3f(mLightShader->GetUniformLocation("u_Color"), m_light_list[i]->GetLightColor());
+				mLightShader->SetUniform3f(mLightShader->GetUniformLocation("u_Color"), m_light_buffer[i]->GetLightColor());
 
 				light_model.GetMesh()->GetVertexArray().bind();
 				light_model.GetMesh()->GetIndexBuffer().bind();
