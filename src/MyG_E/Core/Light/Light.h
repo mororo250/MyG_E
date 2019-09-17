@@ -24,7 +24,7 @@ public:
 	inline float GetSpecularStrength() const { return m_specular_strength; }
 	inline void SetSpecularStrength(const float specular_strength) { m_specular_strength = specular_strength; }
 
-	inline Model3D GetModel() const { return m_model; }
+	inline Model3D& GetModel() { return m_model; }
 
 	virtual void ImGuiRenderer();
 	virtual void SetUniform(class Shader* shader) = 0;

@@ -5,7 +5,7 @@
         "position":
         {
             "x": 0.0,
-            "y": 0.0,
+            "y": 2.0,
             "z": 5.0
         },
         "focus_point":
@@ -17,7 +17,6 @@
     },
     "object_buffer":[
         {
-            "name": "object1",
             "model": "plane",
             "position":
             {
@@ -57,13 +56,21 @@
     ],
     "light_buffer":[
         {
-            "name": "light1",
             "model": "point_light",
             "position":
             {
-                "x": 1.0,
+                "x": 0.0,
                 "y": 1.0,
-                "z": -40.0
+                "z": 0.0
+            }
+        },
+        {
+            "model": "directional_light",
+            "position":
+            {
+                "x": 0.0,
+                "y": 1.0,
+                "z": 0.0
             }
         }
     ]

@@ -18,14 +18,12 @@ struct Material
 	float shininess;
 };
 
-
+// write copy contructor
 class Model3D
 {
 public:
-	Model3D(std::shared_ptr<Mesh> mesh);
-	Model3D(std::shared_ptr<Mesh> mesh, const std::string& name);
-	Model3D(const Mesh& mesh);
-	Model3D(const Mesh& mesh, const std::string& name);
+	Model3D(Mesh* mesh);
+	Model3D(Mesh* mesh, std::string& const name);
 	~Model3D();
 
 	inline Vector<float, 3> GetPosition() const { return m_position; };
@@ -40,7 +38,7 @@ public:
 	inline Matrix<float, 4, 4> GetRotation() { return m_rotation_matrix; }
 	void SetRotation(const Vector<float, 3>& Rotation);
 
-	inline Mesh* GetMesh() { return m_mesh.get(); }
+	inline Mesh* GetMesh() { return m_mesh; }
 
 	inline Material GetMaterial() const { return mMaterial; }
 	inline void SetMaterial(const Material& material) { mMaterial = material; };
@@ -57,7 +55,7 @@ public:
 	static unsigned int GetNumberofObjects() { return m_number_of_objects; }
 
 private:
-	std::shared_ptr<Mesh> m_mesh;
+	Mesh* m_mesh;
 	Material mMaterial;
 
 	Vector<float, 3> m_position;

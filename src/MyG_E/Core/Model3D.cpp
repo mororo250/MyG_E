@@ -12,7 +12,7 @@
 
 unsigned int Model3D::m_number_of_objects = 0;
 
-Model3D::Model3D(std::shared_ptr<Mesh> mesh)
+Model3D::Model3D(Mesh* mesh)
 	: m_position({ 0.0f, 0.0f, 0.0f })
 	, m_trans_matrix(0.0f, 0.0f, 0.0f)
 	, m_scale_matrix(1.0f, 1.0f, 1.0f)
@@ -25,8 +25,8 @@ Model3D::Model3D(std::shared_ptr<Mesh> mesh)
 	m_number_of_objects++;
 }
 
-Model3D::Model3D(std::shared_ptr<Mesh> mesh, const std::string& name)
-	:m_position({ 0.0f, 0.0f, 0.0f }),
+Model3D::Model3D(Mesh* mesh, std::string& const name)
+	: m_position({ 0.0f, 0.0f, 0.0f }),
 	m_trans_matrix(0.0f, 0.0f, 0.0f),
 	m_scale_matrix(1.0f, 1.0f, 1.0f),
 	m_scale({1.0f, 1.0f, 1.0f}),
@@ -40,6 +40,7 @@ Model3D::Model3D(std::shared_ptr<Mesh> mesh, const std::string& name)
 
 Model3D::~Model3D()
 {
+	delete m_mesh;
 }
 
 void Model3D::SetTranslation(const Vector<float, 3>& trans)

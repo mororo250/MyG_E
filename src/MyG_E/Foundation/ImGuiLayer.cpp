@@ -24,7 +24,7 @@ ImGuiLayer::ImGuiLayer()
 
 
 	ImGui_ImplGlfw_InitForOpenGL(Game::Get().GetWindow(), true);
-	ImGui_ImplOpenGL3_Init("#version 460");
+	ImGui_ImplOpenGL3_Init("#version 410");
 }
 
 ImGuiLayer::~ImGuiLayer()

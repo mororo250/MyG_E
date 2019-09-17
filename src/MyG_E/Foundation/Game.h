@@ -6,6 +6,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+class ProjectController;
+class ImGuiLayer;
+
 //singleton class
 class Game : public Uncopyable 
 {
@@ -20,6 +23,8 @@ public:
 	inline float GetDelta() const { return mDelta; }
 	inline int GetHeight() const { return mWinHeight; }
 	inline int GetWidth() const { return mWinWidth; }
+
+	void set_project(ProjectController* project_controller);
 
 	inline static Game& Get() 
 	{ 
@@ -36,6 +41,6 @@ private:
 	static Game *s_Instance;
 
 	LayerCollection m_layer_collection;
-	class ImGuiLayer* m_imgui_layer;
-	class ProjectController* m_project_controller;
+	ImGuiLayer* m_imgui_layer;
+	ProjectController* m_project_controller;
 };

@@ -13,9 +13,9 @@ Render3DScene::Render3DScene()
 {
 	srand(time(NULL));
 	
-	std::shared_ptr<Mesh> cube(new Mesh(Shape::CUBE));
-	std::shared_ptr<Mesh> sphere(new Mesh(Shape::SPHERE));
-	std::shared_ptr<Mesh> plane(new Mesh(Shape::PLANE));
+	Mesh* cube(new Mesh(Shape::CUBE));
+	Mesh* sphere(new Mesh(Shape::SPHERE));
+	Mesh* plane(new Mesh(Shape::PLANE));
 
 	Material esmerald({0.0215, 0.1745, 0.0215}, {0.07568, 0.61424, 0.07568}, {0.633, 0.727811, 0.633}, 0.6);
 	Material jade({0.135, 0.2225, 0.1575}, {0.54, 0.89, 0.63}, {0.316228, 0.316228, 0.316228 }, 0.1);

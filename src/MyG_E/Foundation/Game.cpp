@@ -29,7 +29,9 @@ Game* Game::s_Instance = nullptr;
 Game::Game()
 	:mWinHeight(768),
 	mWinWidth(1024),
-	mDelta(1.0f)
+	mDelta(1.0f),
+	m_imgui_layer(nullptr),
+	m_project_controller(nullptr)
 {
 	if (s_Instance != nullptr)
 	{
@@ -77,18 +79,16 @@ void Game::Loop()
 	// Setup some opengl cofiguration
 	GLcall(glEnable(GL_MULTISAMPLE));
 
+	// layers
+	m_imgui_layer = new ImGuiLayer();
+
+	m_layer_collection.push_layer(m_imgui_layer);
+
 	ProjectFileReader* test = new ProjectFileReader();
 	if (test->read_file(std::string("..\\..\\..\\examples\\3d_scene.json")))
 		std::cout << "SUCCESS" << std::endl;
 	else
 		std::cout << "ERROR" << std::endl;
-
-	// layers
-	m_imgui_layer = new ImGuiLayer();
-	m_project_controller = new ProjectController();
-
-	m_layer_collection.push_layer(m_imgui_layer);
-	m_layer_collection.push_layer(m_project_controller);
 
 	/* Loop until the user closes the window */
 	std::chrono::duration<float> frametime;
@@ -116,4 +116,15 @@ void Game::Loop()
 void Game::Shutdown()
 {
 	glfwTerminate();
+}
+
+void Game::set_project(ProjectController* project_controller)
+{
+	if (m_project_controller != nullptr)
+	{
+		m_layer_collection.pop_layer(m_project_controller);
+		delete m_project_controller;
+	}
+	m_project_controller = project_controller;
+	m_layer_collection.push_layer(m_project_controller);
 }

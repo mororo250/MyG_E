@@ -14,9 +14,11 @@ ProjectController::~ProjectController()
 	// Delete Objects
 	for (auto* aux : m_object_buffer)
 		delete aux;
+
 	// Delete Lights
 	for (auto* aux : m_light_buffer)
 		delete aux;
+	
 	// Delete Camera
 	delete m_camera;
 }
@@ -44,7 +46,7 @@ void ProjectController::update()
 	m_shader->SetUniform1i(m_shader->GetUniformLocation("u_NumDirectionalLight"), 1);
 	m_shader->SetUniform3f(m_shader->GetUniformLocation("u_ViewPos"), m_camera->GetPosition());
 
-	for (auto& aux : m_object_buffer)
+	for (auto* aux : m_object_buffer)
 	{
 		if (aux->isVisible())
 		{
@@ -71,23 +73,22 @@ void ProjectController::update()
 	// Light
 	{
 		m_light_shader->bind();
-		for (unsigned int i = 0; i < m_light_buffer.size(); i++)
+		for (auto* aux : m_light_buffer)
 		{
-			Model3D light_model = m_light_buffer[i]->GetModel();
-			if (light_model.isVisible())
+			if (aux->GetModel().isVisible())
 			{
-				Matrix<float, 4, 4> model_matrix = light_model.GetScale() * light_model.GetRotation() * light_model.GetTranslation(); //Model view projection
+				Matrix<float, 4, 4> model_matrix = aux->GetModel().GetScale() * aux->GetModel().GetRotation() * aux->GetModel().GetTranslation(); //Model view projection
 				Matrix<float, 4, 4> view_projection = m_camera->GetView() * m_persp_matrix;
 
 				m_light_shader->SetUniformMatrix4f(m_light_shader->GetUniformLocation("u_Model"), model_matrix);
 				m_light_shader->SetUniformMatrix4f(m_light_shader->GetUniformLocation("u_ViewProjection"), view_projection);
-				m_light_shader->SetUniform3f(m_light_shader->GetUniformLocation("u_Color"), m_light_buffer[i]->GetLightColor());
+				m_light_shader->SetUniform3f(m_light_shader->GetUniformLocation("u_Color"), aux->GetLightColor());
 
-				light_model.GetMesh()->GetVertexArray().bind();
-				light_model.GetMesh()->GetIndexBuffer().bind();
-				m_renderer->Draw(light_model.GetMesh()->GetIndexBuffer());
-				light_model.GetMesh()->GetVertexArray().unbind();
-				light_model.GetMesh()->GetIndexBuffer().unbind();
+				aux->GetModel().GetMesh()->GetVertexArray().bind();
+				aux->GetModel().GetMesh()->GetIndexBuffer().bind();
+				m_renderer->Draw(aux->GetModel().GetMesh()->GetIndexBuffer());
+				aux->GetModel().GetMesh()->GetVertexArray().unbind();
+				aux->GetModel().GetMesh()->GetIndexBuffer().unbind();
 			}
 		}
 		m_light_shader->unbind();
