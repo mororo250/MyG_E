@@ -49,8 +49,8 @@ void ImGuiLayer::event()
 void ImGuiLayer::imgui_renderer()
 {
 	// Use this to learn how to properly use imgui
-	// static bool show = true;
-	// ImGui::ShowDemoWindow(&show);
+	//static bool show = true;
+	//ImGui::ShowDemoWindow(&show);
 	docking();
 	show_menu();
 }

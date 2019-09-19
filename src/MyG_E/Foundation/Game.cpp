@@ -82,7 +82,7 @@ void Game::Loop()
 	// layers
 	m_imgui_layer = new ImGuiLayer();
 
-	m_layer_collection.push_layer(m_imgui_layer);
+	// m_layer_collection.push_layer(m_imgui_layer);
 
 	ProjectFileReader* test = new ProjectFileReader();
 	if (test->read_file(std::string("..\\..\\..\\examples\\3d_scene.json")))
