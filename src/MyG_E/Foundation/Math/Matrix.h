@@ -163,6 +163,7 @@ class TranslationMatrix4 : public Matrix<float, 4, 4>
 public:
 	TranslationMatrix4(const float TranX, const float TranY, const float TranZ);
 	TranslationMatrix4(const Vector<float, 3>& trans);
+
 	const float GetTranX() { return GetElement(3, 0); }
 	const float GetTranY() { return GetElement(3, 1); }
 	const float GetTranZ() { return GetElement(3, 2); }

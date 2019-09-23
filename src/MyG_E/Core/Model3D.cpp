@@ -18,7 +18,7 @@ Model3D::Model3D(Mesh* mesh)
 	, m_scale_matrix(1.0f, 1.0f, 1.0f)
 	, m_scale({ 1.0f, 1.0f, 1.0f })
 	, m_rotation_matrix(Matrix<float, 4, 4>::make_identity())
-	, m_mesh(mesh)
+	, m_mesh(new Mesh(*mesh))
 	, m_is_visible(true)
 {
 	m_object_name = "Object " + std::to_string(m_number_of_objects);
@@ -31,11 +31,29 @@ Model3D::Model3D(Mesh* mesh, std::string& const name)
 	m_scale_matrix(1.0f, 1.0f, 1.0f),
 	m_scale({1.0f, 1.0f, 1.0f}),
 	m_rotation_matrix(),
-	m_mesh(mesh),
+	m_mesh(new Mesh(*mesh)),
 	m_object_name(name),
 	m_is_visible(true)
 {
 	m_number_of_objects++;
+}
+
+Model3D::Model3D(Model3D& const model3d)
+	: m_trans_matrix(0.0f, 0.0f, 0.0f),
+	m_scale_matrix(1.0f, 1.0f, 1.0f),
+	m_rotation_matrix()
+{
+	m_mesh = new Mesh(*model3d.m_mesh);
+	mMaterial = model3d.mMaterial;
+
+	SetTranslation(model3d.m_position);
+	SetScale(model3d.m_scale);
+	SetRotation(model3d.m_rotate);
+
+	m_object_name = model3d.m_object_name;
+	m_is_visible = model3d.m_is_visible;
+	
+	m_number_of_objects = model3d.m_number_of_objects;
 }
 
 Model3D::~Model3D()
@@ -80,13 +98,13 @@ void Model3D::SetMaterial(Vector<float, 3>& ambient, Vector<float, 3>& diffuse, 
 
 void Model3D::ImGuiRenderer()
 {
-	ImGui::SliderFloat3("Translate", &m_position[0], -50.0f, 50.0f);
-	ImGui::SliderFloat3("Scale", &m_scale[0], 0.0f, 5.0f);
+	ImGui::DragFloat3("Translate", &m_position[0], 0.1f);
+	ImGui::DragFloat3("Scale", &m_scale[0], 0.1f, 0.0f, 100.0f);
 	ImGui::SliderFloat3("Rotate", &m_rotate[0], -6.28f, 6.28f);
 	ImGui::ColorEdit3("Ambient", &mMaterial.ambient[0]);
 	ImGui::ColorEdit3("Diffuse", &mMaterial.diffuse[0]);
 	ImGui::ColorEdit3("Specular", &mMaterial.specular[0]);
-	ImGui::SliderFloat("shininess", &mMaterial.shininess, 0.0f, 1.0f);
+	ImGui::DragFloat("shininess", &mMaterial.shininess, 0.05f, 0.0f, 1.0f);
 	ImGui::Checkbox("Visibility", &m_is_visible);
 
 	SetTranslation(m_position);

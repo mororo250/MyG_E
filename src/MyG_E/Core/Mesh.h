@@ -19,8 +19,11 @@ class Mesh
 public:
 
 	Mesh(Shape shape = Shape::CUBE);
+	// It's a very expensive call should be avoid as much as possible.
+	Mesh(Mesh& const mesh);
 	~Mesh();
 	
+
 	inline float* GetData() { return m_vertex_data.data(); }
 	inline const VertexArray& GetVertexArray() { return *m_vao; }
 	inline const IndexBuffer& GetIndexBuffer() { return *m_ib; }

@@ -4,6 +4,7 @@
 #include "imgui.h"
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_glfw.h"
+#include "Foundation/UI/FileBrowser.h"
 
 #include "GLFW/glfw3.h"
 
@@ -49,8 +50,8 @@ void ImGuiLayer::event()
 void ImGuiLayer::imgui_renderer()
 {
 	// Use this to learn how to properly use imgui
-	//static bool show = true;
-	//ImGui::ShowDemoWindow(&show);
+	// static bool show = true;
+	// ImGui::ShowDemoWindow(&show);
 	docking();
 	show_menu();
 }
@@ -151,7 +152,12 @@ void ImGuiLayer::show_menu()
 void ImGuiLayer::show_menu_file()
 {
 	if (ImGui::MenuItem("New")) {}
-	if (ImGui::MenuItem("Open", "Ctrl+O")) {}
+	if (ImGui::MenuItem("Open", "Ctrl+O")) 
+	{
+		std::string filename;
+		open_file_browser(filename);
+		Game::Get().open_project(filename);
+	}
 	if (ImGui::BeginMenu("Open Recent"))
 	{
 		ImGui::EndMenu();
@@ -163,7 +169,8 @@ void ImGuiLayer::show_menu_file()
 	{
 		ImGui::EndMenu();
 	}
-	if (ImGui::MenuItem("Quit", "Alt+F4")) {}
+	if (ImGui::MenuItem("Quit", "Alt+F4")) 
+		glfwSetWindowShouldClose(Game::Get().GetWindow(), GLFW_TRUE);
 }
 
 void ImGuiLayer::show_menu_edit()

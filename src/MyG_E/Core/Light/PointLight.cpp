@@ -16,9 +16,9 @@ PointLight::PointLight(const Vector<float, 3>& position, const Vector<float, 3>&
 void PointLight::ImGuiRenderer()
 {
 	Light::ImGuiRenderer();
-	ImGui::SliderFloat("Constant:", &m_attenuation_constants[0], 0.0f, 1.0f);
-	ImGui::SliderFloat("Linear:", &m_attenuation_constants[1], 0.0f, 1.0f);
-	ImGui::SliderFloat("Quadratic:", &m_attenuation_constants[2], 0.0f, 1.0f);
+	ImGui::DragFloat("Constant:", &m_attenuation_constants[0], 0.05, 0.0f, 1.0f);
+	ImGui::DragFloat("Linear:", &m_attenuation_constants[1], 0.05f, 0.0f, 1.0f);
+	ImGui::DragFloat("Quadratic:", &m_attenuation_constants[2], 0.05f, 0.0f, 1.0f);
 }
 
 void PointLight::SetUniform(Shader* shader)

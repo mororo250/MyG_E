@@ -15,6 +15,8 @@ public:
 	void ImGuiRenderer() override;
 	void SetUniform(Shader* shader) override;
 
+	static unsigned short get_count() { return s_count; }
+
 private:
 	Vector<float, 3> m_directional;
 	static unsigned short s_count;

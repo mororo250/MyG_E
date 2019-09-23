@@ -22,6 +22,8 @@ public:
 	void ImGuiRenderer() override;
 	void SetUniform(Shader* shader) override;
 
+	static unsigned short get_count() { return s_count; }
+
 private:
 	float m_in_angle;
 	float m_out_angle;

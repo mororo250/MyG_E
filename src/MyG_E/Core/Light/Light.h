@@ -7,10 +7,10 @@ class Light
 {
 public:
 	Light(const Vector<float, 3>& position, const Vector<float, 3>& color);
-	virtual ~Light() = default;
+	virtual ~Light();
 
-	inline Vector<float, 3> GetLightPosition() const { return m_model.GetPosition(); }
-	inline void SetLightPosition(const Vector<float, 3>& position) { m_model.SetPosition(position); }
+	inline Vector<float, 3> GetLightPosition() const { return m_model->GetPosition(); }
+	inline void SetLightPosition(const Vector<float, 3>& position) { m_model->SetPosition(position); }
 
 	inline Vector<float, 3> GetLightColor() const { return m_color; }
 	inline void SetLightColor(const Vector<float, 3>& color) { m_color = color; }
@@ -24,14 +24,14 @@ public:
 	inline float GetSpecularStrength() const { return m_specular_strength; }
 	inline void SetSpecularStrength(const float specular_strength) { m_specular_strength = specular_strength; }
 
-	inline Model3D& GetModel() { return m_model; }
+	Model3D* GetModel() { return m_model; }
 
 	virtual void ImGuiRenderer();
 	virtual void SetUniform(class Shader* shader) = 0;
 
 private:
 	Vector<float, 3> m_color;
-	Model3D m_model;
+	Model3D* m_model;
 	float m_ambient_strength;
 	float m_diffuse_strength;
 	float m_specular_strength;

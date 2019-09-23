@@ -24,6 +24,7 @@ class Model3D
 public:
 	Model3D(Mesh* mesh);
 	Model3D(Mesh* mesh, std::string& const name);
+	Model3D(Model3D& const model3d);
 	~Model3D();
 
 	inline Vector<float, 3> GetPosition() const { return m_position; };

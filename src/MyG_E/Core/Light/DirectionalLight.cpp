@@ -15,10 +15,8 @@ DirectionalLight::DirectionalLight(const Vector<float, 3>& position, const Vecto
 
 void DirectionalLight::ImGuiRenderer()
 {
-	static Vector<float, 3> directional = m_directional;
 	Light::ImGuiRenderer();
-	ImGui::SliderFloat3("Direction", &directional[0], 0.0f, 1.0f);
-	m_directional = directional;
+	ImGui::DragFloat3("Direction", &m_directional[0], 0.05f, 0.0f, 1.0f);
 	m_directional.Normalize();
 }
 

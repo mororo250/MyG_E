@@ -84,9 +84,22 @@ source_group ("Foundation\\Math" FILES
     ${math_source}
 )
 
+set (ui_source
+	Foundation/UI/FileBrowser.h
+	Foundation/UI/FileBrowser.cpp
+)
+
+list (APPEND MyG_E_sources
+    ${ui_source}
+)
+source_group ("Foundation\\ImGui" FILES
+    ${ui_source}
+)
+
 set (project_source
 	Foundation/Project/ProjectFileReader.h
 	Foundation/Project/ProjectFileReader.cpp
+	Foundation/Project/ProjectFileWriter.h
 )
 
 list (APPEND MyG_E_sources

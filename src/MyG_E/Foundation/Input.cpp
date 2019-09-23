@@ -7,13 +7,17 @@ Input::Input()
 	, mWindow(Game::Get().GetWindow())
 	, mScrollOffset(0.0)
 {
-	if (s_Instance != nullptr)
+	try
 	{
-		std::cout << "Instance already existed" << std::endl;
-		__debugbreak();
+		if (s_Instance != nullptr)
+			throw "Game already exist";
+		else
+			s_Instance = this;
 	}
-	else
-		s_Instance = this;
+	catch (const char* msg)
+	{
+		std::cerr << msg << std::endl;
+	}
 
 	glfwSetScrollCallback(mWindow, 
 		[](GLFWwindow * window, double xoffset, double yoffset)

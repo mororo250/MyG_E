@@ -82,7 +82,7 @@ int Shader::GetUniformLocation(const std::string& name) const
 void Shader::ReadShader_File(const std::string& shader_name, std::string& vertex_string, std::string& frag_string)
 {
 	// Shader directory.
-	std::string file_path = std::filesystem::current_path().parent_path().parent_path().parent_path().string(); 
+	std::string file_path = std::filesystem::current_path().parent_path().string(); 
 	file_path += "\\src\\MyG_E\\Shaders\\" + shader_name;
 	std::ifstream shader_file(file_path);
 

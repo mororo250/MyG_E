@@ -1,5 +1,4 @@
 #include <iostream>
-#include <string>
 #include <memory>
 #include <chrono> //time
 
@@ -33,18 +32,20 @@ Game::Game()
 	m_imgui_layer(nullptr),
 	m_project_controller(nullptr)
 {
-	if (s_Instance != nullptr)
+	try
 	{
-		std::cout << "Game already existed" << std::endl;
-		__debugbreak();
-	}
-	else
+		if (s_Instance != nullptr)
+			throw "EROOR!! Game already exist";
 		s_Instance = this;
+	}
+	catch (const char* msg) 
+	{
+		std::cerr << msg << std::endl;
+	}
 }
 
 bool Game::Initialize()
 {
-
 	/* Initialize the library */
 	if (!glfwInit())
 		return 0;
@@ -82,13 +83,7 @@ void Game::Loop()
 	// layers
 	m_imgui_layer = new ImGuiLayer();
 
-	// m_layer_collection.push_layer(m_imgui_layer);
-
-	ProjectFileReader* test = new ProjectFileReader();
-	if (test->read_file(std::string("..\\..\\..\\examples\\3d_scene.json")))
-		std::cout << "SUCCESS" << std::endl;
-	else
-		std::cout << "ERROR" << std::endl;
+	m_layer_collection.push_layer(m_imgui_layer);
 
 	/* Loop until the user closes the window */
 	std::chrono::duration<float> frametime;
@@ -100,8 +95,8 @@ void Game::Loop()
 		for (auto& aux : m_layer_collection)
 			aux->update();
 
-		for (auto& aux : m_layer_collection)
-			aux->imgui_renderer();
+		for (unsigned int i = 0; i < m_layer_collection.count(); i++)
+			m_layer_collection[i]->imgui_renderer();
 
 		m_imgui_layer->end();
 
@@ -116,6 +111,16 @@ void Game::Loop()
 void Game::Shutdown()
 {
 	glfwTerminate();
+}
+
+void Game::open_project(std::string path)
+{
+	ProjectFileReader file_reader;
+	if (file_reader.read_file(path))
+		std::cout << "Project in" << path << " was successfully loaded" << std::endl;
+	else
+		std::cout << "It 'wasn't possible to opne:" << path << std::endl;
+
 }
 
 void Game::set_project(ProjectController* project_controller)

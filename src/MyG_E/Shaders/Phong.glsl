@@ -19,7 +19,7 @@ void main()
 
 };
 
-//rasterization - call once for each pixel
+// rasterization - call once for each pixel
 #shader fragment
 #version 330 core
 
@@ -73,8 +73,8 @@ struct DirectionalLight
 in vec4 v_Position;
 in vec3 v_Normal;
 
-uniform Material u_Material;
 uniform vec3 u_ViewPos;
+uniform Material u_Material;
 
 // Lights:
 uniform int u_NumPointLight;
@@ -143,5 +143,6 @@ void main()
 		result += directional_light(i);
 	for(int i = 0; i < u_NumSpotLight; i++)
 		result += spot_light(i);
+
 	Frag_color = vec4(result, 1.0);
 };

@@ -6,6 +6,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <string>
+
 class ProjectController;
 class ImGuiLayer;
 
@@ -24,6 +26,7 @@ public:
 	inline int GetHeight() const { return mWinHeight; }
 	inline int GetWidth() const { return mWinWidth; }
 
+	void open_project(std::string path);
 	void set_project(ProjectController* project_controller);
 
 	inline static Game& Get() 

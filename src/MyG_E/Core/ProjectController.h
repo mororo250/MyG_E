@@ -30,6 +30,9 @@ public:
 	// Currente Camera
 	inline void set_camera(Camera* camera) { m_camera = camera; }
 private:
+	void create_object(Shape const shape);
+	void create_light(unsigned int type);
+
 	std::unique_ptr<Shader> m_shader;
 	std::unique_ptr<Shader> m_light_shader;
 	std::unique_ptr<Renderer> m_renderer;

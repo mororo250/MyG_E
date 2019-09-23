@@ -26,6 +26,13 @@ Mesh::Mesh(Shape shape)
 	CreateMesh();
 }
 
+Mesh::Mesh(Mesh& const mesh)
+{
+	m_vertex_data = mesh.m_vertex_data;
+	m_indices = mesh.m_indices;
+	CreateMesh();
+}
+
 Mesh::~Mesh()
 {
 }

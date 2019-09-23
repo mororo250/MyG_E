@@ -17,6 +17,8 @@ public:
 	void ImGuiRenderer() override;
 	void SetUniform(Shader* shader) override;
 
+	static unsigned short get_count() { return s_count; }
+
 private:
 	// Attenuation (constant, linear, quadratic).
 	Vector<float, 3> m_attenuation_constants;

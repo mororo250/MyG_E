@@ -5,7 +5,8 @@ ProjectController::ProjectController()
 	:m_camera(nullptr),
 	m_light_shader(new Shader("Light.glsl")),
 	m_shader(new Shader("Phong.glsl")),
-	m_renderer(new Renderer3D())
+	m_renderer(new Renderer3D()),
+	m_persp_matrix(CreatePerspectiveMatrix(45.0f, 1024.0f / 768.0f, 0.1f, 800.0f))
 {
 }
 
@@ -29,7 +30,7 @@ void ProjectController::update()
 		m_camera->Update();
 	else
 	{
-		std::cout << "" << std::endl;
+		std::cout << "There isn't any camera" << std::endl;
 		return; // Doen't continue if m_camera = nullptr 
 	}
 
@@ -41,9 +42,9 @@ void ProjectController::update()
 		m_light_buffer[i]->SetUniform(m_shader.get());
 
 	// General uniforms.
-	m_shader->SetUniform1i(m_shader->GetUniformLocation("u_NumPointLight"), 2);
-	m_shader->SetUniform1i(m_shader->GetUniformLocation("u_NumSpotLight"), 2);
-	m_shader->SetUniform1i(m_shader->GetUniformLocation("u_NumDirectionalLight"), 1);
+	m_shader->SetUniform1i(m_shader->GetUniformLocation("u_NumPointLight"), PointLight::get_count());
+	m_shader->SetUniform1i(m_shader->GetUniformLocation("u_NumSpotLight"), SpotLight::get_count());
+	m_shader->SetUniform1i(m_shader->GetUniformLocation("u_NumDirectionalLight"), DirectionalLight::get_count());
 	m_shader->SetUniform3f(m_shader->GetUniformLocation("u_ViewPos"), m_camera->GetPosition());
 
 	for (auto* aux : m_object_buffer)
@@ -75,20 +76,20 @@ void ProjectController::update()
 		m_light_shader->bind();
 		for (auto* aux : m_light_buffer)
 		{
-			if (aux->GetModel().isVisible())
+			if (aux->GetModel()->isVisible())
 			{
-				Matrix<float, 4, 4> model_matrix = aux->GetModel().GetScale() * aux->GetModel().GetRotation() * aux->GetModel().GetTranslation(); //Model view projection
+				Matrix<float, 4, 4> model_matrix = aux->GetModel()->GetScale() * aux->GetModel()->GetRotation() * aux->GetModel()->GetTranslation(); //Model view projection
 				Matrix<float, 4, 4> view_projection = m_camera->GetView() * m_persp_matrix;
 
 				m_light_shader->SetUniformMatrix4f(m_light_shader->GetUniformLocation("u_Model"), model_matrix);
 				m_light_shader->SetUniformMatrix4f(m_light_shader->GetUniformLocation("u_ViewProjection"), view_projection);
 				m_light_shader->SetUniform3f(m_light_shader->GetUniformLocation("u_Color"), aux->GetLightColor());
 
-				aux->GetModel().GetMesh()->GetVertexArray().bind();
-				aux->GetModel().GetMesh()->GetIndexBuffer().bind();
-				m_renderer->Draw(aux->GetModel().GetMesh()->GetIndexBuffer());
-				aux->GetModel().GetMesh()->GetVertexArray().unbind();
-				aux->GetModel().GetMesh()->GetIndexBuffer().unbind();
+				aux->GetModel()->GetMesh()->GetVertexArray().bind();
+				aux->GetModel()->GetMesh()->GetIndexBuffer().bind();
+				m_renderer->Draw(aux->GetModel()->GetMesh()->GetIndexBuffer());
+				aux->GetModel()->GetMesh()->GetVertexArray().unbind();
+				aux->GetModel()->GetMesh()->GetIndexBuffer().unbind();
 			}
 		}
 		m_light_shader->unbind();
@@ -101,7 +102,7 @@ void ProjectController::imgui_renderer()
 	m_camera->ImGuiRenderer();
 
 	static bool* p_open;
-	ImGui::SetNextWindowSize(ImVec2(430, 450), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(400, 200), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Editor", p_open, ImGuiWindowFlags_MenuBar))
 	{
 
@@ -127,6 +128,35 @@ void ProjectController::imgui_renderer()
 				selected = i;
 		}
 
+		// add item
+		if (ImGui::BeginMenu("add"))
+		{
+			if (ImGui::BeginMenu("Light"))
+			{
+				if (ImGui::MenuItem("Point Light"))
+					create_light(0);
+				if (ImGui::MenuItem("Spot Light"))
+					create_light(1);
+				if (ImGui::MenuItem("Directional Light"))
+					create_light(2);
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("Object"))
+			{
+				if (ImGui::MenuItem("Plane"))
+					create_object(Shape::PLANE);
+				if (ImGui::MenuItem("Cube"))
+					create_object(Shape::CUBE);
+				if (ImGui::MenuItem("Pyramid"))
+					create_object(Shape::PYRAMID);
+				if (ImGui::MenuItem("Sphere"))
+					create_object(Shape::SPHERE);
+				if (ImGui::MenuItem("import mesh"));
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenu();
+		}
+		
 		ImGui::EndChild();
 		ImGui::SameLine();
 		
@@ -164,6 +194,7 @@ void ProjectController::imgui_renderer()
 		ImGui::EndChild();
 		ImGui::EndGroup();
 	}
+
 	ImGui::End();
 }
 
@@ -179,4 +210,25 @@ void ProjectController::pop_object(Model3D* object)
 	auto aux = std::find(m_object_buffer.begin(), m_object_buffer.end(), object);
 	if (aux != m_object_buffer.end())
 		m_object_buffer.erase(aux);
+}
+
+void ProjectController::create_object(Shape const shape)
+{
+	push_object(new Model3D(new Mesh(shape)));
+}
+
+void ProjectController::create_light(unsigned int type)
+{
+	switch (type)
+	{
+	case 0:
+		push_light(new PointLight({ 0.0f, 0.0f, 0.0f }));
+		break;
+	case 1:
+		push_light(new SpotLight({ 0.0f, 0.0f, 0.0f }));
+		break;
+	case 2:
+		push_light(new DirectionalLight({ 0.0f, 0.0f, 0.0f }));
+		break;
+	}
 }

@@ -83,6 +83,7 @@ bool ProjectFileReader::read_file(std::string& const file_path)
 			object->SetPosition(position);
 			object->SetScale(scale);
 			object->SetMaterial(material);
+			// pass object ownership to controller.
 			controller->push_object(object);
 		}
 	}
