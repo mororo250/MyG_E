@@ -6,8 +6,8 @@
 
 unsigned short DirectionalLight::s_count = 0;
 
-DirectionalLight::DirectionalLight(const Vector<float, 3>& position, const Vector<float, 3>& color, const Vector<float, 3>& directional)
-	: m_directional(directional)
+DirectionalLight::DirectionalLight(const Vector<float, 3>& position, const Vector<float, 3>& color, const Vector<float, 3>& direction)
+	: m_direction(direction)
 	, m_id(s_count++)
 	, Light(position, color)
 {
@@ -16,8 +16,8 @@ DirectionalLight::DirectionalLight(const Vector<float, 3>& position, const Vecto
 void DirectionalLight::ImGuiRenderer()
 {
 	Light::ImGuiRenderer();
-	ImGui::DragFloat3("Direction", &m_directional[0], 0.05f, 0.0f, 1.0f);
-	m_directional.Normalize();
+	ImGui::DragFloat3("Direction", &m_direction[0], 0.05f, 0.0f, 1.0f);
+	m_direction.Normalize();
 }
 
 void DirectionalLight::SetUniform(Shader* shader)
@@ -27,5 +27,5 @@ void DirectionalLight::SetUniform(Shader* shader)
 	shader->SetUniform1f(shader->GetUniformLocation(light + ".light.ambient_strength"), GetAmbientStength());
 	shader->SetUniform1f(shader->GetUniformLocation(light + ".light.diffuse_strength"), GetDiffuseStrength());
 	shader->SetUniform1f(shader->GetUniformLocation(light + ".light.specular_strength"), GetSpecularStrength());
-	shader->SetUniform3f(shader->GetUniformLocation(light + ".directional"), m_directional);
+	shader->SetUniform3f(shader->GetUniformLocation(light + ".directional"), m_direction);
 }

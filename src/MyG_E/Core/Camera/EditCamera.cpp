@@ -8,23 +8,18 @@
 #include "imgui.h"
 
 
-EditCamera::EditCamera(const Vector<float, 3>& position, const Vector<float, 3>& focal_point)
-	: m_distance((position - focal_point).Length())
+EditCamera::EditCamera(const Vector<float, 3>& position, const Vector<float, 3>& direction)
+	: m_distance((position - direction).Length())
 	, m_yaw(0.0f)
 	, m_pitch(0.0f)
 {
 	m_position = position;
-	m_focal_point = focal_point;
-	m_view = LookAt(m_position, m_focal_point, {0.0f, 1.0f, 0.0f});
+	m_direction = direction;
+	m_view = LookAt(m_position, m_direction, {0.0f, 1.0f, 0.0f});
 }
 
 EditCamera::~EditCamera()
 {
-}
-
-void EditCamera::SetFocalPoint(const Vector<float, 3>& focal_point) 
-{
-	m_focal_point = focal_point;
 }
 
 void EditCamera::Update()
@@ -33,9 +28,9 @@ void EditCamera::Update()
 	Rotate();
 
 	Quaternion aux = GetOrientation();
-	m_view = TranslationMatrix4(-m_focal_point) * Quaternion::CreateRotationMatrix(aux) * TranslationMatrix4(-Vector<float, 3>({0.0f, 0.0f, m_distance}));
+	m_view = TranslationMatrix4(-m_direction) * Quaternion::CreateRotationMatrix(aux) * TranslationMatrix4(-Vector<float, 3>({0.0f, 0.0f, m_distance}));
 	// Update position
-	m_position = m_focal_point + Quaternion::rotate(aux, { 0.0f, 0.0f, m_distance });
+	m_position = m_direction + Quaternion::rotate(aux, { 0.0f, 0.0f, m_distance });
 }
 
 void EditCamera::Rotate()
@@ -55,7 +50,7 @@ void EditCamera::Rotate()
 
 void EditCamera::Translate()
 {
-	m_distance = (m_position - m_focal_point).Length();
+	m_distance = (m_position - m_direction).Length();
 	float moved_distance = Input::Get().GetScrollOffset() * m_speed / 10.0f * m_distance;
 	if (Input::Get().GetScrollOffset() && moved_distance >= m_distance) 
 		m_distance = m_distance * 0.2f;

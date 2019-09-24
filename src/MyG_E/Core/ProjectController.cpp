@@ -151,7 +151,7 @@ void ProjectController::imgui_renderer()
 					create_object(Shape::PYRAMID);
 				if (ImGui::MenuItem("Sphere"))
 					create_object(Shape::SPHERE);
-				if (ImGui::MenuItem("import mesh"));
+				if (ImGui::MenuItem("Import Mesh"));
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();

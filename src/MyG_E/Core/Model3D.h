@@ -49,6 +49,7 @@ public:
 	inline std::string& GetObjectName() { return m_object_name; }
 
 	inline void ChangeVisibility() { m_is_visible = !m_is_visible; }
+	inline void set_visibility(bool is_visible) { m_is_visible = is_visible; }
 	inline bool isVisible() { return m_is_visible; }
 
 	void ImGuiRenderer();

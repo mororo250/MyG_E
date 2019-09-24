@@ -1,7 +1,10 @@
 #include "ProjectFileReader.h"
+
+#include "rapidjson/document.h"  
+
 #include "Core/ProjectController.h"
 
-bool ProjectFileReader::read_file(std::string& const file_path)
+bool ProjectFileReader::read_file(std::string const& file_path)
 {
 	ProjectController* controller = new ProjectController();
 	if (!is_json(get_filename(file_path)))
@@ -55,6 +58,9 @@ bool ProjectFileReader::read_file(std::string& const file_path)
 				object_buffer[i]["scale"]["y"].GetFloat(),
 				object_buffer[i]["scale"]["z"].GetFloat() };
 
+			// Is visible?
+			bool is_visible = object_buffer[i]["visibility"].GetBool();
+
 			// Load object material
 			auto& material_json = object_buffer[i]["material"];
 			Vector<float, 3> ambient{ material_json["ambient"]["x"].GetFloat(),
@@ -99,14 +105,37 @@ bool ProjectFileReader::read_file(std::string& const file_path)
 				light_buffer[i]["position"]["y"].GetFloat(),
 				light_buffer[i]["position"]["z"].GetFloat() };
 
+			// Load Light Color
+			Vector<float, 3> color{ light_buffer[i]["color"]["x"].GetFloat(),
+				light_buffer[i]["color"]["y"].GetFloat(),
+				light_buffer[i]["color"]["z"].GetFloat() };
+
 			// Create light
 			std::string light_model = light_buffer[i]["model"].GetString();
 			if (light_model == "directional_light")
-				controller->push_light( new DirectionalLight(position));
+			{
+				// Load Direction
+				Vector<float, 3> direction{ light_buffer[i]["direction"]["x"].GetFloat(),
+				light_buffer[i]["direction"]["y"].GetFloat(),
+				light_buffer[i]["direction"]["z"].GetFloat() };
+
+				controller->push_light(new DirectionalLight(position, color, direction));
+			}
 			else if (light_model == "point_light")
-				controller->push_light(new PointLight(position));
+				controller->push_light(new PointLight(position, color));
 			else if (light_model == "spot_light")
-				controller->push_light(new SpotLight(position));
+			{
+				// In and out angles
+				float in_angle = light_buffer[i]["out_angle"].GetFloat();
+				float out_angle = light_buffer[i]["out_angle"].GetFloat();
+
+				// Load Direction
+				Vector<float, 3> direction{ light_buffer[i]["direction"]["x"].GetFloat(),
+				light_buffer[i]["direction"]["y"].GetFloat(),
+				light_buffer[i]["direction"]["z"].GetFloat() };
+
+				controller->push_light(new SpotLight(position, color, in_angle, out_angle, direction));
+			}
 		}
 	}
 	Game::Get().set_project(controller);

@@ -22,6 +22,7 @@
 
 // Others
 #include "Foundation/Project/ProjectFileReader.h"
+#include "Foundation/Project/ProjectFileWriter.h"
 
 Game* Game::s_Instance = nullptr;
 
@@ -110,6 +111,8 @@ void Game::Loop()
 
 void Game::Shutdown()
 {
+	ProjectFileWriter test;
+	test.write_file(m_project_controller, "C://Users//joao_//OneDrive//Desktop\git//MyG_E//examples//test.json");
 	glfwTerminate();
 }
 

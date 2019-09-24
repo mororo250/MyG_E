@@ -73,8 +73,8 @@ set (math_source
 	Foundation/Math/Matrix.h
 	Foundation/Math/Quaternion.cpp
 	Foundation/Math/Quaternion.h
-	Foundation/Math/Vector.h
 	Foundation/Math/Vector.cpp
+	Foundation/Math/Vector.h
 )
 
 list (APPEND MyG_E_sources
@@ -85,8 +85,8 @@ source_group ("Foundation\\Math" FILES
 )
 
 set (ui_source
-	Foundation/UI/FileBrowser.h
 	Foundation/UI/FileBrowser.cpp
+	Foundation/UI/FileBrowser.h
 )
 
 list (APPEND MyG_E_sources
@@ -97,8 +97,9 @@ source_group ("Foundation\\ImGui" FILES
 )
 
 set (project_source
-	Foundation/Project/ProjectFileReader.h
 	Foundation/Project/ProjectFileReader.cpp
+	Foundation/Project/ProjectFileReader.h
+	Foundation/Project/ProjectFileWriter.cpp
 	Foundation/Project/ProjectFileWriter.h
 )
 

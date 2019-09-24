@@ -16,6 +16,7 @@ class Game : public Uncopyable
 {
 private:
 	Game();
+
 public:
 	bool Initialize();
 	void Loop();

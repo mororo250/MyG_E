@@ -29,6 +29,7 @@ public:
 
 	// Currente Camera
 	inline void set_camera(Camera* camera) { m_camera = camera; }
+	inline Camera get_camera() const { return *m_camera; }
 private:
 	void create_object(Shape const shape);
 	void create_light(unsigned int type);
