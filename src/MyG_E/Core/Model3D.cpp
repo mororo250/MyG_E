@@ -44,11 +44,11 @@ Model3D::Model3D(Model3D& const model3d)
 	m_rotation_matrix()
 {
 	m_mesh = new Mesh(*model3d.m_mesh);
-	mMaterial = model3d.mMaterial;
+	m_material = model3d.m_material;
 
-	SetTranslation(model3d.m_position);
-	SetScale(model3d.m_scale);
-	SetRotation(model3d.m_rotate);
+	set_translation(model3d.m_position);
+	set_scale(model3d.m_scale);
+	set_rotation(model3d.m_rotate);
 
 	m_object_name = model3d.m_object_name;
 	m_is_visible = model3d.m_is_visible;
@@ -61,7 +61,7 @@ Model3D::~Model3D()
 	delete m_mesh;
 }
 
-void Model3D::SetTranslation(const Vector<float, 3>& trans)
+void Model3D::set_translation(Vector<float, 3> const& trans)
 {
 	m_position = trans;
 	m_trans_matrix.SetTranX(m_position[0]);
@@ -69,7 +69,7 @@ void Model3D::SetTranslation(const Vector<float, 3>& trans)
 	m_trans_matrix.SetTranZ(m_position[2]);
 }
 
-void Model3D::SetScale(const Vector<float, 3>& scale)
+void Model3D::set_scale(Vector<float, 3> const& scale)
 {
 	m_scale = scale;
 	m_scale_matrix.SetScaleX(m_scale[0]);
@@ -77,7 +77,7 @@ void Model3D::SetScale(const Vector<float, 3>& scale)
 	m_scale_matrix.SetScaleZ(m_scale[2]);
 }
 
-void Model3D::SetRotation(const Vector<float, 3>& rotation)
+void Model3D::set_rotation(Vector<float, 3> const& rotation)
 {
 	m_rotate = rotation;
 	Quaternion quatx = Quaternion::MakeRotate(m_rotate[0], { 1.0f, 0.0f, 0.0f });
@@ -88,12 +88,12 @@ void Model3D::SetRotation(const Vector<float, 3>& rotation)
 	m_rotation_matrix = Quaternion::CreateRotationMatrix(quat);
 }
 
-void Model3D::SetMaterial(Vector<float, 3>& ambient, Vector<float, 3>& diffuse, Vector<float, 3>& specular, float shininess)
+void Model3D::set_material(Vector<float, 3> const& ambient, Vector<float, 3>const& diffuse, Vector<float, 3> const& specular, float shininess)
 {
-	mMaterial.ambient = ambient;
-	mMaterial.diffuse = diffuse;
-	mMaterial.specular = specular;
-	mMaterial.shininess = shininess;
+	m_material.ambient = ambient;
+	m_material.diffuse = diffuse;
+	m_material.specular = specular;
+	m_material.shininess = shininess;
 }
 
 void Model3D::ImGuiRenderer()
@@ -101,14 +101,14 @@ void Model3D::ImGuiRenderer()
 	ImGui::DragFloat3("Translate", &m_position[0], 0.1f);
 	ImGui::DragFloat3("Scale", &m_scale[0], 0.1f, 0.0f, 100.0f);
 	ImGui::SliderFloat3("Rotate", &m_rotate[0], -6.28f, 6.28f);
-	ImGui::ColorEdit3("Ambient", &mMaterial.ambient[0]);
-	ImGui::ColorEdit3("Diffuse", &mMaterial.diffuse[0]);
-	ImGui::ColorEdit3("Specular", &mMaterial.specular[0]);
-	ImGui::DragFloat("shininess", &mMaterial.shininess, 0.05f, 0.0f, 1.0f);
+	ImGui::ColorEdit3("Ambient", &m_material.ambient[0]);
+	ImGui::ColorEdit3("Diffuse", &m_material.diffuse[0]);
+	ImGui::ColorEdit3("Specular", &m_material.specular[0]);
+	ImGui::DragFloat("shininess", &m_material.shininess, 0.05f, 0.0f, 1.0f);
 	ImGui::Checkbox("Visibility", &m_is_visible);
 
-	SetTranslation(m_position);
-	SetScale(m_scale);
-	SetRotation(m_rotate);
+	set_translation(m_position);
+	set_scale(m_scale);
+	set_rotation(m_rotate);
 }
 

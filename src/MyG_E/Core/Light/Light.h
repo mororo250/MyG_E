@@ -9,8 +9,8 @@ public:
 	Light(const Vector<float, 3>& position, const Vector<float, 3>& color);
 	virtual ~Light();
 
-	inline Vector<float, 3> GetLightPosition() const { return m_model->GetPosition(); }
-	inline void SetLightPosition(const Vector<float, 3>& position) { m_model->SetPosition(position); }
+	inline Vector<float, 3> GetLightPosition() const { return m_model->get_position(); }
+	inline void SetLightPosition(const Vector<float, 3>& position) { m_model->set_position(position); }
 
 	inline Vector<float, 3> GetLightColor() const { return m_color; }
 	inline void SetLightColor(const Vector<float, 3>& color) { m_color = color; }

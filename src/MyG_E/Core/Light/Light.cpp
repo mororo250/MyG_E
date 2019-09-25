@@ -8,8 +8,8 @@ Light::Light(const Vector<float, 3>& position, const Vector<float, 3>& color)
 	, m_diffuse_strength(1.0f)
 	, m_specular_strength(1.0f)
 {
-	m_model->SetPosition(position);
-	m_model->SetScale({0.01f, 0.01f, 0.01f});
+	m_model->set_position(position);
+	m_model->set_scale({0.01f, 0.01f, 0.01f});
 }
 
 Light::~Light()
@@ -19,9 +19,9 @@ Light::~Light()
 
 void Light::ImGuiRenderer()
 {
-	Vector<float, 3> position = m_model->GetPosition();
+	Vector<float, 3> position = m_model->get_position();
 	ImGui::DragFloat3("Translate", &position[0], 0.1f);
-	m_model->SetPosition(position);
+	m_model->set_position(position);
 	ImGui::ColorEdit3("Light Color", &m_color[0]);
 	ImGui::Separator();
 	ImGui::DragFloat("Ambient stength", &m_ambient_strength, 0.05f , 0.0f, 1.0f);

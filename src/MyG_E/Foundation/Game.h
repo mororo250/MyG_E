@@ -27,7 +27,8 @@ public:
 	inline int GetHeight() const { return mWinHeight; }
 	inline int GetWidth() const { return mWinWidth; }
 
-	void open_project(std::string path);
+	void open_project(std::string const& path);
+	void save_project(std::string const& path);
 	void set_project(ProjectController* project_controller);
 
 	inline static Game& Get() 

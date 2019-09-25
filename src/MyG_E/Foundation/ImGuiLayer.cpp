@@ -4,7 +4,9 @@
 #include "imgui.h"
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_glfw.h"
+
 #include "Foundation/UI/FileBrowser.h"
+#include "Foundation/Project/ProjectFileWriter.h"
 
 #include "GLFW/glfw3.h"
 
@@ -163,7 +165,12 @@ void ImGuiLayer::show_menu_file()
 		ImGui::EndMenu();
 	}
 	if (ImGui::MenuItem("Save", "Ctrl+S")) {}
-	if (ImGui::MenuItem("Save As..")) {}
+	if (ImGui::MenuItem("Save As.."))
+	{
+		std::string filename;
+		save_file_browser(filename);
+		Game::Get().save_project(filename);
+	}
 	ImGui::Separator();
 	if (ImGui::BeginMenu("Options"))
 	{

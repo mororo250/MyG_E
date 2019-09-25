@@ -6,13 +6,13 @@
 class DirectionalLight : public Light
 {
 public:
-	DirectionalLight(const Vector<float, 3>& position,
-		const Vector<float, 3>& color = Vector<float, 3>({ 1.0f, 1.0f, 1.0f }),
-		const Vector<float, 3>& directional = Vector<float, 3>({0.0f, -1.0f, 0.0f}));
+	DirectionalLight(Vector<float, 3> const& position,
+		Vector<float, 3> const& color = Vector<float, 3>({ 1.0f, 1.0f, 1.0f }),
+		Vector<float, 3> const& directional = Vector<float, 3>({0.0f, -1.0f, 0.0f}));
 	~DirectionalLight() { s_count--; }
 
-	inline Vector<float, 3> GetDirectionalLight() { return m_direction; }
-	inline void SetDirectionalLight(Vector<float, 3>& direction) { m_direction = direction; }
+	inline Vector<float, 3> GetDirection() { return m_direction; }
+	inline void SetDirection(Vector<float, 3>& direction) { m_direction = direction; }
 
 	void ImGuiRenderer() override;
 	void SetUniform(Shader* shader) override;

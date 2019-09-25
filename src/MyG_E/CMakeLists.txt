@@ -138,8 +138,6 @@ set (scenes_source
     Scenes/BatchRenderScene.h
     Scenes/Menu.cpp
     Scenes/Menu.h
-    Scenes/Render3DScene.cpp
-    Scenes/Render3DScene.h
     Scenes/Scene.cpp
     Scenes/Scene.h
     Scenes/Texture2D.cpp

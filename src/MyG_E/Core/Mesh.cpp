@@ -2,6 +2,7 @@
 
 Mesh::Mesh(Shape shape)
 {
+	m_shape = shape;
 	switch (shape)
 	{
 	case Shape::PLANE:
@@ -28,6 +29,7 @@ Mesh::Mesh(Shape shape)
 
 Mesh::Mesh(Mesh& const mesh)
 {
+	m_shape = mesh.m_shape;
 	m_vertex_data = mesh.m_vertex_data;
 	m_indices = mesh.m_indices;
 	CreateMesh();

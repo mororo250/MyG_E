@@ -23,10 +23,10 @@ public:
 	Mesh(Mesh& const mesh);
 	~Mesh();
 	
-
+	inline Shape get_shape() { return m_shape; }
 	inline float* GetData() { return m_vertex_data.data(); }
-	inline const VertexArray& GetVertexArray() { return *m_vao; }
-	inline const IndexBuffer& GetIndexBuffer() { return *m_ib; }
+	inline VertexArray const& GetVertexArray() const { return *m_vao; }
+	inline IndexBuffer const& GetIndexBuffer() const { return *m_ib; }
 private:
 
 	static const std::vector<float> Mesh::plane_vertices;
@@ -38,6 +38,7 @@ private:
 	static const std::vector<float> sphere_vertices;
 	static const std::vector<unsigned int> sphere_indices;
 
+	Shape m_shape;
 	std::vector<float> m_vertex_data;
 	std::vector<unsigned int> m_indices;
 	std::unique_ptr<VertexArray> m_vao;

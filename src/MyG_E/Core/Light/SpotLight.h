@@ -5,9 +5,9 @@
 class SpotLight : public Light
 {
 public:
-	SpotLight(const Vector<float, 3>& position, const Vector<float, 3>& color = Vector<float, 3>({ 1.0f, 1.0f, 1.0f }), 
+	SpotLight(Vector<float, 3> const& position, const Vector<float, 3> const& color = Vector<float, 3>({ 1.0f, 1.0f, 1.0f }),
 		float in_angle = 0.436332f, float out_angle = 0.523599f,
-		const Vector<float, 3>& direction = Vector<float, 3>({ 0.0f, -1.0f, 0.0f }));
+		Vector<float, 3>const& direction = Vector<float, 3>({ 0.0f, -1.0f, 0.0f }));
 	~SpotLight() { s_count--; }
 
 	inline float GetInAngle() { return m_in_angle; }

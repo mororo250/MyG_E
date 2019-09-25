@@ -25,11 +25,11 @@ public:
 	void SetDirection(Vector<float, 3> direction) { m_direction = direction; }
 
 	virtual void ImGuiRenderer();
-	virtual void Update() {}
+	virtual void Update() = 0;
 
 protected:
-	virtual void Translate() {}
-	virtual void Rotate() {}
+	virtual void Translate() = 0;
+	virtual void Rotate() = 0;
 
 	float m_speed; //speed of camera moviment
 	float m_sensitivity; //velocity in witch the camera will change front_camera

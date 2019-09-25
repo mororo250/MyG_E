@@ -22,14 +22,16 @@ public:
 	// Light Buffer
 	inline void push_light(Light* light) { m_light_buffer.push_back(light); }
 	void pop_light(Light* light);
+	inline std::vector<Light*> const get_light_buffer() const { return m_light_buffer; }
 
 	// Object Buffer
 	inline void push_object(Model3D* object) { m_object_buffer.push_back(object); }
 	void pop_object(Model3D* object);
+	inline std::vector<Model3D*> const get_object_buffer() const { return m_object_buffer; }
 
 	// Currente Camera
 	inline void set_camera(Camera* camera) { m_camera = camera; }
-	inline Camera get_camera() const { return *m_camera; }
+	inline Camera const* get_camera() const { return m_camera; }
 private:
 	void create_object(Shape const shape);
 	void create_light(unsigned int type);

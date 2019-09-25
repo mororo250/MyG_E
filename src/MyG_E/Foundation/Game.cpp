@@ -111,19 +111,26 @@ void Game::Loop()
 
 void Game::Shutdown()
 {
-	ProjectFileWriter test;
-	test.write_file(m_project_controller, "C://Users//joao_//OneDrive//Desktop\git//MyG_E//examples//test.json");
 	glfwTerminate();
 }
 
-void Game::open_project(std::string path)
+void Game::open_project(std::string const& path)
 {
 	ProjectFileReader file_reader;
 	if (file_reader.read_file(path))
 		std::cout << "Project in" << path << " was successfully loaded" << std::endl;
 	else
-		std::cout << "It 'wasn't possible to opne:" << path << std::endl;
+		std::cout << "It 'wasn't possible to open:" << path << std::endl;
 
+}
+
+void Game::save_project(std::string const& path)
+{
+	ProjectFileWriter file_writer;
+	if (file_writer.write_file(m_project_controller, path))
+		std::cout << "Project was successfully saved in " << path << std::endl;
+	else
+		std::cout << "It 'wasn't possible to save project in:" << path << std::endl;
 }
 
 void Game::set_project(ProjectController* project_controller)
