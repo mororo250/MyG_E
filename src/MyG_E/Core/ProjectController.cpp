@@ -39,13 +39,13 @@ void ProjectController::update()
 	m_shader->bind();
 
 	for (unsigned int i = 0; i < m_light_buffer.size(); i++)
-		m_light_buffer[i]->SetUniform(m_shader.get());
+		m_light_buffer[i]->set_uniform(m_shader.get());
 
 	// General uniforms.
-	m_shader->SetUniform1i(m_shader->GetUniformLocation("u_NumPointLight"), PointLight::get_count());
-	m_shader->SetUniform1i(m_shader->GetUniformLocation("u_NumSpotLight"), SpotLight::get_count());
-	m_shader->SetUniform1i(m_shader->GetUniformLocation("u_NumDirectionalLight"), DirectionalLight::get_count());
-	m_shader->SetUniform3f(m_shader->GetUniformLocation("u_ViewPos"), m_camera->GetPosition());
+	m_shader->set_uniform1i(m_shader->GetUniformLocation("u_NumPointLight"), PointLight::get_count());
+	m_shader->set_uniform1i(m_shader->GetUniformLocation("u_NumSpotLight"), SpotLight::get_count());
+	m_shader->set_uniform1i(m_shader->GetUniformLocation("u_NumDirectionalLight"), DirectionalLight::get_count());
+	m_shader->set_uniform3f(m_shader->GetUniformLocation("u_ViewPos"), m_camera->GetPosition());
 
 	for (auto* aux : m_object_buffer)
 	{
@@ -55,12 +55,12 @@ void ProjectController::update()
 			Matrix<float, 4, 4> view_projection = m_camera->GetView() * m_persp_matrix;
 
 			// Materials uniforms.
-			m_shader->SetUniformMatrix4f(m_shader->GetUniformLocation("u_Model"), model_matrix);
-			m_shader->SetUniformMatrix4f(m_shader->GetUniformLocation("u_ViewProjection"), view_projection);
-			m_shader->SetUniform3f(m_shader->GetUniformLocation("u_Material.ambient"), aux->get_material().ambient);
-			m_shader->SetUniform3f(m_shader->GetUniformLocation("u_Material.diffuse"), aux->get_material().diffuse);
-			m_shader->SetUniform3f(m_shader->GetUniformLocation("u_Material.specular"), aux->get_material().specular);
-			m_shader->SetUniform1f(m_shader->GetUniformLocation("u_Material.shininess"), aux->get_material().shininess);
+			m_shader->set_uniformMatrix4f(m_shader->GetUniformLocation("u_Model"), model_matrix);
+			m_shader->set_uniformMatrix4f(m_shader->GetUniformLocation("u_ViewProjection"), view_projection);
+			m_shader->set_uniform3f(m_shader->GetUniformLocation("u_Material.ambient"), aux->get_material().ambient);
+			m_shader->set_uniform3f(m_shader->GetUniformLocation("u_Material.diffuse"), aux->get_material().diffuse);
+			m_shader->set_uniform3f(m_shader->GetUniformLocation("u_Material.specular"), aux->get_material().specular);
+			m_shader->set_uniform1f(m_shader->GetUniformLocation("u_Material.shininess"), aux->get_material().shininess);
 
 			aux->get_mesh()->GetVertexArray().bind();
 			aux->get_mesh()->GetIndexBuffer().bind();
@@ -81,9 +81,9 @@ void ProjectController::update()
 				Matrix<float, 4, 4> model_matrix = aux->GetModel()->get_scale_matrix() * aux->GetModel()->get_rotation_matrix() * aux->GetModel()->get_translation(); //Model view projection
 				Matrix<float, 4, 4> view_projection = m_camera->GetView() * m_persp_matrix;
 
-				m_light_shader->SetUniformMatrix4f(m_light_shader->GetUniformLocation("u_Model"), model_matrix);
-				m_light_shader->SetUniformMatrix4f(m_light_shader->GetUniformLocation("u_ViewProjection"), view_projection);
-				m_light_shader->SetUniform3f(m_light_shader->GetUniformLocation("u_Color"), aux->GetLightColor());
+				m_light_shader->set_uniformMatrix4f(m_light_shader->GetUniformLocation("u_Model"), model_matrix);
+				m_light_shader->set_uniformMatrix4f(m_light_shader->GetUniformLocation("u_ViewProjection"), view_projection);
+				m_light_shader->set_uniform3f(m_light_shader->GetUniformLocation("u_Color"), aux->GetLightColor());
 
 				aux->GetModel()->get_mesh()->GetVertexArray().bind();
 				aux->GetModel()->get_mesh()->GetIndexBuffer().bind();

@@ -1,7 +1,5 @@
 #include "Quaternion.h"
 
-#include <cmath>
-
 Quaternion::Quaternion(const float scale, const Vector<float, 3>& vector)
 	: m_scalar(scale)
 	, m_vector(vector)

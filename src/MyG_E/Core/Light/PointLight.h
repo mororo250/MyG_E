@@ -15,7 +15,7 @@ public:
 	inline void SetAttenuationConstants(const Vector<float, 3>& constants) { m_attenuation_constants = constants; }
 
 	void ImGuiRenderer() override;
-	void SetUniform(Shader* shader) override;
+	void set_uniform(Shader* shader) override;
 
 	static unsigned short get_count() { return s_count; }
 

@@ -1,9 +1,5 @@
 #pragma once
 
-#include <iostream>
-#include <memory.h>
-#include <cmath>
-
 #include "Foundation\Math\Vector.h"
 
 template<class T, unsigned int NumRow, unsigned int NumCol>

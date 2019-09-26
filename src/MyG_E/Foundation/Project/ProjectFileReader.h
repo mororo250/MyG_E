@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-#include <fstream>   // rapidjson's DOM-style API
 #include "rapidjson/document.h"  
 
 class ProjectController;

@@ -1,7 +1,6 @@
 #include "SpotLight.h"
 #include "Core\Shader.h"
 
-#include <string>
 #include "imgui.h"
 
 unsigned short SpotLight::s_count = 0;
@@ -24,15 +23,15 @@ void SpotLight::ImGuiRenderer()
 		m_out_angle = m_in_angle;
 }
 
-void SpotLight::SetUniform(Shader* shader)
+void SpotLight::set_uniform(Shader* shader)
 {
 	std::string light = "u_SpotLight[" + std::to_string(m_id) + "]";
-	shader->SetUniform3f(shader->GetUniformLocation(light + ".light.color"), GetLightColor());
-	shader->SetUniform1f(shader->GetUniformLocation(light + ".light.ambient_strength"), GetAmbientStength());
-	shader->SetUniform1f(shader->GetUniformLocation(light + ".light.diffuse_strength"), GetDiffuseStrength());
-	shader->SetUniform1f(shader->GetUniformLocation(light + ".light.specular_strength"), GetSpecularStrength());
-	shader->SetUniform3f(shader->GetUniformLocation(light + ".position"), GetLightPosition());
-	shader->SetUniform1f(shader->GetUniformLocation(light + ".in_angle"), std::cos(m_in_angle));
-	shader->SetUniform1f(shader->GetUniformLocation(light + ".out_angle"), std::cos(m_out_angle));
-	shader->SetUniform3f(shader->GetUniformLocation(light + ".direction"), m_direction);
+	shader->set_uniform3f(shader->GetUniformLocation(light + ".light.color"), GetLightColor());
+	shader->set_uniform1f(shader->GetUniformLocation(light + ".light.ambient_strength"), GetAmbientStength());
+	shader->set_uniform1f(shader->GetUniformLocation(light + ".light.diffuse_strength"), GetDiffuseStrength());
+	shader->set_uniform1f(shader->GetUniformLocation(light + ".light.specular_strength"), GetSpecularStrength());
+	shader->set_uniform3f(shader->GetUniformLocation(light + ".position"), GetLightPosition());
+	shader->set_uniform1f(shader->GetUniformLocation(light + ".in_angle"), std::cos(m_in_angle));
+	shader->set_uniform1f(shader->GetUniformLocation(light + ".out_angle"), std::cos(m_out_angle));
+	shader->set_uniform3f(shader->GetUniformLocation(light + ".direction"), m_direction);
 }

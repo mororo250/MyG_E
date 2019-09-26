@@ -3,8 +3,6 @@
 #include "Renderer2D.h"
 #include "Sprite.h"
 
-#include <vector>
-
 template <class T>
 class BatchRenderer
 {

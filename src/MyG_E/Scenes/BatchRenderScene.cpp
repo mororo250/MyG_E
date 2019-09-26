@@ -1,5 +1,4 @@
 #include "BatchRenderScene.h"
-#include <time.h>
 #include "imgui.h"
 
 
@@ -54,7 +53,7 @@ BatchRenderScene::BatchRenderScene()
 	mMVP = WorldTransform * mOrtho; //Model view projection
 
 	mU_MVP = mShader->GetUniformLocation("u_MVP");
-	mShader->SetUniformMatrix3f(mU_MVP, mMVP);
+	mShader->set_uniformMatrix3f(mU_MVP, mMVP);
 
 	mBatchRenderer->begin();
 	mBatchRenderer->add(mSprites);
@@ -113,7 +112,7 @@ void BatchRenderScene::Update()
 	mBatchRenderer->end();
 
 	mShader->bind();
-	mShader->SetUniformMatrix3f(mU_MVP, mMVP);
+	mShader->set_uniformMatrix3f(mU_MVP, mMVP);
 
 	mBatchRenderer->Render();
 

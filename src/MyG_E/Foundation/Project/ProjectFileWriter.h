@@ -2,8 +2,6 @@
 
 #include "Core/ProjectController.h"
 
-#include <string>
-
 class ProjectFileWriter
 {
 public:

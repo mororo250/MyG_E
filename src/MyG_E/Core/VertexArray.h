@@ -4,8 +4,6 @@
 #include "Foundation/Gldebug.h"
 #include "Foundation\Uncopyable.h"
 
-#include <vector>
-
 
 struct VertexLayout
 {

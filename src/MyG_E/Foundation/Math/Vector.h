@@ -1,10 +1,6 @@
 #pragma once
 
-#define _USE_MATH_DEFINES
-
-#include <iostream>
-#include <memory.h>
-#include <math.h>
+#define _USE_MATH_DEFINES // Math constants
 
 template<class T, unsigned int NumRow, unsigned int NumCol>
 class Matrix;

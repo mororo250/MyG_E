@@ -1,4 +1,5 @@
 #Sources
+include (../../cmake/include/cmake-precompiled-header.cmake)
 
 set (core_source
     Core/BatchRenderer.h
@@ -19,6 +20,7 @@ set (core_source
     Core/Shader.h
     Core/Sprite.cpp
     Core/Sprite.h
+    Core/SkyBox.h
     Core/Texture.cpp
     Core/Texture.h
     Core/VertexArray.cpp
@@ -96,6 +98,17 @@ source_group ("Foundation\\ImGui" FILES
     ${ui_source}
 )
 
+set (precompiled_source
+    Foundation/Precompiled/pch.cpp
+)
+
+list (APPEND MyG_E_sources
+    ${precompiled_source}
+)
+source_group ("Foundation\\Precompiled" FILES
+    ${precompiled_source}
+)
+
 set (project_source
 	Foundation/Project/ProjectFileReader.cpp
 	Foundation/Project/ProjectFileReader.h
@@ -136,8 +149,6 @@ source_group ("Foundation" FILES
 set (scenes_source
     Scenes/BatchRenderScene.cpp
     Scenes/BatchRenderScene.h
-    Scenes/Menu.cpp
-    Scenes/Menu.h
     Scenes/Scene.cpp
     Scenes/Scene.h
     Scenes/Texture2D.cpp
@@ -169,6 +180,9 @@ source_group ("Shaders" FILES
 add_executable (MyG_E
     ${MyG_E_sources}
 )
+
+#Precompiled
+add_precompiled_header(MyG_E Foundation/Precompiled/pch.h SOURCE_CXX Foundation/Precompiled/pch.cpp FORCEINCLUDE)
 
 set_target_properties (MyG_E PROPERTIES FOLDER "Core")
 

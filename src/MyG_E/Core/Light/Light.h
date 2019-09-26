@@ -6,14 +6,14 @@
 class Light
 {
 public:
-	Light(const Vector<float, 3>& position, const Vector<float, 3>& color);
+	Light(Vector<float, 3> const& position, Vector<float, 3> const& color);
 	virtual ~Light();
 
 	inline Vector<float, 3> GetLightPosition() const { return m_model->get_position(); }
-	inline void SetLightPosition(const Vector<float, 3>& position) { m_model->set_position(position); }
+	inline void SetLightPosition(Vector<float, 3> const& position) { m_model->set_position(position); }
 
 	inline Vector<float, 3> GetLightColor() const { return m_color; }
-	inline void SetLightColor(const Vector<float, 3>& color) { m_color = color; }
+	inline void SetLightColor(Vector<float, 3> const& color) { m_color = color; }
 
 	inline float GetAmbientStength() const { return m_ambient_strength; }
 	inline void SetAmbientStength(const float ambient_strength) { m_ambient_strength = ambient_strength; }
@@ -27,7 +27,7 @@ public:
 	Model3D* GetModel() { return m_model; }
 
 	virtual void ImGuiRenderer();
-	virtual void SetUniform(class Shader* shader) = 0;
+	virtual void set_uniform(class Shader* shader) = 0;
 
 private:
 	Vector<float, 3> m_color;

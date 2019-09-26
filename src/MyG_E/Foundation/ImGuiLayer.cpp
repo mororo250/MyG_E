@@ -10,8 +10,6 @@
 
 #include "GLFW/glfw3.h"
 
-#include <iostream>
-
 ImGuiLayer::ImGuiLayer()
 :m_time(0.0)
 {

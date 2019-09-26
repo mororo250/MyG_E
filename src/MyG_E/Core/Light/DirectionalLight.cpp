@@ -1,7 +1,6 @@
 #include "DirectionalLight.h"
 #include "Core\Shader.h"
 
-#include <string>
 #include "imgui.h"
 
 unsigned short DirectionalLight::s_count = 0;
@@ -20,12 +19,12 @@ void DirectionalLight::ImGuiRenderer()
 	m_direction.Normalize();
 }
 
-void DirectionalLight::SetUniform(Shader* shader)
+void DirectionalLight::set_uniform(Shader* shader)
 {
 	std::string light = "u_DirectionalLight[" + std::to_string(m_id) + "]";
-	shader->SetUniform3f(shader->GetUniformLocation(light + ".light.color"), GetLightColor());
-	shader->SetUniform1f(shader->GetUniformLocation(light + ".light.ambient_strength"), GetAmbientStength());
-	shader->SetUniform1f(shader->GetUniformLocation(light + ".light.diffuse_strength"), GetDiffuseStrength());
-	shader->SetUniform1f(shader->GetUniformLocation(light + ".light.specular_strength"), GetSpecularStrength());
-	shader->SetUniform3f(shader->GetUniformLocation(light + ".directional"), m_direction);
+	shader->set_uniform3f(shader->GetUniformLocation(light + ".light.color"), GetLightColor());
+	shader->set_uniform1f(shader->GetUniformLocation(light + ".light.ambient_strength"), GetAmbientStength());
+	shader->set_uniform1f(shader->GetUniformLocation(light + ".light.diffuse_strength"), GetDiffuseStrength());
+	shader->set_uniform1f(shader->GetUniformLocation(light + ".light.specular_strength"), GetSpecularStrength());
+	shader->set_uniform3f(shader->GetUniformLocation(light + ".directional"), m_direction);
 }

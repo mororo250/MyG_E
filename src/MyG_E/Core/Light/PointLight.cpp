@@ -1,7 +1,6 @@
 #include "PointLight.h"
 #include "Core\Shader.h"
 
-#include <string>
 #include "imgui.h"
 
 unsigned short PointLight::s_count = 0;
@@ -21,15 +20,15 @@ void PointLight::ImGuiRenderer()
 	ImGui::DragFloat("Quadratic:", &m_attenuation_constants[2], 0.05f, 0.0f, 1.0f);
 }
 
-void PointLight::SetUniform(Shader* shader)
+void PointLight::set_uniform(Shader* shader)
 {
 	std::string light = "u_PointLight[" + std::to_string(m_id) + "]";
-	shader->SetUniform3f(shader->GetUniformLocation(light + ".light.color"), GetLightColor());
-	shader->SetUniform1f(shader->GetUniformLocation(light + ".light.ambient_strength"), GetAmbientStength());
-	shader->SetUniform1f(shader->GetUniformLocation(light + ".light.diffuse_strength"), GetDiffuseStrength());
-	shader->SetUniform1f(shader->GetUniformLocation(light + ".light.specular_strength"), GetSpecularStrength());
-	shader->SetUniform3f(shader->GetUniformLocation(light + ".position"), GetLightPosition());
-	shader->SetUniform1f(shader->GetUniformLocation(light + ".constant"), GetConstant());
-	shader->SetUniform1f(shader->GetUniformLocation(light + ".linear"), GetLinear());
-	shader->SetUniform1f(shader->GetUniformLocation(light + ".quadratic"), GetQuadratic());
+	shader->set_uniform3f(shader->GetUniformLocation(light + ".light.color"), GetLightColor());
+	shader->set_uniform1f(shader->GetUniformLocation(light + ".light.ambient_strength"), GetAmbientStength());
+	shader->set_uniform1f(shader->GetUniformLocation(light + ".light.diffuse_strength"), GetDiffuseStrength());
+	shader->set_uniform1f(shader->GetUniformLocation(light + ".light.specular_strength"), GetSpecularStrength());
+	shader->set_uniform3f(shader->GetUniformLocation(light + ".position"), GetLightPosition());
+	shader->set_uniform1f(shader->GetUniformLocation(light + ".constant"), GetConstant());
+	shader->set_uniform1f(shader->GetUniformLocation(light + ".linear"), GetLinear());
+	shader->set_uniform1f(shader->GetUniformLocation(light + ".quadratic"), GetQuadratic());
 }

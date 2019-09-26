@@ -3,8 +3,6 @@
 #include "Game.h"
 #include "Foundation\Uncopyable.h"
 
-#include <iostream>
-
 
 //keycodes using glfw numbers
 enum KeyCode 

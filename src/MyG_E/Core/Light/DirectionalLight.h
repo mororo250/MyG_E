@@ -15,7 +15,7 @@ public:
 	inline void SetDirection(Vector<float, 3>& direction) { m_direction = direction; }
 
 	void ImGuiRenderer() override;
-	void SetUniform(Shader* shader) override;
+	void set_uniform(Shader* shader) override;
 
 	static unsigned short get_count() { return s_count; }
 

@@ -6,8 +6,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <string>
-
 class ProjectController;
 class ImGuiLayer;
 

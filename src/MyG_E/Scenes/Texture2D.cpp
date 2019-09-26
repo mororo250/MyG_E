@@ -1,6 +1,5 @@
 #include "Texture2D.h"
 #include "Core/BatchRenderer.h"
-#include <filesystem>
 
 Texture2D::Texture2D()
 	:mTranX(384.0f), mTranY(512.0f), mScaleX(3.0f), mScaleY(3.0f), mAngle(0.0f),
@@ -39,14 +38,14 @@ Texture2D::Texture2D()
 	mMVP = WorldTransform * mOrtho; //Model view projection
 
 	mU_MVP = mShader->GetUniformLocation("u_MVP");
-	mShader->SetUniformMatrix3f(mU_MVP, mMVP);
+	mShader->set_uniformMatrix3f(mU_MVP, mMVP);
 
 	std::string file_path = std::filesystem::current_path().parent_path().parent_path().parent_path().string();
 	file_path += "\\src\\MyG_E\\Resources\\PS4.PNG";
 	m_texture = std::make_unique<Texture>(file_path);
 
 	m_texture->bind(0);
-	mShader->SetUniform1i(mShader->GetUniformLocation("u_texture"), 0);
+	mShader->set_uniform1i(mShader->GetUniformLocation("u_texture"), 0);
 
 	mVa->unbind();
 	m_vb->unbind();
@@ -84,7 +83,7 @@ void Texture2D::Update()
 	mMVP = WorldTransform * mOrtho;
 
 	mShader->bind();
-	mShader->SetUniformMatrix3f(mU_MVP, mMVP);
+	mShader->set_uniformMatrix3f(mU_MVP, mMVP);
 
 	mVa->bind();
 	m_ib->bind();

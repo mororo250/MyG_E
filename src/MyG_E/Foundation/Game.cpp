@@ -1,7 +1,3 @@
-#include <iostream>
-#include <memory>
-#include <chrono> //time
-
 #include "Game.h"
 
 //imgui
@@ -11,9 +7,7 @@
 
 // Scenes
 #include "Scenes/Texture2D.h"
-#include "Scenes/Menu.h"
 #include "Scenes/BatchRenderScene.h"
-#include "Scenes/Render3DScene.h"
 
 // Layers
 #include "Foundation/Layer.h"

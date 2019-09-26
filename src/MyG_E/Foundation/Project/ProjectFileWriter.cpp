@@ -1,7 +1,5 @@
 #include "ProjectFileWriter.h"
 
-#include <fstream>
-
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/prettywriter.h"
 

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Foundation/Layer.h"
-#include <vector>
 
 class LayerCollection
 {
