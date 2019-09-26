@@ -12,6 +12,19 @@ Light::Light(const Vector<float, 3>& position, const Vector<float, 3>& color)
 	m_model->set_scale({0.01f, 0.01f, 0.01f});
 }
 
+Light::Light(Light const& other)
+{
+	copy_other(other);
+}
+
+Light& Light::operator=(Light const& other)
+{
+	delete m_model;
+
+	copy_other(other);
+	return *this;
+}
+
 Light::~Light()
 {
 	delete m_model;
@@ -28,4 +41,13 @@ void Light::ImGuiRenderer()
 	ImGui::DragFloat("Diffuse stength", &m_diffuse_strength, 0.05f ,0.0f, 5.0f);
 	ImGui::DragFloat("Specular stength", &m_specular_strength, 0.05f, 0.0f, 5.0f);
 	ImGui::Separator();
+}
+
+void Light::copy_other(Light const& other)
+{
+	m_color = other.m_color;
+	m_ambient_strength = other.m_ambient_strength;
+	m_diffuse_strength = other.m_diffuse_strength;
+	m_specular_strength = other.m_specular_strength;
+	m_model = new Model3D(*m_model);
 }

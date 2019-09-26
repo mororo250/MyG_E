@@ -33,12 +33,6 @@
             "visibility": true,
             "material":
             {
-                "ambient":
-                {
-                    "x": 0.0215,
-                    "y": 0.1745,
-                    "z": 0.0215
-                },
                 "diffuse":
                 {
                     "x": 0.07568,

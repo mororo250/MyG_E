@@ -186,11 +186,6 @@ bool ProjectFileReader::load_objects(rapidjson::Document const& document, Projec
 			auto& material_json = object_buffer[i]["material"];
 			
 			// Check if it's possible load material
-			if (!material_json.HasMember("ambient"))
-			{
-				std::cout << "It wasn't possible to load material of object. Ambient light information is missing" << i << std::endl;
-				break;
-			}
 			if (!material_json.HasMember("diffuse"))
 			{
 				std::cout << "It wasn't possible to load material of object. Diffuse light information is missing" << i << std::endl;
@@ -208,9 +203,6 @@ bool ProjectFileReader::load_objects(rapidjson::Document const& document, Projec
 				break;
 			}
 
-			Vector<float, 3> ambient{ material_json["ambient"]["x"].GetFloat(),
-				material_json["ambient"]["y"].GetFloat(),
-				material_json["ambient"]["z"].GetFloat() };
 			Vector<float, 3> diffuse{ material_json["diffuse"]["x"].GetFloat(),
 				material_json["diffuse"]["y"].GetFloat(),
 				material_json["diffuse"]["z"].GetFloat() };
@@ -218,7 +210,7 @@ bool ProjectFileReader::load_objects(rapidjson::Document const& document, Projec
 				material_json["specular"]["y"].GetFloat(),
 				material_json["specular"]["z"].GetFloat() };
 			float shininess = material_json["shininess"].GetFloat();
-			material = Material(ambient, diffuse, specular, shininess);
+			material = Material(diffuse, specular, shininess);
 		}
 		
 		// Create Object

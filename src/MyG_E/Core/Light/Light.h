@@ -7,6 +7,8 @@ class Light
 {
 public:
 	Light(Vector<float, 3> const& position, Vector<float, 3> const& color);
+	Light(Light const& other);
+	Light& operator=(Light const& other);
 	virtual ~Light();
 
 	inline Vector<float, 3> GetLightPosition() const { return m_model->get_position(); }
@@ -30,6 +32,8 @@ public:
 	virtual void set_uniform(class Shader* shader) = 0;
 
 private:
+	void copy_other(Light const& other);
+
 	Vector<float, 3> m_color;
 	Model3D* m_model;
 	float m_ambient_strength;

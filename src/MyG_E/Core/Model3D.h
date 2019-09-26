@@ -2,19 +2,25 @@
 
 #include "Core\Mesh.h"
 #include "Foundation\Math\Matrix.h"
+#include "Core/Texture.h"
 
 // For while.
 struct Material 
 {
-	Material(Vector<float, 3> amb = { 1.0f, 1.0f, 1.0f }, Vector<float, 3> dif = { 1.0f, 1.0f, 1.0f }, Vector<float, 3> spec = { 1.0f, 1.0f, 1.0f }, float shi = 32.0f)
-		: ambient(amb)
-		, diffuse(dif)
+	Material(Vector<float, 3> const& dif = { 1.0f, 1.0f, 1.0f }, Vector<float, 3> const& spec = { 1.0f, 1.0f, 1.0f }, float shi = 32.0f)
+		: diffuse(dif)
 		, specular(spec)
 		, shininess(shi)
 	{}
-	Vector<float, 3> ambient;
-	Vector<float, 3> diffuse;
-	Vector<float, 3> specular;
+
+	Material(std::string const& filepath , Vector<float, 3> const& spec = { 1.0f, 1.0f, 1.0f }, float shi = 32.0f)
+		: diffuse(filepath)
+		, specular(spec)
+		, shininess(shi)
+	{}
+
+	Texture diffuse; // a color or a texture
+	Vector<float, 3> specular; // a color or a specular map
 	float shininess;
 };
 
@@ -24,7 +30,8 @@ class Model3D
 public:
 	Model3D(Mesh* mesh);
 	Model3D(Mesh* mesh, std::string& const name);
-	Model3D(Model3D& const model3d);
+	Model3D(Model3D const& other);
+	Model3D& operator=(Model3D const& other);
 	~Model3D();
 
 	inline Vector<float, 3> get_position() const { return m_position; };
@@ -46,7 +53,8 @@ public:
 
 	inline Material get_material() const { return m_material; }
 	inline void set_material(Material const& material) { m_material = material; };
-	void set_material (Vector<float, 3> const& ambient, Vector<float, 3> const& diffuse, Vector<float, 3> const& specular, float shininess);
+	void set_material (Vector<float, 3> const& diffuse, Vector<float, 3> const& specular, float shininess);
+	void set_material (std::string const& filepath, Vector<float, 3> const& specular, float shininess);
 
 	inline void rename_object(std::string const& name) { m_object_name = name; }
 	inline std::string& get_object() { return m_object_name; }
@@ -60,6 +68,8 @@ public:
 	static unsigned int get_number_of_object() { return m_number_of_objects; }
 
 private:
+	void copy_other(Model3D const& other);
+
 	Mesh* m_mesh;
 	Material m_material;
 

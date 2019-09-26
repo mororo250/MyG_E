@@ -4,9 +4,11 @@
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
+layout(location = 1) in vec2 tex_coord;
 
 out vec4 v_Position;
 out vec3 v_Normal;
+out vec2 v_tex_coord;
 
 uniform mat4 u_Model;
 uniform mat4 u_ViewProjection;
@@ -16,18 +18,19 @@ void main()
 	v_Normal = normal;
 	v_Position = vec4(position, 1.0) * u_Model;
 	gl_Position = v_Position * u_ViewProjection;
-
+	v_tex_coord = tex_coord;
 };
 
 // rasterization - call once for each pixel
 #shader fragment
 #version 330 core
 
+in vec2 v_tex_coord;
+
 layout(location = 0) out vec4 Frag_color;
 
 struct Material 
 {
-	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
 	float shininess;
@@ -74,7 +77,9 @@ in vec4 v_Position;
 in vec3 v_Normal;
 
 uniform vec3 u_ViewPos;
+uniform sampler2D u_texture;
 uniform Material u_Material;
+Material temp; // bad design.
 
 // Lights:
 uniform int u_NumPointLight;
@@ -91,11 +96,11 @@ vec3 light(Light light, vec3 ray_direction)
 	vec3 reflect_direction = reflect(ray_direction, norm);
 
 	// Ambient
-	vec3 ambient = light.ambient_strength * light.color * u_Material.ambient;
+	vec3 ambient = light.ambient_strength * light.color * temp.diffuse;
 
 // Difuse
 	float diff = max(dot(norm, -ray_direction), 0.0);
-	vec3 diffuse = diff * light.diffuse_strength * light.color * u_Material.diffuse;
+	vec3 diffuse = diff * light.diffuse_strength * light.color * temp.diffuse;
 
 // Specular
 	float spec = pow(max(dot(view_direction, reflect_direction), 0.0), u_Material.shininess * 128);
@@ -136,6 +141,9 @@ vec3 directional_light(const int i)
 
 void main()
 {
+	temp = u_Material;
+	temp.diffuse = vec3(texture(u_texture, v_tex_coord));
+
 	vec3 result = vec3(0.0);
 	for(int i = 0; i < u_NumPointLight; i++)
 		result += point_light(i);

@@ -20,6 +20,7 @@ set (core_source
     Core/Shader.h
     Core/Sprite.cpp
     Core/Sprite.h
+    Core/SkyBox.cpp
     Core/SkyBox.h
     Core/Texture.cpp
     Core/Texture.h

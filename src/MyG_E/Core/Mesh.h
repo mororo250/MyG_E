@@ -19,15 +19,20 @@ class Mesh
 public:
 
 	Mesh(Shape shape = Shape::CUBE);
-	// It's a very expensive call should be avoid as much as possible.
-	Mesh(Mesh& const mesh);
+	// copy It's a very expensive call should be avoid as much as possible.
+	Mesh(Mesh const& other);
+	Mesh& operator=(Mesh const& other);
 	~Mesh();
 	
 	inline Shape get_shape() { return m_shape; }
 	inline float* GetData() { return m_vertex_data.data(); }
 	inline VertexArray const& GetVertexArray() const { return *m_vao; }
 	inline IndexBuffer const& GetIndexBuffer() const { return *m_ib; }
+
 private:
+	void copy_other(Mesh const& other);
+
+	void CreateMesh();
 
 	static const std::vector<float> Mesh::plane_vertices;
 	static const std::vector<unsigned int> Mesh::plane_indices;
@@ -44,6 +49,4 @@ private:
 	std::unique_ptr<VertexArray> m_vao;
 	std::unique_ptr<IndexBuffer> m_ib;
 	std::unique_ptr<VertexBuffer> m_vb;
-
-	void CreateMesh();
 };

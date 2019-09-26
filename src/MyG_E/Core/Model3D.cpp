@@ -35,22 +35,20 @@ Model3D::Model3D(Mesh* mesh, std::string& const name)
 	m_number_of_objects++;
 }
 
-Model3D::Model3D(Model3D& const model3d)
-	: m_trans_matrix(0.0f, 0.0f, 0.0f),
+Model3D::Model3D(Model3D const& other)
+	:m_trans_matrix(0.0f, 0.0f, 0.0f),
 	m_scale_matrix(1.0f, 1.0f, 1.0f),
 	m_rotation_matrix()
 {
-	m_mesh = new Mesh(*model3d.m_mesh);
-	m_material = model3d.m_material;
+	copy_other(other);
+}
 
-	set_translation(model3d.m_position);
-	set_scale(model3d.m_scale);
-	set_rotation(model3d.m_rotate);
+Model3D& Model3D::operator=(Model3D const& other)
+{
+	delete m_mesh;
 
-	m_object_name = model3d.m_object_name;
-	m_is_visible = model3d.m_is_visible;
-	
-	m_number_of_objects = model3d.m_number_of_objects;
+	copy_other(other);
+	return *this;
 }
 
 Model3D::~Model3D()
@@ -85,21 +83,27 @@ void Model3D::set_rotation(Vector<float, 3> const& rotation)
 	m_rotation_matrix = Quaternion::CreateRotationMatrix(quat);
 }
 
-void Model3D::set_material(Vector<float, 3> const& ambient, Vector<float, 3>const& diffuse, Vector<float, 3> const& specular, float shininess)
+void Model3D::set_material(Vector<float, 3>const& diffuse, Vector<float, 3> const& specular, float shininess)
 {
-	m_material.ambient = ambient;
-	m_material.diffuse = diffuse;
+	m_material.diffuse = Texture(diffuse);
 	m_material.specular = specular;
 	m_material.shininess = shininess;
 }
+
+void Model3D::set_material(std::string const& filepath, Vector<float, 3> const& specular, float shininess)
+{
+	m_material.diffuse = Texture(filepath);
+	m_material.specular = specular;
+	m_material.shininess = shininess;
+}
+
 
 void Model3D::ImGuiRenderer()
 {
 	ImGui::DragFloat3("Translate", &m_position[0], 0.1f);
 	ImGui::DragFloat3("Scale", &m_scale[0], 0.1f, 0.0f, 100.0f);
 	ImGui::SliderFloat3("Rotate", &m_rotate[0], -6.28f, 6.28f);
-	ImGui::ColorEdit3("Ambient", &m_material.ambient[0]);
-	ImGui::ColorEdit3("Diffuse", &m_material.diffuse[0]);
+	// ImGui::ColorEdit3("Diffuse", &m_material.diffuse[0]);
 	ImGui::ColorEdit3("Specular", &m_material.specular[0]);
 	ImGui::DragFloat("shininess", &m_material.shininess, 0.05f, 0.0f, 1.0f);
 	ImGui::Checkbox("Visibility", &m_is_visible);
@@ -107,5 +111,21 @@ void Model3D::ImGuiRenderer()
 	set_translation(m_position);
 	set_scale(m_scale);
 	set_rotation(m_rotate);
+}
+
+void Model3D::copy_other(Model3D const& other)
+{
+	m_mesh = new Mesh(*other.m_mesh);
+	m_material = other.m_material;
+
+	//matrices
+	set_translation(other.m_position);
+	set_scale(other.m_scale);
+	set_rotation(other.m_rotate);
+
+	m_object_name = other.m_object_name;
+	m_is_visible = other.m_is_visible;
+	
+	m_number_of_objects++;
 }
 

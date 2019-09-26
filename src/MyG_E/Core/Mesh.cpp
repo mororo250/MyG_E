@@ -27,16 +27,27 @@ Mesh::Mesh(Shape shape)
 	CreateMesh();
 }
 
-Mesh::Mesh(Mesh& const mesh)
+Mesh::Mesh(Mesh const& other)
 {
-	m_shape = mesh.m_shape;
-	m_vertex_data = mesh.m_vertex_data;
-	m_indices = mesh.m_indices;
-	CreateMesh();
+	copy_other(other);
+}
+
+Mesh& Mesh::operator=(Mesh const& other)
+{
+	copy_other(other);
+	return *this;
 }
 
 Mesh::~Mesh()
 {
+}
+
+void Mesh::copy_other(Mesh const& other)
+{
+	m_shape = other.m_shape;
+	m_vertex_data = other.m_vertex_data;
+	m_indices = other.m_indices;
+	CreateMesh();
 }
 
 void Mesh::CreateMesh()
@@ -48,6 +59,7 @@ void Mesh::CreateMesh()
 
 	m_vao->PushLayout(3, GL_FLOAT, GL_FALSE, 0);
 	m_vao->PushLayout(3, GL_FLOAT, GL_FALSE, 3);
+	m_vao->PushLayout(2, GL_FLOAT, GL_FALSE, 6);
 
 	m_vao->AddBuffer(*m_vb);
 

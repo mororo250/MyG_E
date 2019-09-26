@@ -99,24 +99,14 @@ bool ProjectFileWriter::write_file(ProjectController const* project_controller, 
 		writer.Key("material");
 		writer.StartObject(); // Material
 		
-		writer.Key("ambient");
-		writer.StartObject(); // Ambient
-		writer.Key("x");
-		writer.Double(object_buffer[i]->get_material().ambient[0]);
-		writer.Key("y");
-		writer.Double(object_buffer[i]->get_material().ambient[1]);
-		writer.Key("z");
-		writer.Double(object_buffer[i]->get_material().ambient[2]);
-		writer.EndObject(); // ambient
-
 		writer.Key("diffuse");
 		writer.StartObject(); // Diffuse
 		writer.Key("x");
-		writer.Double(object_buffer[i]->get_material().diffuse[0]);
+		writer.Double(object_buffer[i]->get_material().diffuse.get_color()[0]);
 		writer.Key("y");
-		writer.Double(object_buffer[i]->get_material().diffuse[1]);
+		writer.Double(object_buffer[i]->get_material().diffuse.get_color()[1]);
 		writer.Key("z");
-		writer.Double(object_buffer[i]->get_material().diffuse[2]);
+		writer.Double(object_buffer[i]->get_material().diffuse.get_color()[2]);
 		writer.EndObject(); // Diffuse
 
 		writer.Key("specular");

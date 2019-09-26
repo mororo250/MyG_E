@@ -57,8 +57,8 @@ void ProjectController::update()
 			// Materials uniforms.
 			m_shader->set_uniformMatrix4f(m_shader->GetUniformLocation("u_Model"), model_matrix);
 			m_shader->set_uniformMatrix4f(m_shader->GetUniformLocation("u_ViewProjection"), view_projection);
-			m_shader->set_uniform3f(m_shader->GetUniformLocation("u_Material.ambient"), aux->get_material().ambient);
-			m_shader->set_uniform3f(m_shader->GetUniformLocation("u_Material.diffuse"), aux->get_material().diffuse);
+			aux->get_material().diffuse.bind();
+			m_shader->set_uniform1i(m_shader->GetUniformLocation("u_texture"), 0);
 			m_shader->set_uniform3f(m_shader->GetUniformLocation("u_Material.specular"), aux->get_material().specular);
 			m_shader->set_uniform1f(m_shader->GetUniformLocation("u_Material.shininess"), aux->get_material().shininess);
 
