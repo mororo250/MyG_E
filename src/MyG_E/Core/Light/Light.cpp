@@ -19,9 +19,11 @@ Light::Light(Light const& other)
 
 Light& Light::operator=(Light const& other)
 {
-	delete m_model;
-
-	copy_other(other);
+	if (this != &other)
+	{
+		delete m_model;
+		copy_other(other);
+	}
 	return *this;
 }
 

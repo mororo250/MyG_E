@@ -154,9 +154,7 @@ void ImGuiLayer::show_menu_file()
 	if (ImGui::MenuItem("New")) {}
 	if (ImGui::MenuItem("Open", "Ctrl+O")) 
 	{
-		std::string filename;
-		open_file_browser(filename);
-		Game::Get().open_project(filename);
+		Game::Get().open_project(open_file_browser("(*.json) Project File\0*.json\0"));
 	}
 	if (ImGui::BeginMenu("Open Recent"))
 	{
@@ -165,9 +163,7 @@ void ImGuiLayer::show_menu_file()
 	if (ImGui::MenuItem("Save", "Ctrl+S")) {}
 	if (ImGui::MenuItem("Save As.."))
 	{
-		std::string filename;
-		save_file_browser(filename);
-		Game::Get().save_project(filename);
+		Game::Get().save_project(save_file_browser("(*.json) Project File\0*.json\0"));
 	}
 	ImGui::Separator();
 	if (ImGui::BeginMenu("Options"))

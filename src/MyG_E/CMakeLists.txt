@@ -95,7 +95,7 @@ set (ui_source
 list (APPEND MyG_E_sources
     ${ui_source}
 )
-source_group ("Foundation\\ImGui" FILES
+source_group ("Foundation\\UI" FILES
     ${ui_source}
 )
 

@@ -4,7 +4,7 @@
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
-layout(location = 1) in vec2 tex_coord;
+layout(location = 2) in vec2 tex_coord;
 
 out vec4 v_Position;
 out vec3 v_Normal;
@@ -79,7 +79,7 @@ in vec3 v_Normal;
 uniform vec3 u_ViewPos;
 uniform sampler2D u_texture;
 uniform Material u_Material;
-Material temp; // bad design.
+vec3 g_diffuse;
 
 // Lights:
 uniform int u_NumPointLight;
@@ -95,12 +95,12 @@ vec3 light(Light light, vec3 ray_direction)
 	vec3 view_direction = normalize(u_ViewPos - v_Position.xyz);
 	vec3 reflect_direction = reflect(ray_direction, norm);
 
-	// Ambient
-	vec3 ambient = light.ambient_strength * light.color * temp.diffuse;
+// Ambient
+	vec3 ambient = light.ambient_strength * light.color * g_diffuse;
 
 // Difuse
 	float diff = max(dot(norm, -ray_direction), 0.0);
-	vec3 diffuse = diff * light.diffuse_strength * light.color * temp.diffuse;
+	vec3 diffuse = diff * light.diffuse_strength * light.color * g_diffuse;
 
 // Specular
 	float spec = pow(max(dot(view_direction, reflect_direction), 0.0), u_Material.shininess * 128);
@@ -141,8 +141,7 @@ vec3 directional_light(const int i)
 
 void main()
 {
-	temp = u_Material;
-	temp.diffuse = vec3(texture(u_texture, v_tex_coord));
+	g_diffuse = texture(u_texture, v_tex_coord).xyz;
 
 	vec3 result = vec3(0.0);
 	for(int i = 0; i < u_NumPointLight; i++)

@@ -51,7 +51,7 @@ public:
 	inline Mesh const* get_mesh() { return m_mesh; }
 	inline Shape get_shape() { return m_mesh->get_shape(); }
 
-	inline Material get_material() const { return m_material; }
+	inline Material const& get_material() const { return m_material; }
 	inline void set_material(Material const& material) { m_material = material; };
 	void set_material (Vector<float, 3> const& diffuse, Vector<float, 3> const& specular, float shininess);
 	void set_material (std::string const& filepath, Vector<float, 3> const& specular, float shininess);

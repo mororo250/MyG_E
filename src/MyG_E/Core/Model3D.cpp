@@ -3,6 +3,7 @@
 
 // Intern files.
 #include "Foundation\Math\Quaternion.h"
+#include "Foundation/UI/FileBrowser.h"
 
 // Third Parties.
 #include "imgui.h"
@@ -45,9 +46,11 @@ Model3D::Model3D(Model3D const& other)
 
 Model3D& Model3D::operator=(Model3D const& other)
 {
-	delete m_mesh;
-
-	copy_other(other);
+	if (this != &other)
+	{
+		delete m_mesh;
+		copy_other(other);
+	}
 	return *this;
 }
 
@@ -103,9 +106,29 @@ void Model3D::ImGuiRenderer()
 	ImGui::DragFloat3("Translate", &m_position[0], 0.1f);
 	ImGui::DragFloat3("Scale", &m_scale[0], 0.1f, 0.0f, 100.0f);
 	ImGui::SliderFloat3("Rotate", &m_rotate[0], -6.28f, 6.28f);
-	// ImGui::ColorEdit3("Diffuse", &m_material.diffuse[0]);
+	ImGui::Separator();
+
+	if (ImGui::Button("import texture"))
+	{
+		m_material.diffuse.change_texture(open_file_browser("(*.png) Project File\0*.png\0"));
+	}
+	ImGui::Text("Current texture: %s", m_material.diffuse.get_filepath().c_str());
+	
+	float const* color = m_material.diffuse.get_color();
+	if (m_material.diffuse.is_unitary())
+	{
+		Vector<float, 3> diffuse{ color[0], color[1], color[2] };
+		ImGui::ColorEdit3("Diffuse", &diffuse[0]);
+		m_material.diffuse.change_texture(diffuse);
+	}
+	else
+		if (ImGui::Button("remove texture"))
+			m_material.diffuse.change_texture(Vector<float, 3>{});
+
 	ImGui::ColorEdit3("Specular", &m_material.specular[0]);
 	ImGui::DragFloat("shininess", &m_material.shininess, 0.05f, 0.0f, 1.0f);
+	ImGui::Separator();
+	
 	ImGui::Checkbox("Visibility", &m_is_visible);
 
 	set_translation(m_position);

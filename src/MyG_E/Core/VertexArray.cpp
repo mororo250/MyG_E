@@ -24,11 +24,11 @@ void VertexArray::AddBuffer(const VertexBuffer& vb)
 	{
 		GLcall(glEnableVertexAttribArray(i));
 		GLcall(glVertexAttribPointer(
-			i,								//Atribute Index
-			m_layout_vector[i].num_elem,		//Number of components
-			m_layout_vector[i].type,			//type of the components
-			m_layout_vector[i].normalized,	//Normalize a valor
-			sizeof(float) * vb.GetStride(),				//Amount of bytes between two vertex (Stride) {incomplete}
+			i,																	//Atribute Index
+			m_layout_vector[i].num_elem,										//Number of components
+			m_layout_vector[i].type,											//type of the components
+			m_layout_vector[i].normalized,										//Normalize a valor
+			sizeof(float) * vb.GetStride(),										//Amount of bytes between two vertex (Stride) {incomplete}
 			reinterpret_cast<void*>(m_layout_vector[i].offset * sizeof(float))	//offset from start of the vertex to this attribute
 		));
 	}

@@ -1,6 +1,6 @@
 #include "FileBrowser.h"
 
-void open_file_browser(std::string& path)
+std::string open_file_browser(const char* filter)
 {
 	OPENFILENAME ofn; // common dialog box structure
 	char filename[MAX_PATH]; // buffer for file name
@@ -11,7 +11,7 @@ void open_file_browser(std::string& path)
 	ofn.lpstrFile = filename;
 	ofn.lpstrFile[0] = '\0';
 	ofn.nMaxFile = sizeof(filename);
-	ofn.lpstrFilter = "(*.json) Project File\0*.json\0";
+	ofn.lpstrFilter = filter;
 	ofn.nFilterIndex = 1; 
 	ofn.lpstrFileTitle = NULL;
 	ofn.nMaxFileTitle = 0;
@@ -21,7 +21,7 @@ void open_file_browser(std::string& path)
 
 	if (GetOpenFileNameA(&ofn))
 	{
-		path = filename;
+		return filename;
 	}
 	else
 	{
@@ -46,10 +46,11 @@ void open_file_browser(std::string& path)
 		case FNERR_SUBCLASSFAILURE: std::cout << "FNERR_SUBCLASSFAILURE\n"; break;
 		default: std::cout << "You cancelled.\n";
 		}
+		return NULL;
 	}
 }
 
-void save_file_browser(std::string& path)
+std::string save_file_browser(const char* filter)
 {
 	OPENFILENAME ofn; // common dialog box structure
 	char filename[MAX_PATH]; // buffer for file name
@@ -60,7 +61,7 @@ void save_file_browser(std::string& path)
 	ofn.lpstrFile = filename;
 	ofn.lpstrFile[0] = '\0';
 	ofn.nMaxFile = sizeof(filename);
-	ofn.lpstrFilter = "(*.json) Project File\0*.json\0";
+	ofn.lpstrFilter = filter;
 	ofn.nFilterIndex = 1;
 	ofn.lpstrFileTitle = NULL;
 	ofn.nMaxFile = MAX_PATH;
@@ -68,7 +69,7 @@ void save_file_browser(std::string& path)
 
 	if (GetSaveFileName(&ofn))
 	{
-		path = filename + std::string(".json");
+		return filename;
 	}
 	else
 	{
@@ -93,5 +94,6 @@ void save_file_browser(std::string& path)
 		case FNERR_SUBCLASSFAILURE: std::cout << "FNERR_SUBCLASSFAILURE\n"; break;
 		default: std::cout << "You cancelled.\n";
 		}
+		return NULL;
 	}
 }

@@ -1,4 +1,4 @@
 #pragma once
 
-void open_file_browser(std::string& path);
-void save_file_browser(std::string& path);
+std::string open_file_browser(const char* filter);
+std::string save_file_browser(const char* filter);

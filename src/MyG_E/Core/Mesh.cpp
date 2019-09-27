@@ -34,7 +34,8 @@ Mesh::Mesh(Mesh const& other)
 
 Mesh& Mesh::operator=(Mesh const& other)
 {
-	copy_other(other);
+	if (this != &other)
+		copy_other(other);
 	return *this;
 }
 
@@ -80,7 +81,7 @@ const std::vector<float> Mesh::plane_vertices({
 const std::vector<unsigned int> Mesh::plane_indices({
 	0, 1, 2,
 	3, 2, 1
-	});
+});
 
 // Square.
 const std::vector<float> Mesh::cube_vertices({
@@ -119,7 +120,7 @@ const std::vector<float> Mesh::cube_vertices({
 			-0.5, -0.5, -0.5, -1, 0, 0, 0, 0,
 			-0.5, 0.5, 0.5, -1, 0, 0, 0, -1,
 			-0.5, 0.5, -0.5, -1, 0, 0, 0, -1
-		});
+});
 const std::vector<unsigned int> Mesh::cube_indices({
 			2, 1, 0,
 			3, 9, 8,
@@ -133,7 +134,7 @@ const std::vector<unsigned int> Mesh::cube_indices({
 			23, 21, 22,
 			26, 25, 24,
 			27, 25, 26
-		});
+});
 
 // Piramid.
 const std::vector<float> Mesh::pyramid_vertices({
@@ -158,14 +159,14 @@ const std::vector<float> Mesh::pyramid_vertices({
 		-0.5f, -0.5f, -0.5f, -0.894427f, 0.447214f, 0.0f, 0, 0,
 		-0.5f, -0.5f, 0.5f, -0.894427f, 0.447214f, 0.0f, 1, 0,
 		0.0f, 0.5f, 0.0f, -0.894427f, 0.447214f, 0.0f, 1, 1
-	});
+});
 const std::vector<unsigned int> Mesh::pyramid_indices({
 			0, 1, 2,
 			2, 3, 1,
 			4, 5, 6,
 			7, 8, 9,
 			10, 11, 12
-	});
+});
 
 // Sphere.
 const std::vector<float> Mesh::sphere_vertices({

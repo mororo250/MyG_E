@@ -8,6 +8,6 @@ protected:
 
 private:
 	// Prevent any class inheriting it from being copied.
-	Uncopyable(const Uncopyable&);
-	Uncopyable& operator=(const Uncopyable&);
+	Uncopyable(Uncopyable const&);
+	Uncopyable& operator=(Uncopyable const&);
 };
