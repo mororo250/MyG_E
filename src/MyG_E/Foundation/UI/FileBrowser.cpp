@@ -46,7 +46,7 @@ std::string open_file_browser(const char* filter)
 		case FNERR_SUBCLASSFAILURE: std::cout << "FNERR_SUBCLASSFAILURE\n"; break;
 		default: std::cout << "You cancelled.\n";
 		}
-		return NULL;
+		return "";
 	}
 }
 
@@ -94,6 +94,6 @@ std::string save_file_browser(const char* filter)
 		case FNERR_SUBCLASSFAILURE: std::cout << "FNERR_SUBCLASSFAILURE\n"; break;
 		default: std::cout << "You cancelled.\n";
 		}
-		return NULL;
+		return "";
 	}
 }

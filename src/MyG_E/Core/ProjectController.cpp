@@ -58,9 +58,10 @@ void ProjectController::update()
 			m_shader->set_uniformMatrix4f(m_shader->GetUniformLocation("u_Model"), model_matrix);
 			m_shader->set_uniformMatrix4f(m_shader->GetUniformLocation("u_ViewProjection"), view_projection);
 			aux->get_material().diffuse.bind(0);
+			aux->get_material().specular.bind(1);
 			m_shader->set_uniform1i(m_shader->GetUniformLocation("u_texture"), 0);
-			m_shader->set_uniform3f(m_shader->GetUniformLocation("u_Material.specular"), aux->get_material().specular);
-			m_shader->set_uniform1f(m_shader->GetUniformLocation("u_Material.shininess"), aux->get_material().shininess);
+			m_shader->set_uniform1i(m_shader->GetUniformLocation("u_specular_map"), 1);
+			m_shader->set_uniform1f(m_shader->GetUniformLocation("u_shininess"), aux->get_material().shininess);
 
 			aux->get_mesh()->GetVertexArray().bind();
 			aux->get_mesh()->GetIndexBuffer().bind();
@@ -84,7 +85,7 @@ void ProjectController::update()
 
 				m_light_shader->set_uniformMatrix4f(m_light_shader->GetUniformLocation("u_Model"), model_matrix);
 				m_light_shader->set_uniformMatrix4f(m_light_shader->GetUniformLocation("u_ViewProjection"), view_projection);
-				m_light_shader->set_uniform3f(m_light_shader->GetUniformLocation("u_Color"), aux->GetLightColor());
+				m_light_shader->set_uniform3f(m_light_shader->GetUniformLocation("u_Color"), aux->get_light_color());
 
 				aux->GetModel()->get_mesh()->GetVertexArray().bind();
 				aux->GetModel()->get_mesh()->GetIndexBuffer().bind();

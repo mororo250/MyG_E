@@ -2,6 +2,8 @@
 
 #include "Core/ProjectController.h"
 
+// It needs a redsign.
+
 bool ProjectFileReader::read_file(std::string const& file_path)
 {
 	ProjectController* controller = new ProjectController();
@@ -94,7 +96,7 @@ bool ProjectFileReader::load_lights(rapidjson::Document const& document, Project
 	{
 		// Load light position
 		Vector<float, 3> position;
-		if (light_buffer[i].HasMember("light_buffer"))
+		if (light_buffer[i].HasMember("position"))
 			position = { light_buffer[i]["position"]["x"].GetFloat(),
 				light_buffer[i]["position"]["y"].GetFloat(),
 				light_buffer[i]["position"]["z"].GetFloat() };
@@ -105,6 +107,16 @@ bool ProjectFileReader::load_lights(rapidjson::Document const& document, Project
 			color = { light_buffer[i]["color"]["x"].GetFloat(),
 				light_buffer[i]["color"]["y"].GetFloat(),
 				light_buffer[i]["color"]["z"].GetFloat() };
+
+		float ambient_strength = 0.1f;
+		float diffuse_strength = 1.0f;
+		float specular_strength = 1.0f;
+		if (light_buffer[i].HasMember("ambient_strength"))
+			ambient_strength = light_buffer[i]["ambient_strength"].GetDouble();
+		if (light_buffer[i].HasMember("diffuse_strength"))
+			ambient_strength = light_buffer[i]["diffuse_strength"].GetDouble();
+		if (light_buffer[i].HasMember("specular_strength"))
+			ambient_strength = light_buffer[i]["specular_strength"].GetDouble();
 
 		// Create light
 		std::string light_model = "point_light";
@@ -120,10 +132,16 @@ bool ProjectFileReader::load_lights(rapidjson::Document const& document, Project
 					light_buffer[i]["direction"]["y"].GetFloat(),
 					light_buffer[i]["direction"]["z"].GetFloat() };
 
-			controller->push_light(new DirectionalLight(position, color, direction));
+			DirectionalLight* light = new DirectionalLight(position, color, direction);
+			load_light_strength(light, light_buffer[i]);
+			controller->push_light(light);
 		}
 		else if (light_model == "point_light")
-			controller->push_light(new PointLight(position, color));
+		{
+			PointLight* light = new PointLight(position, color);
+			load_light_strength(light, light_buffer[i]);
+			controller->push_light(light);
+		}
 		else if (light_model == "spot_light")
 		{
 			// In and out angles
@@ -140,7 +158,9 @@ bool ProjectFileReader::load_lights(rapidjson::Document const& document, Project
 				direction = { light_buffer[i]["direction"]["x"].GetFloat(),
 					light_buffer[i]["direction"]["y"].GetFloat(),
 					light_buffer[i]["direction"]["z"].GetFloat() };
-			controller->push_light(new SpotLight(position, color, in_angle, out_angle, direction));
+			SpotLight* light = new SpotLight(position, color, in_angle, out_angle, direction);
+			load_light_strength(light, light_buffer[i]);
+			controller->push_light(light);
 		}
 		else
 		{
@@ -178,40 +198,6 @@ bool ProjectFileReader::load_objects(rapidjson::Document const& document, Projec
 		bool is_visible = true;
 		if (object_buffer[i].HasMember("visibility"))
 			is_visible = object_buffer[i]["visibility"].GetBool();
-
-		// Load object material
-		Material material;
-		if (object_buffer[i].HasMember("material")) 
-		{
-			auto& material_json = object_buffer[i]["material"];
-			
-			// Check if it's possible load material
-			if (!material_json.HasMember("diffuse"))
-			{
-				std::cout << "It wasn't possible to load material of object. Diffuse light information is missing" << i << std::endl;
-				break;
-			}
-			if (!material_json.HasMember("specular"))
-			{
-				std::cout << "It wasn't possible to load material of object. specular light information is missing" << i << std::endl;
-				break;
-			}
-
-			if (!material_json.HasMember("shininess"))
-			{
-				std::cout << "It wasn't possible to load material of object. shininess light information is missing" << i << std::endl;
-				break;
-			}
-
-			Vector<float, 3> diffuse{ material_json["diffuse"]["x"].GetFloat(),
-				material_json["diffuse"]["y"].GetFloat(),
-				material_json["diffuse"]["z"].GetFloat() };
-			Vector<float, 3> specular{ material_json["specular"]["x"].GetFloat(),
-				material_json["specular"]["y"].GetFloat(),
-				material_json["specular"]["z"].GetFloat() };
-			float shininess = material_json["shininess"].GetFloat();
-			material = Material(diffuse, specular, shininess);
-		}
 		
 		// Create Object
 		std::string object_model = "cube";
@@ -230,10 +216,93 @@ bool ProjectFileReader::load_objects(rapidjson::Document const& document, Projec
 		
 		object->set_position(position);
 		object->set_scale(scale);
-		object->set_material(material);
+
+		// Load object material
+		if (object_buffer[i].HasMember("material"))
+		{
+			auto& material_json = object_buffer[i]["material"];
+
+			// Check if it's possible load material
+			bool check = true;
+			if (!material_json.HasMember("has_texture"))
+			{
+				std::cout << "It wasn't possible to load material of object. has texture information is missing" << i << std::endl;
+				check = false;
+			}
+			if (!material_json.HasMember("has_specular_map"))
+			{
+				std::cout << "It wasn't possible to load material of object. has specular_map information is missing" << i << std::endl;
+				check = false;
+			}
+			if (check)
+			{
+				bool has_texture = material_json["has_texture"].GetBool(); // If true use texture if false load diffuse 
+				bool has_specular_map = material_json["has_specular_map"].GetBool();
+
+				if (!material_json.HasMember("diffuse") && !has_texture)
+				{
+					std::cout << "It wasn't possible to load material of object. Diffuse information is missing" << i << std::endl;
+					check = false;
+				}
+				if (!material_json.HasMember("texture") && has_texture)
+				{
+					std::cout << "It wasn't possible to load material of object. Teture information is missing" << i << std::endl;
+					check = false;
+				}
+
+				if (!material_json.HasMember("specular") && !has_specular_map)
+				{
+					std::cout << "It wasn't possible to load material of object. specular information is missing" << i << std::endl;
+					check = false;
+				}
+				
+				if (!material_json.HasMember("specular_map") && has_specular_map)
+				{
+					std::cout << "It wasn't possible to load material of object. specular_map information is missing" << i << std::endl;
+					check = false;
+				}
+
+				if (!material_json.HasMember("shininess"))
+				{
+					std::cout << "It wasn't possible to load material of object. shininess information is missing" << i << std::endl;
+					check = false;
+				}
+
+				if (check)
+				{
+					float shininess = material_json["shininess"].GetFloat();
+
+					std::unique_ptr<Texture> specular;
+					if (!has_specular_map)
+						specular.reset(new Texture(Vector<float, 3>{ material_json["specular"]["x"].GetFloat(),
+							material_json["specular"]["y"].GetFloat(),
+							material_json["specular"]["z"].GetFloat() }));
+					else
+						specular.reset(new Texture(std::filesystem::absolute(std::filesystem::absolute(
+							material_json["specular_map"].GetString()).string()).string()));
+					if (!has_texture)
+					{
+						Vector<float, 3> diffuse{ material_json["diffuse"]["x"].GetFloat(),
+							material_json["diffuse"]["y"].GetFloat(),
+							material_json["diffuse"]["z"].GetFloat() };
+						object->set_material(Material(diffuse, *specular, shininess));
+					}
+					else
+						object->set_material(std::filesystem::absolute(
+							material_json["texture"].GetString()).string(), *specular, shininess);
+				}
+			}
+		}
 		
 		// pass object ownership to controller.
 		controller->push_object(object);
 	}
 	return true;
+}
+
+void ProjectFileReader::load_light_strength(Light* light, rapidjson::Value const& json)
+{
+	light->set_ambient_strength(json["ambient_strength"].GetDouble());
+	light->set_diffuse_strength(json["diffuse_strength"].GetDouble());
+	light->set_specular_strength(json["specular_strength"].GetDouble());
 }

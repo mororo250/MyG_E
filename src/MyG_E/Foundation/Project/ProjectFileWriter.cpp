@@ -96,28 +96,64 @@ bool ProjectFileWriter::write_file(ProjectController const* project_controller, 
 		writer.Double(object_buffer[i]->get_scale()[2]);
 		writer.EndObject(); // Scale
 
+		writer.Key("rotation");
+		writer.StartObject(); // Rotation
+		writer.Key("x");
+		writer.Double(object_buffer[i]->get_rotation()[0]);
+		writer.Key("y");
+		writer.Double(object_buffer[i]->get_rotation()[1]);
+		writer.Key("z");
+		writer.Double(object_buffer[i]->get_rotation()[2]);
+		writer.EndObject(); // Rotation
+
 		writer.Key("material");
 		writer.StartObject(); // Material
 		
-		writer.Key("diffuse");
-		writer.StartObject(); // Diffuse
-		writer.Key("x");
-		writer.Double(object_buffer[i]->get_material().diffuse.get_color()[0]);
-		writer.Key("y");
-		writer.Double(object_buffer[i]->get_material().diffuse.get_color()[1]);
-		writer.Key("z");
-		writer.Double(object_buffer[i]->get_material().diffuse.get_color()[2]);
-		writer.EndObject(); // Diffuse
+		if (object_buffer[i]->get_material().diffuse.is_unitary())
+		{
+			writer.Key("has_texture");
+			writer.Bool(false);
+			writer.Key("diffuse");
+			writer.StartObject(); // Diffuse
+			writer.Key("x");
+			writer.Double(object_buffer[i]->get_material().diffuse.get_color()[0]);
+			writer.Key("y");
+			writer.Double(object_buffer[i]->get_material().diffuse.get_color()[1]);
+			writer.Key("z");
+			writer.Double(object_buffer[i]->get_material().diffuse.get_color()[2]);
+			writer.EndObject(); // Diffuse
+		}
+		else
+		{
+			writer.Key("has_texture");
+			writer.Bool(true);
+			writer.Key("texture");
+			writer.String(
+				std::filesystem::relative(object_buffer[i]->get_material().diffuse.get_filepath()).string().c_str());
+		}
 
-		writer.Key("specular");
-		writer.StartObject(); // specular
-		writer.Key("x");
-		writer.Double(object_buffer[i]->get_material().specular[0]);
-		writer.Key("y");
-		writer.Double(object_buffer[i]->get_material().specular[1]);
-		writer.Key("z");
-		writer.Double(object_buffer[i]->get_material().specular[2]);
-		writer.EndObject(); // Specular
+		if (object_buffer[i]->get_material().specular.is_unitary())
+		{
+			writer.Key("has_specular_map");
+			writer.Bool(false);
+			writer.Key("specular");
+			writer.StartObject(); // specular
+			writer.Key("x");
+			writer.Double(object_buffer[i]->get_material().specular.get_color()[0]);
+			writer.Key("y");
+			writer.Double(object_buffer[i]->get_material().specular.get_color()[1]);
+			writer.Key("z");
+			writer.Double(object_buffer[i]->get_material().specular.get_color()[2]);
+			writer.EndObject(); // specular
+		}
+		else
+		{
+			writer.Key("has_specular_map");
+			writer.Bool(true);
+			writer.Key("specular_map");
+			writer.String(
+				std::filesystem::relative(object_buffer[i]->get_material().specular.get_filepath()).string().c_str());
+		}
 		
 		writer.Key("shininess");
 		writer.Double(object_buffer[i]->get_material().shininess);
@@ -125,6 +161,7 @@ bool ProjectFileWriter::write_file(ProjectController const* project_controller, 
 		writer.EndObject(); // Object
 	}
 	writer.EndArray();
+	
 	// Write Light
 	std::vector<Light*> const light_buffer = project_controller->get_light_buffer();
 	writer.Key("light_buffer");
@@ -136,22 +173,29 @@ bool ProjectFileWriter::write_file(ProjectController const* project_controller, 
 		writer.Key("position");
 		writer.StartObject(); // Position
 		writer.Key("x");
-		writer.Double(light_buffer[i]->GetLightPosition()[0]);
+		writer.Double(light_buffer[i]->get_light_position()[0]);
 		writer.Key("y");
-		writer.Double(light_buffer[i]->GetLightPosition()[1]);
+		writer.Double(light_buffer[i]->get_light_position()[1]);
 		writer.Key("z");
-		writer.Double(light_buffer[i]->GetLightPosition()[2]);
+		writer.Double(light_buffer[i]->get_light_position()[2]);
 		writer.EndObject(); // Position
 
 		writer.Key("color");
 		writer.StartObject(); // color
 		writer.Key("x");
-		writer.Double(light_buffer[i]->GetLightColor()[0]);
+		writer.Double(light_buffer[i]->get_light_color()[0]);
 		writer.Key("y");
-		writer.Double(light_buffer[i]->GetLightColor()[1]);
+		writer.Double(light_buffer[i]->get_light_color()[1]);
 		writer.Key("z");
-		writer.Double(light_buffer[i]->GetLightColor()[0]);
+		writer.Double(light_buffer[i]->get_light_color()[0]);
 		writer.EndObject(); // color
+
+		writer.Key("ambient_strength");
+		writer.Double(light_buffer[i]->get_ambient_strength());
+		writer.Key("diffuse_strength");
+		writer.Double(light_buffer[i]->get_diffuse_strength());
+		writer.Key("specular_strength");
+		writer.Double(light_buffer[i]->get_specular_strength());
 
 		if (dynamic_cast<DirectionalLight*>(light_buffer[i]))
 		{
@@ -185,7 +229,6 @@ bool ProjectFileWriter::write_file(ProjectController const* project_controller, 
 			writer.Key("z");
 			writer.Double(light->GetDirection()[2]);
 			writer.EndObject(); // Direction
-
 
 			writer.Key("in_angle");
 			writer.Double(light->GetInAngle());

@@ -7,20 +7,15 @@
 // For while.
 struct Material 
 {
-	Material(Vector<float, 3> const& dif = { 1.0f, 1.0f, 1.0f }, Vector<float, 3> const& spec = { 1.0f, 1.0f, 1.0f }, float shi = 32.0f)
-		: diffuse(dif)
-		, specular(spec)
-		, shininess(shi)
-	{}
-
-	Material(std::string const& filepath , Vector<float, 3> const& spec = { 1.0f, 1.0f, 1.0f }, float shi = 32.0f)
-		: diffuse(filepath)
+	Material() {};
+	Material(Texture const& diff, Texture const& spec, float shi = 32.0f)
+		: diffuse(diff)
 		, specular(spec)
 		, shininess(shi)
 	{}
 
 	Texture diffuse; // a color or a texture
-	Vector<float, 3> specular; // a color or a specular map
+	Texture specular; // a color or a specular map
 	float shininess;
 };
 
@@ -53,8 +48,7 @@ public:
 
 	inline Material const& get_material() const { return m_material; }
 	inline void set_material(Material const& material) { m_material = material; };
-	void set_material (Vector<float, 3> const& diffuse, Vector<float, 3> const& specular, float shininess);
-	void set_material (std::string const& filepath, Vector<float, 3> const& specular, float shininess);
+	void set_material (Texture const& diffuse, Texture const& specular, float shininess);
 
 	inline void rename_object(std::string const& name) { m_object_name = name; }
 	inline std::string& get_object() { return m_object_name; }

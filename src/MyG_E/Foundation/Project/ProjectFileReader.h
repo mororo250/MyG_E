@@ -19,4 +19,5 @@ private:
 	bool load_camera(rapidjson::Document const& document, ProjectController* controller);
 	bool load_lights(rapidjson::Document const& document, ProjectController* controller);
 	bool load_objects(rapidjson::Document const& document, ProjectController* controller);
+	void load_light_strength(class Light* light, rapidjson::Value const& json);
 };

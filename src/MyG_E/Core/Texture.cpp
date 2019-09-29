@@ -2,9 +2,11 @@
 #include <GLFW/glfw3.h>
 
 #include "Foundation/Gldebug.h"
+#include "Foundation/UI/FileBrowser.h"
 #include "Texture.h"
 
 #include "stb_image.h"
+#include "imgui.h"
 
 
 Texture::Texture(std::string const& file_path)
@@ -94,9 +96,28 @@ void Texture::change_texture(Vector<float, 3> const& color)
 	if_is_a_color();
 }
 
+void Texture::imgui_renderer(std::string const& texture_name)
+{
+	if (ImGui::Button("import texture"))
+	{
+		change_texture(open_file_browser("(*.png) Project File\0*.png\0"));
+	}
+	ImGui::Text("Current texture: %s", m_file_path.c_str());
+
+	if (m_is_unitary)
+	{
+		Vector<float, 3> color{ m_color[0], m_color[1], m_color[2] };
+		ImGui::ColorEdit3("Texture_name", &color[0]);
+		change_texture(color);
+	}
+	else
+		if (ImGui::Button("remove texture"))
+			change_texture(Vector<float, 3>{});
+}
+
 void Texture::copy_other(Texture const& other)
 {
-	m_file_path = m_file_path;
+	m_file_path = other.m_file_path;
 
 	m_width = other.m_width;
 	m_height = other.m_height;

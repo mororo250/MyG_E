@@ -22,9 +22,9 @@ void DirectionalLight::ImGuiRenderer()
 void DirectionalLight::set_uniform(Shader* shader)
 {
 	std::string light = "u_DirectionalLight[" + std::to_string(m_id) + "]";
-	shader->set_uniform3f(shader->GetUniformLocation(light + ".light.color"), GetLightColor());
-	shader->set_uniform1f(shader->GetUniformLocation(light + ".light.ambient_strength"), GetAmbientStength());
-	shader->set_uniform1f(shader->GetUniformLocation(light + ".light.diffuse_strength"), GetDiffuseStrength());
-	shader->set_uniform1f(shader->GetUniformLocation(light + ".light.specular_strength"), GetSpecularStrength());
+	shader->set_uniform3f(shader->GetUniformLocation(light + ".light.color"), get_light_color());
+	shader->set_uniform1f(shader->GetUniformLocation(light + ".light.ambient_strength"), get_ambient_strength());
+	shader->set_uniform1f(shader->GetUniformLocation(light + ".light.diffuse_strength"), get_diffuse_strength());
+	shader->set_uniform1f(shader->GetUniformLocation(light + ".light.specular_strength"), get_specular_strength());
 	shader->set_uniform3f(shader->GetUniformLocation(light + ".directional"), m_direction);
 }

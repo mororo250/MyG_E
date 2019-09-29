@@ -11,20 +11,20 @@ public:
 	Light& operator=(Light const& other);
 	virtual ~Light();
 
-	inline Vector<float, 3> GetLightPosition() const { return m_model->get_position(); }
-	inline void SetLightPosition(Vector<float, 3> const& position) { m_model->set_position(position); }
+	inline Vector<float, 3> get_light_position() const { return m_model->get_position(); }
+	inline void set_light_position(Vector<float, 3> const& position) { m_model->set_position(position); }
 
-	inline Vector<float, 3> GetLightColor() const { return m_color; }
-	inline void SetLightColor(Vector<float, 3> const& color) { m_color = color; }
+	inline Vector<float, 3> get_light_color() const { return m_color; }
+	inline void set_light_color(Vector<float, 3> const& color) { m_color = color; }
 
-	inline float GetAmbientStength() const { return m_ambient_strength; }
-	inline void SetAmbientStength(const float ambient_strength) { m_ambient_strength = ambient_strength; }
+	inline float get_ambient_strength() const { return m_ambient_strength; }
+	inline void set_ambient_strength(const float ambient_strength) { m_ambient_strength = ambient_strength; }
 
-	inline float GetDiffuseStrength() const { return m_diffuse_strength; }
-	inline void SetDiffuseStrength(const float diffuse_strength) { m_diffuse_strength = diffuse_strength; }
+	inline float get_diffuse_strength() const { return m_diffuse_strength; }
+	inline void set_diffuse_strength(const float diffuse_strength) { m_diffuse_strength = diffuse_strength; }
 	
-	inline float GetSpecularStrength() const { return m_specular_strength; }
-	inline void SetSpecularStrength(const float specular_strength) { m_specular_strength = specular_strength; }
+	inline float get_specular_strength() const { return m_specular_strength; }
+	inline void set_specular_strength(const float specular_strength) { m_specular_strength = specular_strength; }
 
 	Model3D* GetModel() { return m_model; }
 

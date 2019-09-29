@@ -23,6 +23,8 @@ public:
 	void change_texture(std::string const& file_path);
 	void change_texture(Vector<float, 3> const& color);
 
+	void imgui_renderer(std::string const& texture_name);
+
 private:
 	void copy_other(Texture const& other);
 

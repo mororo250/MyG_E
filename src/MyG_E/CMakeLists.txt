@@ -7,6 +7,8 @@ set (core_source
     Core/IndexBuffer.h
 	Core/ProjectController.cpp
 	Core/ProjectController.h
+	Core/Material.cpp
+	Core/Material.h
     Core/Mesh.cpp
     Core/Mesh.h
     Core/Model3D.cpp

@@ -129,7 +129,7 @@ void Game::save_project(std::string const& path)
 
 void Game::set_project(ProjectController* project_controller)
 {
-	if (m_project_controller != nullptr)
+	if (m_project_controller)
 	{
 		m_layer_collection.pop_layer(m_project_controller);
 		delete m_project_controller;

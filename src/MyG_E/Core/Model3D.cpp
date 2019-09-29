@@ -3,7 +3,6 @@
 
 // Intern files.
 #include "Foundation\Math\Quaternion.h"
-#include "Foundation/UI/FileBrowser.h"
 
 // Third Parties.
 #include "imgui.h"
@@ -86,20 +85,12 @@ void Model3D::set_rotation(Vector<float, 3> const& rotation)
 	m_rotation_matrix = Quaternion::CreateRotationMatrix(quat);
 }
 
-void Model3D::set_material(Vector<float, 3>const& diffuse, Vector<float, 3> const& specular, float shininess)
+void Model3D::set_material(Texture const& diffuse, Texture const& specular, float shininess)
 {
-	m_material.diffuse = Texture(diffuse);
+	m_material.diffuse = diffuse;
 	m_material.specular = specular;
 	m_material.shininess = shininess;
 }
-
-void Model3D::set_material(std::string const& filepath, Vector<float, 3> const& specular, float shininess)
-{
-	m_material.diffuse = Texture(filepath);
-	m_material.specular = specular;
-	m_material.shininess = shininess;
-}
-
 
 void Model3D::ImGuiRenderer()
 {
@@ -107,26 +98,11 @@ void Model3D::ImGuiRenderer()
 	ImGui::DragFloat3("Scale", &m_scale[0], 0.1f, 0.0f, 100.0f);
 	ImGui::SliderFloat3("Rotate", &m_rotate[0], -6.28f, 6.28f);
 	ImGui::Separator();
-
-	if (ImGui::Button("import texture"))
-	{
-		m_material.diffuse.change_texture(open_file_browser("(*.png) Project File\0*.png\0"));
-	}
-	ImGui::Text("Current texture: %s", m_material.diffuse.get_filepath().c_str());
 	
-	float const* color = m_material.diffuse.get_color();
-	if (m_material.diffuse.is_unitary())
-	{
-		Vector<float, 3> diffuse{ color[0], color[1], color[2] };
-		ImGui::ColorEdit3("Diffuse", &diffuse[0]);
-		m_material.diffuse.change_texture(diffuse);
-	}
-	else
-		if (ImGui::Button("remove texture"))
-			m_material.diffuse.change_texture(Vector<float, 3>{});
+	m_material.diffuse.imgui_renderer("diffuse");
+	m_material.specular.imgui_renderer("specular");
 
-	ImGui::ColorEdit3("Specular", &m_material.specular[0]);
-	ImGui::DragFloat("shininess", &m_material.shininess, 0.05f, 0.0f, 1.0f);
+	ImGui::DragFloat("shininess", &m_material.shininess, 0.05f, 0.0f, 100.0f);
 	ImGui::Separator();
 	
 	ImGui::Checkbox("Visibility", &m_is_visible);
@@ -151,4 +127,3 @@ void Model3D::copy_other(Model3D const& other)
 	
 	m_number_of_objects++;
 }
-
