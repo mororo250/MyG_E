@@ -4,14 +4,15 @@
 #include "imgui.h"
 
 unsigned short SpotLight::s_count = 0;
+unsigned short SpotLight::s_id = 0;
 
 SpotLight::SpotLight(const Vector<float, 3>& position, const Vector<float, 3>& color, float in_angle, float out_angle, const Vector<float, 3>& direction)
 	: m_in_angle(in_angle)
 	, m_out_angle(out_angle)
 	, m_direction(direction)
 	, Light(position, color)
-	, m_id(s_count++)
 {
+	s_count++;
 }
 
 void SpotLight::ImGuiRenderer()
@@ -23,15 +24,14 @@ void SpotLight::ImGuiRenderer()
 		m_out_angle = m_in_angle;
 }
 
-void SpotLight::set_uniform(Shader* shader)
+void SpotLight::set_uniform(Shader const* shader)
 {
-	std::string light = "u_SpotLight[" + std::to_string(m_id) + "]";
-	shader->set_uniform3f(shader->GetUniformLocation(light + ".light.color"), get_light_color());
-	shader->set_uniform1f(shader->GetUniformLocation(light + ".light.ambient_strength"), get_ambient_strength());
-	shader->set_uniform1f(shader->GetUniformLocation(light + ".light.diffuse_strength"), get_diffuse_strength());
-	shader->set_uniform1f(shader->GetUniformLocation(light + ".light.specular_strength"), get_specular_strength());
-	shader->set_uniform3f(shader->GetUniformLocation(light + ".position"), get_light_position());
-	shader->set_uniform1f(shader->GetUniformLocation(light + ".in_angle"), std::cos(m_in_angle));
-	shader->set_uniform1f(shader->GetUniformLocation(light + ".out_angle"), std::cos(m_out_angle));
-	shader->set_uniform3f(shader->GetUniformLocation(light + ".direction"), m_direction);
+	std::string light = "u_SpotLight[" + std::to_string(s_id++) + "]";
+	set_general_uniform(shader, light);
+	shader->set_uniform3f(shader->get_uniform_location(light + ".position"), get_light_position());
+	shader->set_uniform1f(shader->get_uniform_location(light + ".in_angle"), std::cos(m_in_angle));
+	shader->set_uniform1f(shader->get_uniform_location(light + ".out_angle"), std::cos(m_out_angle));
+	shader->set_uniform3f(shader->get_uniform_location(light + ".direction"), m_direction);
+	if (s_id >= s_count)
+		s_id = 0;
 }

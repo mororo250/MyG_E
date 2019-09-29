@@ -52,7 +52,7 @@ BatchRenderScene::BatchRenderScene()
 	Matrix<float, 3, 3> WorldTransform = mScaleMat * mRotMat * mTranMat;
 	mMVP = WorldTransform * mOrtho; //Model view projection
 
-	mU_MVP = mShader->GetUniformLocation("u_MVP");
+	mU_MVP = mShader->get_uniform_location("u_MVP");
 	mShader->set_uniformMatrix3f(mU_MVP, mMVP);
 
 	mBatchRenderer->begin();

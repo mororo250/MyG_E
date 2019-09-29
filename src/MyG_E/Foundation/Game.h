@@ -20,10 +20,12 @@ public:
 	void Loop();
 	void Shutdown();
 
-	inline GLFWwindow* GetWindow() const { return mWindow; }
-	inline float GetDelta() const { return mDelta; }
-	inline int GetHeight() const { return mWinHeight; }
-	inline int GetWidth() const { return mWinWidth; }
+	void resize_window(int width, int height);
+
+	inline GLFWwindow* GetWindow() const { return m_window; }
+	inline float GetDelta() const { return m_delta; }
+	inline int GetHeight() const { return m_window_height; }
+	inline int GetWidth() const { return m_window_width; }
 
 	void open_project(std::string const& path);
 	void save_project(std::string const& path);
@@ -37,10 +39,10 @@ public:
 	}
 
 private:
-	float mDelta; //time between this frame and the last one
-	int mWinHeight;
-	int mWinWidth;
-	GLFWwindow* mWindow;
+	float m_delta; //time between this frame and the last one
+	int m_window_height;
+	int m_window_width;
+	GLFWwindow* m_window;
 	static Game *s_Instance;
 
 	LayerCollection m_layer_collection;

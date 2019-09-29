@@ -2,22 +2,7 @@
 
 #include "Core\Mesh.h"
 #include "Foundation\Math\Matrix.h"
-#include "Core/Texture.h"
-
-// For while.
-struct Material 
-{
-	Material() {};
-	Material(Texture const& diff, Texture const& spec, float shi = 32.0f)
-		: diffuse(diff)
-		, specular(spec)
-		, shininess(shi)
-	{}
-
-	Texture diffuse; // a color or a texture
-	Texture specular; // a color or a specular map
-	float shininess;
-};
+#include "Core/Material.h"
 
 // write copy contructor
 class Model3D
@@ -48,7 +33,6 @@ public:
 
 	inline Material const& get_material() const { return m_material; }
 	inline void set_material(Material const& material) { m_material = material; };
-	void set_material (Texture const& diffuse, Texture const& specular, float shininess);
 
 	inline void rename_object(std::string const& name) { m_object_name = name; }
 	inline std::string& get_object() { return m_object_name; }

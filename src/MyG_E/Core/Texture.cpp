@@ -107,7 +107,7 @@ void Texture::imgui_renderer(std::string const& texture_name)
 	if (m_is_unitary)
 	{
 		Vector<float, 3> color{ m_color[0], m_color[1], m_color[2] };
-		ImGui::ColorEdit3("Texture_name", &color[0]);
+		ImGui::ColorEdit3(texture_name.c_str(), &color[0]);
 		change_texture(color);
 	}
 	else

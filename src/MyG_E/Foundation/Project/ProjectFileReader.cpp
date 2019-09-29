@@ -272,24 +272,24 @@ bool ProjectFileReader::load_objects(rapidjson::Document const& document, Projec
 				{
 					float shininess = material_json["shininess"].GetFloat();
 
-					std::unique_ptr<Texture> specular;
+					Texture* specular;
 					if (!has_specular_map)
-						specular.reset(new Texture(Vector<float, 3>{ material_json["specular"]["x"].GetFloat(),
+						specular = new Texture(Vector<float, 3>{ material_json["specular"]["x"].GetFloat(),
 							material_json["specular"]["y"].GetFloat(),
-							material_json["specular"]["z"].GetFloat() }));
+							material_json["specular"]["z"].GetFloat() });
 					else
-						specular.reset(new Texture(std::filesystem::absolute(std::filesystem::absolute(
-							material_json["specular_map"].GetString()).string()).string()));
+						specular = new Texture(std::filesystem::absolute(std::filesystem::absolute(
+							material_json["specular_map"].GetString()).string()).string());
 					if (!has_texture)
 					{
 						Vector<float, 3> diffuse{ material_json["diffuse"]["x"].GetFloat(),
 							material_json["diffuse"]["y"].GetFloat(),
 							material_json["diffuse"]["z"].GetFloat() };
-						object->set_material(Material(diffuse, *specular, shininess));
+						object->set_material(Material(new Texture(diffuse), specular, shininess));
 					}
 					else
-						object->set_material(std::filesystem::absolute(
-							material_json["texture"].GetString()).string(), *specular, shininess);
+						object->set_material(Material(new Texture(std::filesystem::absolute(
+							material_json["texture"].GetString()).string()), specular, shininess));
 				}
 			}
 		}

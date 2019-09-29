@@ -12,26 +12,26 @@ public:
 
 	void bind() const;
 	void unbind() const;
-	void set_uniform1i(int location, int value);
-	void set_uniform1f(int location, float value);
-	void set_uniform3f(int location, float v1, float v2, float v3);
-	void set_uniform4f(int location, float v1, float v2, float v3, float v4);
+	void set_uniform1i(int location, int value) const;
+	void set_uniform1f(int location, float value) const;
+	void set_uniform3f(int location, float v1, float v2, float v3) const;
+	void set_uniform4f(int location, float v1, float v2, float v3, float v4) const;
 
-	void set_uniform3f(int location, const Vector<float, 3>& vector3);
-	void set_uniform4f(int location, const Vector<float, 4>& vector4);
+	void set_uniform3f(int location, Vector<float, 3> const& vector3) const;
+	void set_uniform4f(int location, Vector<float, 4> const& vector4) const;
 
-	void set_uniformMatrix3f(int location, const Matrix< float, 3, 3>& matrix);
-	void set_uniformMatrix4f(int location, const Matrix< float, 4, 4>& matrix);
-	int GetUniformLocation(const std::string& name) const;
+	void set_uniformMatrix3f(int location, Matrix< float, 3, 3> const& matrix) const;
+	void set_uniformMatrix4f(int location, Matrix< float, 4, 4> const& matrix) const;
+	int get_uniform_location(std::string const& name) const;
 
-	inline unsigned int GetProgram()const { return m_shader_program; }
+	inline unsigned int get_program() const { return m_shader_program; }
 
 private:
 	enum shader_type { NONE, VERTEX, FRAGMENT };
 
-	void ReadShader_File(const std::string& filepath, std::string& vertex_string, std::string& frag_string);
-	bool CreateShader(const std::string& filepath);
-	unsigned int CompileShader(const std::string& source, const unsigned int shader_type);
+	void read_shader_file(std::string const& filepath, std::string& vertex_string, std::string& frag_string);
+	bool create_shader(std::string const& filepath);
+	unsigned int compile_shader(std::string const& source, unsigned int const shader_type);
 	
 	unsigned int m_shader_program;
 

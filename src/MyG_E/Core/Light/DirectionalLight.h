@@ -15,12 +15,12 @@ public:
 	inline void SetDirection(Vector<float, 3>& direction) { m_direction = direction; }
 
 	void ImGuiRenderer() override;
-	void set_uniform(Shader* shader) override;
+	void set_uniform(Shader const* shader) override;
 
 	static unsigned short get_count() { return s_count; }
 
 private:
 	Vector<float, 3> m_direction;
 	static unsigned short s_count;
-	unsigned short m_id;
+	static unsigned short s_id;
 };

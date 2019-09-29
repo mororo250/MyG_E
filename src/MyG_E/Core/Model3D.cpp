@@ -85,13 +85,6 @@ void Model3D::set_rotation(Vector<float, 3> const& rotation)
 	m_rotation_matrix = Quaternion::CreateRotationMatrix(quat);
 }
 
-void Model3D::set_material(Texture const& diffuse, Texture const& specular, float shininess)
-{
-	m_material.diffuse = diffuse;
-	m_material.specular = specular;
-	m_material.shininess = shininess;
-}
-
 void Model3D::ImGuiRenderer()
 {
 	ImGui::DragFloat3("Translate", &m_position[0], 0.1f);
@@ -99,10 +92,12 @@ void Model3D::ImGuiRenderer()
 	ImGui::SliderFloat3("Rotate", &m_rotate[0], -6.28f, 6.28f);
 	ImGui::Separator();
 	
-	m_material.diffuse.imgui_renderer("diffuse");
-	m_material.specular.imgui_renderer("specular");
+	m_material.get_diffuse()->imgui_renderer("diffuse");
+	m_material.get_specular()->imgui_renderer("specular map");
 
-	ImGui::DragFloat("shininess", &m_material.shininess, 0.05f, 0.0f, 100.0f);
+	float shininess = m_material.get_shininess();
+	ImGui::DragFloat("shininess", &shininess, 0.05f, 0.0f, 100.0f);
+	m_material.set_shininess(shininess);
 	ImGui::Separator();
 	
 	ImGui::Checkbox("Visibility", &m_is_visible);

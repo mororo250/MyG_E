@@ -1,51 +1,66 @@
 #include "ProjectFileWriter.h"
 
-#include "rapidjson/stringbuffer.h"
-#include "rapidjson/prettywriter.h"
-
 bool ProjectFileWriter::write_file(ProjectController const* project_controller, std::string const& filename )
 {
 	rapidjson::StringBuffer string_buffer;
 	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(string_buffer);
 	
 	// must pass an allocator when the object may need to allocate memory
-
-	// Write camera
 	writer.StartObject(); // root
-	{
-		Camera const* camera = project_controller->get_camera();
-		
-		writer.Key("camera");
 
-		writer.StartObject(); // Camera
-		writer.Key("model");
-		if(dynamic_cast<EditCamera const*>(camera))
-			writer.String("edit_camera");
-		if (dynamic_cast<FPSCamera const*>(camera))
-			writer.String("fps_camera");
-		writer.Key("position");
+	write_camera(writer, project_controller);
+	write_objects(writer, project_controller);
+	write_lights(writer, project_controller);
 
-		writer.StartObject(); // Camera Position
-		writer.Key("x");
-		writer.Double(camera->GetPosition()[0]);
-		writer.Key("y");
-		writer.Double(camera->GetPosition()[1]);
-		writer.Key("z");
-		writer.Double(camera->GetPosition()[2]);
-		writer.EndObject(); // End Camera Position
+	writer.EndObject(); // root
 
-		writer.Key("direction");
-		writer.StartObject(); // Camera Direction
-		writer.Key("x");
-		writer.Double(camera->GetDirection()[0]);
-		writer.Key("y");
-		writer.Double(camera->GetDirection()[1]);
-		writer.Key("z");
-		writer.Double(camera->GetDirection()[2]);
-		writer.EndObject(); // End Camera Direction
-		writer.EndObject(); // End Camera
-	}
+	// Write file
+	std::ofstream file;
+	file.open(filename);
+	file << string_buffer.GetString();
+	file.close();
 
+	return true;
+}
+
+void ProjectFileWriter::write_camera(rapidjson::PrettyWriter<rapidjson::StringBuffer>& writer, ProjectController const* project_controller)
+{
+	// Write camera
+	Camera const* camera = project_controller->get_camera();
+
+	writer.Key("camera");
+
+	writer.StartObject(); // Camera
+	writer.Key("model");
+	if (dynamic_cast<EditCamera const*>(camera))
+		writer.String("edit_camera");
+	if (dynamic_cast<FPSCamera const*>(camera))
+		writer.String("fps_camera");
+	writer.Key("position");
+
+	writer.StartObject(); // Camera Position
+	writer.Key("x");
+	writer.Double(camera->GetPosition()[0]);
+	writer.Key("y");
+	writer.Double(camera->GetPosition()[1]);
+	writer.Key("z");
+	writer.Double(camera->GetPosition()[2]);
+	writer.EndObject(); // End Camera Position
+
+	writer.Key("direction");
+	writer.StartObject(); // Camera Direction
+	writer.Key("x");
+	writer.Double(camera->GetDirection()[0]);
+	writer.Key("y");
+	writer.Double(camera->GetDirection()[1]);
+	writer.Key("z");
+	writer.Double(camera->GetDirection()[2]);
+	writer.EndObject(); // End Camera Direction
+	writer.EndObject(); // End Camera
+}
+
+void ProjectFileWriter::write_objects(rapidjson::PrettyWriter<rapidjson::StringBuffer>& writer, ProjectController const* project_controller)
+{
 	// Write Object Buffer
 	std::vector<Model3D*> const object_buffer = project_controller->get_object_buffer();
 	writer.Key("object_buffer");
@@ -53,7 +68,7 @@ bool ProjectFileWriter::write_file(ProjectController const* project_controller, 
 	for (unsigned int i = 0; i < object_buffer.size(); i++)
 	{
 		writer.StartObject(); // Object
-		
+
 		writer.Key("model");
 		switch (object_buffer[i]->get_shape())
 		{
@@ -72,7 +87,7 @@ bool ProjectFileWriter::write_file(ProjectController const* project_controller, 
 		default:
 			break;
 		}
-		
+
 		writer.Key("visibility");
 		writer.Bool(object_buffer[i]->is_visible());
 
@@ -108,19 +123,19 @@ bool ProjectFileWriter::write_file(ProjectController const* project_controller, 
 
 		writer.Key("material");
 		writer.StartObject(); // Material
-		
-		if (object_buffer[i]->get_material().diffuse.is_unitary())
+
+		if (object_buffer[i]->get_material().get_diffuse()->is_unitary())
 		{
 			writer.Key("has_texture");
 			writer.Bool(false);
 			writer.Key("diffuse");
 			writer.StartObject(); // Diffuse
 			writer.Key("x");
-			writer.Double(object_buffer[i]->get_material().diffuse.get_color()[0]);
+			writer.Double(object_buffer[i]->get_material().get_diffuse()->get_color()[0]);
 			writer.Key("y");
-			writer.Double(object_buffer[i]->get_material().diffuse.get_color()[1]);
+			writer.Double(object_buffer[i]->get_material().get_diffuse()->get_color()[1]);
 			writer.Key("z");
-			writer.Double(object_buffer[i]->get_material().diffuse.get_color()[2]);
+			writer.Double(object_buffer[i]->get_material().get_diffuse()->get_color()[2]);
 			writer.EndObject(); // Diffuse
 		}
 		else
@@ -129,21 +144,21 @@ bool ProjectFileWriter::write_file(ProjectController const* project_controller, 
 			writer.Bool(true);
 			writer.Key("texture");
 			writer.String(
-				std::filesystem::relative(object_buffer[i]->get_material().diffuse.get_filepath()).string().c_str());
+				std::filesystem::relative(object_buffer[i]->get_material().get_diffuse()->get_filepath()).string().c_str());
 		}
 
-		if (object_buffer[i]->get_material().specular.is_unitary())
+		if (object_buffer[i]->get_material().get_specular()->is_unitary())
 		{
 			writer.Key("has_specular_map");
 			writer.Bool(false);
 			writer.Key("specular");
 			writer.StartObject(); // specular
 			writer.Key("x");
-			writer.Double(object_buffer[i]->get_material().specular.get_color()[0]);
+			writer.Double(object_buffer[i]->get_material().get_specular()->get_color()[0]);
 			writer.Key("y");
-			writer.Double(object_buffer[i]->get_material().specular.get_color()[1]);
+			writer.Double(object_buffer[i]->get_material().get_specular()->get_color()[1]);
 			writer.Key("z");
-			writer.Double(object_buffer[i]->get_material().specular.get_color()[2]);
+			writer.Double(object_buffer[i]->get_material().get_specular()->get_color()[2]);
 			writer.EndObject(); // specular
 		}
 		else
@@ -152,16 +167,19 @@ bool ProjectFileWriter::write_file(ProjectController const* project_controller, 
 			writer.Bool(true);
 			writer.Key("specular_map");
 			writer.String(
-				std::filesystem::relative(object_buffer[i]->get_material().specular.get_filepath()).string().c_str());
+				std::filesystem::relative(object_buffer[i]->get_material().get_specular()->get_filepath()).string().c_str());
 		}
-		
+
 		writer.Key("shininess");
-		writer.Double(object_buffer[i]->get_material().shininess);
+		writer.Double(object_buffer[i]->get_material().get_shininess());
 		writer.EndObject(); // Material
 		writer.EndObject(); // Object
 	}
 	writer.EndArray();
-	
+}
+
+void ProjectFileWriter::write_lights(rapidjson::PrettyWriter<rapidjson::StringBuffer>& writer, ProjectController const* project_controller)
+{
 	// Write Light
 	std::vector<Light*> const light_buffer = project_controller->get_light_buffer();
 	writer.Key("light_buffer");
@@ -244,13 +262,4 @@ bool ProjectFileWriter::write_file(ProjectController const* project_controller, 
 		writer.EndObject(); // Light
 	}
 	writer.EndArray();
-	writer.EndObject(); // root
-
-	// Write file
-	std::ofstream file;
-	file.open(filename);
-	file << string_buffer.GetString();
-	file.close();
-
-	return true;
 }

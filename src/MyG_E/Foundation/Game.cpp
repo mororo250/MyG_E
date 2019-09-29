@@ -21,9 +21,9 @@
 Game* Game::s_Instance = nullptr;
 
 Game::Game()
-	:mWinHeight(768),
-	mWinWidth(1024),
-	mDelta(1.0f),
+	:m_window_height(768),
+	m_window_width(1024),
+	m_delta(1.0f),
 	m_imgui_layer(nullptr),
 	m_project_controller(nullptr)
 {
@@ -49,15 +49,22 @@ bool Game::Initialize()
 	glfwWindowHint(GLFW_SAMPLES, 4);
 
 	/* Create a windowed mode window and its OpenGL context */
-	mWindow = glfwCreateWindow(mWinWidth, mWinHeight, "Hello World", NULL, NULL);
-	if (!mWindow)
+	m_window = glfwCreateWindow(m_window_width, m_window_height, "Hello World", NULL, NULL);
+	if (!m_window)
 	{
 		glfwTerminate();
 		return 0;
 	}
 
+	glfwSetWindowSizeCallback(m_window, 
+		[](GLFWwindow* window, int width, int height)
+	{
+		Game::Get().resize_window(width, height);
+	}
+		);
+
 	/* Make the window's context current */
-	glfwMakeContextCurrent(mWindow);
+	glfwMakeContextCurrent(m_window);
 	//sicronize with vsync
 	glfwSwapInterval(1);
 
@@ -82,7 +89,7 @@ void Game::Loop()
 
 	/* Loop until the user closes the window */
 	std::chrono::duration<float> frametime;
-	while (!glfwWindowShouldClose(mWindow))
+	while (!glfwWindowShouldClose(m_window))
 	{
 		GLcall(glClear(GL_COLOR_BUFFER_BIT));
 		m_imgui_layer->begin();
@@ -96,7 +103,7 @@ void Game::Loop()
 		m_imgui_layer->end();
 
 		// Swap front and back buffers 
-		glfwSwapBuffers(mWindow);
+		glfwSwapBuffers(m_window);
 
 		// Poll for and process events 
 		glfwPollEvents();
@@ -106,6 +113,14 @@ void Game::Loop()
 void Game::Shutdown()
 {
 	glfwTerminate();
+}
+
+void Game::resize_window(int width, int height)
+{
+	m_window_height = height;
+	m_window_width = width;
+	GLcall(glViewport(0, 0, width, height));
+	m_project_controller->set_perspective_matrix(width/height);
 }
 
 void Game::open_project(std::string const& path)

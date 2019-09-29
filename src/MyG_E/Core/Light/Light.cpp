@@ -1,5 +1,6 @@
 #include "Light.h"
 #include "imgui.h"
+#include "Core/Shader.h"
 
 Light::Light(const Vector<float, 3>& position, const Vector<float, 3>& color)
 	: m_color(color)
@@ -43,6 +44,14 @@ void Light::ImGuiRenderer()
 	ImGui::DragFloat("Diffuse stength", &m_diffuse_strength, 0.05f ,0.0f, 5.0f);
 	ImGui::DragFloat("Specular stength", &m_specular_strength, 0.05f, 0.0f, 5.0f);
 	ImGui::Separator();
+}
+
+void Light::set_general_uniform(Shader const* shader, std::string const& uniform_name)
+{
+	shader->set_uniform3f(shader->get_uniform_location(uniform_name + ".light.color"), get_light_color());
+	shader->set_uniform1f(shader->get_uniform_location(uniform_name + ".light.ambient_strength"), get_ambient_strength());
+	shader->set_uniform1f(shader->get_uniform_location(uniform_name + ".light.diffuse_strength"), get_diffuse_strength());
+	shader->set_uniform1f(shader->get_uniform_location(uniform_name + ".light.specular_strength"), get_specular_strength());
 }
 
 void Light::copy_other(Light const& other)

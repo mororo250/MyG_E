@@ -8,7 +8,7 @@
 Shader::Shader(const std::string& filepath)
 	: m_shader_program(0)
 {
-	ASSERT(!CreateShader(filepath));
+	ASSERT(!create_shader(filepath));
 }
 
 Shader::~Shader() {
@@ -25,47 +25,47 @@ void Shader::unbind() const
 	GLcall(glUseProgram(0));
 }
 
-void Shader::set_uniform1i(int location, int value)
+void Shader::set_uniform1i(int location, int value) const
 {
 	GLcall(glUniform1i(location, value));
 }
 
-void Shader::set_uniform1f(int location, float value)
+void Shader::set_uniform1f(int location, float value) const
 {
 	GLcall(glUniform1f(location, value));
 }
 
-void Shader::set_uniform3f(int location, float v1, float v2, float v3)
+void Shader::set_uniform3f(int location, float v1, float v2, float v3) const
 {
 	GLcall(glUniform3f(location, v1, v2, v3));
 }
 
-void Shader::set_uniform4f(int location, float v1, float v2, float v3, float v4)
+void Shader::set_uniform4f(int location, float v1, float v2, float v3, float v4) const
 {
 	GLcall(glUniform4f(location, v1, v2, v3, v4));
 }
 
-void Shader::set_uniform3f(int location, const Vector<float, 3>& vector)
+void Shader::set_uniform3f(int location, const Vector<float, 3>& vector) const
 {
 	GLcall(glUniform3f(location, vector[0], vector[1], vector[2]));
 }
 
-void Shader::set_uniform4f(int location, const Vector<float, 4>& vector)
+void Shader::set_uniform4f(int location, const Vector<float, 4>& vector) const
 {
 	GLcall(glUniform4f(location, vector[0], vector[1], vector[2], vector[3]));
 }
 
-void Shader::set_uniformMatrix3f(int location, const Matrix<float, 3, 3>& matrix)
+void Shader::set_uniformMatrix3f(int location, const Matrix<float, 3, 3>& matrix) const
 {
 	GLcall(glUniformMatrix3fv(location, 1, GL_TRUE, reinterpret_cast<const float *>(matrix.GetAsPointer()) ));
 }
 
-void Shader::set_uniformMatrix4f(int location, const Matrix<float, 4, 4>& matrix)
+void Shader::set_uniformMatrix4f(int location, const Matrix<float, 4, 4>& matrix) const
 {
 	GLcall(glUniformMatrix4fv(location, 1, GL_TRUE, reinterpret_cast<const float *>(matrix.GetAsPointer()) ));
 }
 
-int Shader::GetUniformLocation(const std::string& name) const
+int Shader::get_uniform_location(const std::string& name) const
 {
 	GLcall(int uniform_location = glGetUniformLocation(m_shader_program, name.c_str()));
 	if (uniform_location == -1)
@@ -74,7 +74,7 @@ int Shader::GetUniformLocation(const std::string& name) const
 }
 
 //this function read the shader file and put the shader code in a string
-void Shader::ReadShader_File(const std::string& shader_name, std::string& vertex_string, std::string& frag_string)
+void Shader::read_shader_file(const std::string& shader_name, std::string& vertex_string, std::string& frag_string)
 {
 	// Shader directory.
 	std::string file_path = std::filesystem::current_path().parent_path().string();
@@ -124,17 +124,17 @@ void Shader::ReadShader_File(const std::string& shader_name, std::string& vertex
 	}
 }
 
-bool Shader::CreateShader(const std::string& filepath)
+bool Shader::create_shader(const std::string& filepath)
 {
 	std::string vertex_string("");
 	std::string frag_string("");
-	ReadShader_File(filepath, vertex_string, frag_string);
+	read_shader_file(filepath, vertex_string, frag_string);
 	//create a shader program that links together the vertex/frag shaders
 	GLcall(m_shader_program = glCreateProgram());
 
 
-	unsigned int vertex_shader = CompileShader(vertex_string, GL_VERTEX_SHADER);
-	unsigned int frag_shader = CompileShader(frag_string, GL_FRAGMENT_SHADER);
+	unsigned int vertex_shader = compile_shader(vertex_string, GL_VERTEX_SHADER);
+	unsigned int frag_shader = compile_shader(frag_string, GL_FRAGMENT_SHADER);
 
 	// links together the vertex/frag shaders
 	GLcall(glAttachShader(m_shader_program, vertex_shader));
@@ -163,7 +163,7 @@ bool Shader::CreateShader(const std::string& filepath)
 	return true;
 }
 
-unsigned int Shader::CompileShader(const std::string& source, const unsigned int shader_type) 
+unsigned int Shader::compile_shader(const std::string& source, const unsigned int shader_type) 
 {
 	// Create a shader of the specified type
 	GLcall(unsigned int id = glCreateShader(shader_type));

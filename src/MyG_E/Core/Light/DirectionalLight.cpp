@@ -4,12 +4,13 @@
 #include "imgui.h"
 
 unsigned short DirectionalLight::s_count = 0;
+unsigned short DirectionalLight::s_id = 0;
 
 DirectionalLight::DirectionalLight(const Vector<float, 3>& position, const Vector<float, 3>& color, const Vector<float, 3>& direction)
 	: m_direction(direction)
-	, m_id(s_count++)
 	, Light(position, color)
 {
+	s_count++;
 }
 
 void DirectionalLight::ImGuiRenderer()
@@ -19,12 +20,11 @@ void DirectionalLight::ImGuiRenderer()
 	m_direction.Normalize();
 }
 
-void DirectionalLight::set_uniform(Shader* shader)
+void DirectionalLight::set_uniform(Shader const* shader)
 {
-	std::string light = "u_DirectionalLight[" + std::to_string(m_id) + "]";
-	shader->set_uniform3f(shader->GetUniformLocation(light + ".light.color"), get_light_color());
-	shader->set_uniform1f(shader->GetUniformLocation(light + ".light.ambient_strength"), get_ambient_strength());
-	shader->set_uniform1f(shader->GetUniformLocation(light + ".light.diffuse_strength"), get_diffuse_strength());
-	shader->set_uniform1f(shader->GetUniformLocation(light + ".light.specular_strength"), get_specular_strength());
-	shader->set_uniform3f(shader->GetUniformLocation(light + ".directional"), m_direction);
+	std::string light = "u_DirectionalLight[" + std::to_string(s_id++) + "]";
+	set_general_uniform(shader, light);
+	shader->set_uniform3f(shader->get_uniform_location(light + ".directional"), m_direction);
+	if (s_id >= s_count)
+		s_id = 0;
 }

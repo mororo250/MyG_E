@@ -15,6 +15,7 @@ Material::Material(Material const& other)
 Material& Material::operator=(Material const& other)
 {
 	copy_other(other);
+	return *this;
 }
 
 void Material::copy_other(Material const& other)

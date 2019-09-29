@@ -6,7 +6,7 @@ ProjectController::ProjectController()
 	m_light_shader(new Shader("Light.glsl")),
 	m_shader(new Shader("Phong.glsl")),
 	m_renderer(new Renderer3D()),
-	m_persp_matrix(CreatePerspectiveMatrix(45.0f, 1024.0f / 768.0f, 0.1f, 800.0f))
+	m_persp_matrix(CreatePerspectiveMatrix(45.0f, Game::Get().GetWidth() / Game::Get().GetHeight(), 0.1f, 800.0f))
 {
 }
 
@@ -42,10 +42,10 @@ void ProjectController::update()
 		m_light_buffer[i]->set_uniform(m_shader.get());
 
 	// General uniforms.
-	m_shader->set_uniform1i(m_shader->GetUniformLocation("u_NumPointLight"), PointLight::get_count());
-	m_shader->set_uniform1i(m_shader->GetUniformLocation("u_NumSpotLight"), SpotLight::get_count());
-	m_shader->set_uniform1i(m_shader->GetUniformLocation("u_NumDirectionalLight"), DirectionalLight::get_count());
-	m_shader->set_uniform3f(m_shader->GetUniformLocation("u_ViewPos"), m_camera->GetPosition());
+	m_shader->set_uniform1i(m_shader->get_uniform_location("u_NumPointLight"), PointLight::get_count());
+	m_shader->set_uniform1i(m_shader->get_uniform_location("u_NumSpotLight"), SpotLight::get_count());
+	m_shader->set_uniform1i(m_shader->get_uniform_location("u_NumDirectionalLight"), DirectionalLight::get_count());
+	m_shader->set_uniform3f(m_shader->get_uniform_location("u_ViewPos"), m_camera->GetPosition());
 
 	for (auto* aux : m_object_buffer)
 	{
@@ -55,20 +55,20 @@ void ProjectController::update()
 			Matrix<float, 4, 4> view_projection = m_camera->GetView() * m_persp_matrix;
 
 			// Materials uniforms.
-			m_shader->set_uniformMatrix4f(m_shader->GetUniformLocation("u_Model"), model_matrix);
-			m_shader->set_uniformMatrix4f(m_shader->GetUniformLocation("u_ViewProjection"), view_projection);
-			aux->get_material().diffuse.bind(0);
-			aux->get_material().specular.bind(1);
-			m_shader->set_uniform1i(m_shader->GetUniformLocation("u_texture"), 0);
-			m_shader->set_uniform1i(m_shader->GetUniformLocation("u_specular_map"), 1);
-			m_shader->set_uniform1f(m_shader->GetUniformLocation("u_shininess"), aux->get_material().shininess);
+			m_shader->set_uniformMatrix4f(m_shader->get_uniform_location("u_Model"), model_matrix);
+			m_shader->set_uniformMatrix4f(m_shader->get_uniform_location("u_ViewProjection"), view_projection);
+			aux->get_material().get_diffuse()->bind(0);
+			aux->get_material().get_specular()->bind(1);
+			m_shader->set_uniform1i(m_shader->get_uniform_location("u_texture"), 0);
+			m_shader->set_uniform1i(m_shader->get_uniform_location("u_specular_map"), 1);
+			m_shader->set_uniform1f(m_shader->get_uniform_location("u_shininess"), aux->get_material().get_shininess());
 
 			aux->get_mesh()->GetVertexArray().bind();
 			aux->get_mesh()->GetIndexBuffer().bind();
 			m_renderer->Draw(aux->get_mesh()->GetIndexBuffer());
 			aux->get_mesh()->GetVertexArray().unbind();
 			aux->get_mesh()->GetIndexBuffer().unbind();
-			aux->get_material().diffuse.unbind();
+			aux->get_material().get_diffuse()->unbind();
 		}
 	}
 	m_shader->unbind();
@@ -83,9 +83,9 @@ void ProjectController::update()
 				Matrix<float, 4, 4> model_matrix = aux->GetModel()->get_scale_matrix() * aux->GetModel()->get_rotation_matrix() * aux->GetModel()->get_translation(); //Model view projection
 				Matrix<float, 4, 4> view_projection = m_camera->GetView() * m_persp_matrix;
 
-				m_light_shader->set_uniformMatrix4f(m_light_shader->GetUniformLocation("u_Model"), model_matrix);
-				m_light_shader->set_uniformMatrix4f(m_light_shader->GetUniformLocation("u_ViewProjection"), view_projection);
-				m_light_shader->set_uniform3f(m_light_shader->GetUniformLocation("u_Color"), aux->get_light_color());
+				m_light_shader->set_uniformMatrix4f(m_light_shader->get_uniform_location("u_Model"), model_matrix);
+				m_light_shader->set_uniformMatrix4f(m_light_shader->get_uniform_location("u_ViewProjection"), view_projection);
+				m_light_shader->set_uniform3f(m_light_shader->get_uniform_location("u_Color"), aux->get_light_color());
 
 				aux->GetModel()->get_mesh()->GetVertexArray().bind();
 				aux->GetModel()->get_mesh()->GetIndexBuffer().bind();
@@ -104,7 +104,6 @@ void ProjectController::imgui_renderer()
 	m_camera->ImGuiRenderer();
 
 	static bool* p_open;
-	ImGui::SetNextWindowSize(ImVec2(400, 200), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Editor", p_open, ImGuiWindowFlags_MenuBar))
 	{
 
@@ -212,6 +211,11 @@ void ProjectController::pop_object(Model3D* object)
 	auto aux = std::find(m_object_buffer.begin(), m_object_buffer.end(), object);
 	if (aux != m_object_buffer.end())
 		m_object_buffer.erase(aux);
+}
+
+void ProjectController::set_perspective_matrix(float aspect_ratio)
+{
+	m_persp_matrix = CreatePerspectiveMatrix(45.0f, aspect_ratio, 0.1f, 2000.0f);
 }
 
 void ProjectController::create_object(Shape const shape)

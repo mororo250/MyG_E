@@ -32,6 +32,9 @@ public:
 	// Currente Camera
 	inline void set_camera(Camera* camera) { m_camera = camera; }
 	inline Camera const* get_camera() const { return m_camera; }
+
+	// perspective matrix:
+	void set_perspective_matrix(float aspect_atio);
 private:
 	void create_object(Shape const shape);
 	void create_light(unsigned int type);

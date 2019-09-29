@@ -29,7 +29,10 @@ public:
 	Model3D* GetModel() { return m_model; }
 
 	virtual void ImGuiRenderer();
-	virtual void set_uniform(class Shader* shader) = 0;
+	virtual void set_uniform(class Shader const* shader) = 0;
+
+protected:
+	void set_general_uniform(Shader const* shader, std::string const& uniform_name);
 
 private:
 	void copy_other(Light const& other);

@@ -37,7 +37,7 @@ Texture2D::Texture2D()
 	Matrix<float, 3, 3> WorldTransform = mScaleMat * mRotMat * mTranMat;
 	mMVP = WorldTransform * mOrtho; //Model view projection
 
-	mU_MVP = mShader->GetUniformLocation("u_MVP");
+	mU_MVP = mShader->get_uniform_location("u_MVP");
 	mShader->set_uniformMatrix3f(mU_MVP, mMVP);
 
 	std::string file_path = std::filesystem::current_path().parent_path().parent_path().parent_path().string();
@@ -45,7 +45,7 @@ Texture2D::Texture2D()
 	m_texture = std::make_unique<Texture>(file_path);
 
 	m_texture->bind(0);
-	mShader->set_uniform1i(mShader->GetUniformLocation("u_texture"), 0);
+	mShader->set_uniform1i(mShader->get_uniform_location("u_texture"), 0);
 
 	mVa->unbind();
 	m_vb->unbind();
