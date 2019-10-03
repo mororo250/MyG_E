@@ -39,13 +39,14 @@ Matrix<float, 4, 4> CreateOrthographicMatrix(const float left, const float right
 	return OrthoMatrix;
 }
 
-Matrix<float, 4, 4> CreatePerspectiveMatrix(const float fov, const float aspectRatio, const float l_near, const float l_far)
+Matrix<float, 4, 4> CreatePerspectiveMatrix(float const fov, float const width, float const height, float const l_near)
 {
-	float fovr = ToRadiants(fov);
-	Matrix<float, 4, 4> PerspectiveMatrix{{ 1.0f / (aspectRatio * (tan(fovr/2))), 0.0f, 0.0f, 0.0f},
-											{ 0, 1.0f / tan(fovr/2), 0, 0},
-											{ 0.0f, 0.0f, -(l_far + l_near) / (l_far - l_near), -1.0f},
-											{ 0, 0, -(2.0f * l_far * l_near) / (l_far - l_near), 0.0f} };
+	float aspect_ratio = width / height;
+	float projec_width = tan(ToRadiants(fov) / 2.0f);
+	Matrix<float, 4, 4> PerspectiveMatrix{{ 1.0f / (aspect_ratio * (projec_width)), 0.0f,					0.0f,				0.0f},
+											{ 0.0f,									1.0f / (projec_width),	0.0f,				0.0f},
+											{ 0.0f,									0.0f,					-1.0f,				-1.0f},
+											{ 0.0f,									0.0f,					-(2.0f * l_near),	0.0f} };
 	return PerspectiveMatrix;
 }
 

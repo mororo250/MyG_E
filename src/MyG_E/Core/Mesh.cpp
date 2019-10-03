@@ -1,122 +1,51 @@
 #include "Mesh.h"
 
-Mesh::Mesh(Shape shape)
-{
-	m_shape = shape;
-	switch (shape)
-	{
-	case Shape::PLANE:
-		m_vertex_data = plane_vertices;
-		m_indices = plane_indices;
-		break;
-	case Shape::CUBE:
-		m_vertex_data = cube_vertices;
-		m_indices = cube_indices;
-		break;
-	case Shape::SPHERE:
-		m_vertex_data = sphere_vertices;
-		m_indices = sphere_indices;
-		break;
-	case Shape::PYRAMID:
-		m_vertex_data = pyramid_vertices;
-		m_indices = pyramid_indices;
-		break;
-	default: 
-		break;
-	}
-	CreateMesh();
-}
-
-Mesh::Mesh(Mesh const& other)
-{
-	copy_other(other);
-}
-
-Mesh& Mesh::operator=(Mesh const& other)
-{
-	if (this != &other)
-		copy_other(other);
-	return *this;
-}
-
-Mesh::~Mesh()
-{
-}
-
-void Mesh::copy_other(Mesh const& other)
-{
-	m_shape = other.m_shape;
-	m_vertex_data = other.m_vertex_data;
-	m_indices = other.m_indices;
-	CreateMesh();
-}
-
-void Mesh::CreateMesh()
-{
-	const int NumAttrib = 8;
-	m_vao = std::make_unique<VertexArray>();
-	m_vb = std::make_unique<VertexBuffer>(reinterpret_cast<float *>(m_vertex_data.data()), m_vertex_data.size() / NumAttrib, NumAttrib);
-	m_ib = std::make_unique<IndexBuffer>(m_indices.data(), m_indices.size());
-
-	m_vao->PushLayout(3, GL_FLOAT, GL_FALSE, 0);
-	m_vao->PushLayout(3, GL_FLOAT, GL_FALSE, 3);
-	m_vao->PushLayout(2, GL_FLOAT, GL_FALSE, 6);
-
-	m_vao->AddBuffer(*m_vb);
-
-	m_vao->unbind();
-	m_vb->unbind();
-	m_ib->unbind();
-}
-
-// Vertices: positiom/ tesxture. normals
 // Plane.
-const std::vector<float> Mesh::plane_vertices({
+constexpr std::array<float, 32> plane_vertices({
 	-0.5f, 0.0f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
 	0.5f, 0.0f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
 	-0.5f, 0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
 	0.5f, 0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f
-});
-
-const std::vector<unsigned int> Mesh::plane_indices({
+	});
+constexpr std::array<unsigned int, 6> plane_indices({
 	0, 1, 2,
 	3, 2, 1
-});
+	});
 
 // Square.
-const std::vector<float> Mesh::cube_vertices({
-			// position // normal //tex coords
-			-0.5, -0.5, -0.5,  0,  0, -1, 0, 0,
-			 0.5, -0.5, -0.5,  0,  0, -1, 1, 0,
-			 0.5,  0.5, -0.5,  0,  0, -1, 1, 1,
-			-0.5,  0.5, -0.5,  0,  0, -1, 0, 1,
-							   	   
-			-0.5, -0.5,  0.5,  0,  0,  1, 0, 0,
-			 0.5, -0.5,  0.5,  0,  0,  1, 1, 0,
-			 0.5,  0.5,  0.5,  0,  0,  1, 1, 1,
-			-0.5,  0.5,  0.5,  0,  0,  1, 0, 1,
+constexpr std::array<float, 192> cube_vertices({
+	// position		 normal		tex coords
+	-0.5, -0.5, -0.5,  0,  0, -1, 0, 0,
+	 0.5, -0.5, -0.5,  0,  0, -1, 1, 0,
+	 0.5,  0.5, -0.5,  0,  0, -1, 1, 1,
+	-0.5,  0.5, -0.5,  0,  0, -1, 0, 1,
 
-			-0.5,  0.5,  0.5, -1,  0,  0, 1, 0,
-			-0.5,  0.5, -0.5, -1,  0,  0, 1, 1,
-			-0.5, -0.5, -0.5, -1,  0,  0, 0, 1,
-			-0.5, -0.5,  0.5, -1,  0,  0, 0, 0,
+	-0.5, -0.5,  0.5,  0,  0,  1, 0, 0,
+	 0.5, -0.5,  0.5,  0,  0,  1, 1, 0,
+	 0.5,  0.5,  0.5,  0,  0,  1, 1, 1,
+	-0.5,  0.5,  0.5,  0,  0,  1, 0, 1,
 
-			 0.5,  0.5,  0.5,  1,  0,  0, 1, 0,
-			 0.5,  0.5, -0.5,  1,  0,  0, 1, 1,
-			 0.5, -0.5, -0.5,  1,  0,  0, 0, 1,
-			 0.5, -0.5,  0.5,  1,  0,  0, 0, 0,
+	-0.5,  0.5,  0.5, -1,  0,  0, 1, 0,
+	-0.5,  0.5, -0.5, -1,  0,  0, 1, 1,
+	-0.5, -0.5, -0.5, -1,  0,  0, 0, 1,
+	-0.5, -0.5,  0.5, -1,  0,  0, 0, 0,
 
-			-0.5, -0.5, -0.5,  0, -1,  0, 0, 1,
-			 0.5, -0.5, -0.5,  0, -1,  0, 1, 1,
-			 0.5, -0.5,  0.5,  0, -1,  0, 1, 0,
-			-0.5, -0.5,  0.5,  0, -1,  0, 0, 0,
+	 0.5,  0.5,  0.5,  1,  0,  0, 1, 0,
+	 0.5,  0.5, -0.5,  1,  0,  0, 1, 1,
+	 0.5, -0.5, -0.5,  1,  0,  0, 0, 1,
+	 0.5, -0.5,  0.5,  1,  0,  0, 0, 0,
 
-			-0.5,  0.5, -0.5,  0,  1,  0, 0, 1,
-			 0.5,  0.5, -0.5,  0,  1,  0, 1, 1,
-			 0.5,  0.5,  0.5,  0,  1,  1, 1, 0,
-			-0.5,  0.5,  0.5,  0,  1,  1, 0, 0,
-});
-const std::vector<unsigned int> Mesh::cube_indices({
+	-0.5, -0.5, -0.5,  0, -1,  0, 0, 1,
+	 0.5, -0.5, -0.5,  0, -1,  0, 1, 1,
+	 0.5, -0.5,  0.5,  0, -1,  0, 1, 0,
+	-0.5, -0.5,  0.5,  0, -1,  0, 0, 0,
+
+	-0.5,  0.5, -0.5,  0,  1,  0, 0, 1,
+	 0.5,  0.5, -0.5,  0,  1,  0, 1, 1,
+	 0.5,  0.5,  0.5,  0,  1,  1, 1, 0,
+	-0.5,  0.5,  0.5,  0,  1,  1, 0, 0,
+	});
+constexpr std::array<unsigned int, 36> cube_indices({
 			0, 1, 2,
 			2, 3, 0,
 
@@ -131,13 +60,13 @@ const std::vector<unsigned int> Mesh::cube_indices({
 
 			16, 17, 18,
 			18, 19, 16,
-			
+
 			20, 21, 22,
 			22, 23, 20
-});
+	});
 
 // Piramid.
-const std::vector<float> Mesh::pyramid_vertices({
+constexpr std::array<float, 128> pyramid_vertices({
 
 		-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0, 0,
 		0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1, 0,
@@ -159,17 +88,17 @@ const std::vector<float> Mesh::pyramid_vertices({
 		-0.5f, -0.5f, -0.5f, -0.894427f, 0.447214f, 0.0f, 0, 0,
 		-0.5f, -0.5f, 0.5f, -0.894427f, 0.447214f, 0.0f, 1, 0,
 		0.0f, 0.5f, 0.0f, -0.894427f, 0.447214f, 0.0f, 1, 1
-});
-const std::vector<unsigned int> Mesh::pyramid_indices({
+	});
+constexpr std::array<unsigned int, 15> pyramid_indices({
 			0, 1, 2,
 			2, 3, 0,
 			4, 5, 6,
 			7, 8, 9,
 			10, 11, 12
-});
+	});
 
 // Sphere.
-const std::vector<float> Mesh::sphere_vertices({
+constexpr std::array<float, 4472> sphere_vertices({
 		0.000000, 0.000001, 12.500000, -0.003922, -0.003922, 0.992157, 0.968750, 0.000000,
 		0.475748, -2.391772, 12.259815, 0.027451, -0.215686, 0.968628, 0.968750, 0.062500,
 		-0.000000, -2.438629, 12.259815, -0.011765, -0.215686, 0.968628, 1.000000, 0.062500,
@@ -729,8 +658,8 @@ const std::vector<float> Mesh::sphere_vertices({
 		0.000000, 0.000001, -12.500000, -0.003922, -0.003922, -1.000000, 0.031250, 1.000000,
 		-0.000000, -2.438626, -12.259816, -0.003922, -0.215686, -0.984314, 0.000000, 0.937500,
 		0.000000, 0.000001, -12.500000, -0.003922, -0.003922, -1.000000, 0.000000, 1.000000
-});
-const std::vector<unsigned int> Mesh::sphere_indices({
+	});
+constexpr std::array<unsigned int, 2880> sphere_indices({
 		0, 1, 2,
 		1, 3, 2,
 		1, 4, 3,
@@ -1691,4 +1620,73 @@ const std::vector<unsigned int> Mesh::sphere_indices({
 		556, 498, 555,
 		554, 557, 555,
 		558, 555, 557
-});
+	});
+
+Mesh::Mesh(Shape shape)
+{
+	m_shape = shape;
+	switch (shape)
+	{
+	case Shape::PLANE:
+		m_vertex_data.insert(m_vertex_data.begin(), plane_vertices.begin(), plane_vertices.end());
+		m_indices.insert(m_indices.begin(), plane_indices.begin(), plane_indices.end());
+		break;
+	case Shape::CUBE:
+		m_vertex_data.insert(m_vertex_data.begin(), cube_vertices.begin(), cube_vertices.end());
+		m_indices.insert(m_indices.begin(), cube_indices.begin(), cube_indices.end());
+		break;
+	case Shape::SPHERE:
+		m_vertex_data.insert(m_vertex_data.begin(), sphere_vertices.begin(), sphere_vertices.end());
+		m_indices.insert(m_indices.begin(), sphere_indices.begin(), sphere_indices.end());
+		break;
+	case Shape::PYRAMID:
+		m_vertex_data.insert(m_vertex_data.begin(), pyramid_vertices.begin(), pyramid_vertices.end());
+		m_indices.insert(m_indices.begin(), pyramid_indices.begin(), pyramid_indices.end());
+		break;
+	default: 
+		break;
+	}
+	CreateMesh();
+}
+
+Mesh::Mesh(Mesh const& other)
+{
+	copy_other(other);
+}
+
+Mesh& Mesh::operator=(Mesh const& other)
+{
+	if (this != &other)
+		copy_other(other);
+	return *this;
+}
+
+Mesh::~Mesh()
+{
+}
+
+void Mesh::copy_other(Mesh const& other)
+{
+	m_shape = other.m_shape;
+	m_vertex_data = other.m_vertex_data;
+	m_indices = other.m_indices;
+	CreateMesh();
+}
+
+void Mesh::CreateMesh()
+{
+	constexpr int NumAttrib = 8;
+	m_vao = std::make_unique<VertexArray>();
+	m_vb = std::make_unique<VertexBuffer>(reinterpret_cast<float *>(m_vertex_data.data()), m_vertex_data.size() / NumAttrib, NumAttrib);
+	m_ib = std::make_unique<IndexBuffer>(m_indices.data(), m_indices.size());
+
+	m_vao->PushLayout(3, GL_FLOAT, GL_FALSE, 0);
+	m_vao->PushLayout(3, GL_FLOAT, GL_FALSE, 3);
+	m_vao->PushLayout(2, GL_FLOAT, GL_FALSE, 6);
+
+	m_vao->AddBuffer(*m_vb);
+
+	m_vao->unbind();
+	m_vb->unbind();
+	m_ib->unbind();
+}

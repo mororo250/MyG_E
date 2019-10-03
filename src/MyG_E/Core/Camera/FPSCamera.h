@@ -8,9 +8,9 @@ public:
 	FPSCamera(Vector<float, 3> position, Vector<float, 3> direction);
 	~FPSCamera();
 
-	void Update() override;
+	void update() override;
 
 protected:
-	void Rotate() override;
-	void Translate() override;
+	void rotate() override;
+	void translate() override;
 };

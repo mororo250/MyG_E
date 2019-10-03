@@ -5,10 +5,6 @@
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_glfw.h"
 
-// Scenes
-#include "Scenes/Texture2D.h"
-#include "Scenes/BatchRenderScene.h"
-
 // Layers
 #include "Foundation/Layer.h"
 #include "Foundation/ImGuiLayer.h"
@@ -91,7 +87,6 @@ void Game::Loop()
 	std::chrono::duration<float> frametime;
 	while (!glfwWindowShouldClose(m_window))
 	{
-		GLcall(glClear(GL_COLOR_BUFFER_BIT));
 		m_imgui_layer->begin();
 
 		for (auto& aux : m_layer_collection)
@@ -120,7 +115,7 @@ void Game::resize_window(int width, int height)
 	m_window_height = height;
 	m_window_width = width;
 	GLcall(glViewport(0, 0, width, height));
-	m_project_controller->set_perspective_matrix(width/height);
+	m_project_controller->set_perspective_matrix();
 }
 
 void Game::open_project(std::string const& path)
@@ -133,7 +128,7 @@ void Game::open_project(std::string const& path)
 
 }
 
-void Game::save_project(std::string const& path)
+void Game::save_project(std::string const& path) const
 {
 	ProjectFileWriter file_writer;
 	if (file_writer.write_file(m_project_controller, path))

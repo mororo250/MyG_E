@@ -7,6 +7,7 @@
 #include "Core/Light/PointLight.h"
 #include "Core\Light\SpotLight.h"
 #include "Core\Light\DirectionalLight.h"
+#include "Core/SkyBox.h"
 
 class ProjectController : public Layer
 {
@@ -34,17 +35,25 @@ public:
 	inline Camera const* get_camera() const { return m_camera; }
 
 	// perspective matrix:
-	void set_perspective_matrix(float aspect_atio);
+	void set_perspective_matrix();
+
+	inline float get_fov() const { return m_fov; }
+	void set_fov(float fov); // Maximum m_fov = 120 and minimum = 30
 private:
 	void create_object(Shape const shape);
 	void create_light(unsigned int type);
 
 	std::unique_ptr<Shader> m_shader;
 	std::unique_ptr<Shader> m_light_shader;
+	std::unique_ptr<Shader> m_skybox_shader;
 	std::unique_ptr<Renderer> m_renderer;
+	
+	// entities
 	Camera* m_camera;
+	std::unique_ptr<SkyBox> m_skybox;
 	std::vector<Light*> m_light_buffer;
 	std::vector<Model3D*> m_object_buffer;
 
 	Matrix<float, 4, 4> m_persp_matrix;
+	float m_fov; // I am still not sure if this should be a menber of camera or not..... 
 };

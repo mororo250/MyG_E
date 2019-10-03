@@ -24,8 +24,6 @@ set (core_source
     Core/Sprite.h
     Core/SkyBox.cpp
     Core/SkyBox.h
-    Core/Texture.cpp
-    Core/Texture.h
     Core/VertexArray.cpp
     Core/VertexArray.h
     Core/VertexBuffer.cpp
@@ -56,21 +54,37 @@ source_group ("Core\\Camera" FILES
 )
 
 set (light_source
-    Core/Light/Light.cpp
-    Core/Light/Light.h
-    Core/Light/DirectionalLight.cpp
-    Core/Light/DirectionalLight.h
-    Core/Light/PointLight.cpp
-    Core/Light/PointLight.h
-    Core/Light/SpotLight.cpp
-    Core/Light/SpotLight.h
+	Core/Light/Light.cpp
+	Core/Light/Light.h
+	Core/Light/DirectionalLight.cpp
+	Core/Light/DirectionalLight.h
+	Core/Light/PointLight.cpp
+	Core/Light/PointLight.h
+	Core/Light/SpotLight.cpp
+	Core/Light/SpotLight.h
 )
 
 list (APPEND MyG_E_sources
-    ${light_source}
+	${light_source}
 )
 source_group ("Core\\Light" FILES
-    ${light_source}
+	${light_source}
+)
+
+set (texture_source
+	Core/Texture/Texture2D.cpp
+	Core/Texture/Texture2D.h
+	Core/Texture/TextureCubMap.cpp
+	Core/Texture/TextureCubMap.h
+	Core/Texture/Texture.cpp
+	Core/Texture/Texture.h
+)
+
+list (APPEND MyG_E_sources
+	${texture_source}
+)
+source_group ("Core\\Texture" FILES
+	${texture_source}
 )
 
 set (math_source
@@ -149,27 +163,12 @@ source_group ("Foundation" FILES
     ${foundation_source}
 )
 
-set (scenes_source
-    Scenes/BatchRenderScene.cpp
-    Scenes/BatchRenderScene.h
-    Scenes/Scene.cpp
-    Scenes/Scene.h
-    Scenes/Texture2D.cpp
-    Scenes/Texture2D.h
-)
-
-list (APPEND MyG_E_sources
-    ${scenes_source}
-)
-source_group ("Scenes" FILES
-    ${scenes_source}
-)
-
 set (shaders_source
     Shaders/Color.glsl
     Shaders/Light.glsl
     Shaders/Phong.glsl
     Shaders/Shader.glsl
+    Shaders/SkyBox.glsl
 )
 
 list (APPEND MyG_E_sources

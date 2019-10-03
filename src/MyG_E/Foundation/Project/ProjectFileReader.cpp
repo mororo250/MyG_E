@@ -34,7 +34,7 @@ bool ProjectFileReader::read_file(std::string const& file_path)
 
 bool ProjectFileReader::load_camera(rapidjson::Document const& document, ProjectController* controller)
 {
-	// Load camera
+	// Load camera // ISNT LOADING FOV< SPEED< SENSIBILITY
 	if (!document.HasMember("camera"))
 	{
 		std::cout << "There isn't a camera in the file" << std::endl;
@@ -272,23 +272,22 @@ bool ProjectFileReader::load_objects(rapidjson::Document const& document, Projec
 				{
 					float shininess = material_json["shininess"].GetFloat();
 
-					Texture* specular;
+					Texture2D* specular;
 					if (!has_specular_map)
-						specular = new Texture(Vector<float, 3>{ material_json["specular"]["x"].GetFloat(),
+						specular = new Texture2D(Vector<float, 3>{ material_json["specular"]["x"].GetFloat(),
 							material_json["specular"]["y"].GetFloat(),
 							material_json["specular"]["z"].GetFloat() });
 					else
-						specular = new Texture(std::filesystem::absolute(std::filesystem::absolute(
-							material_json["specular_map"].GetString()).string()).string());
+						specular = new Texture2D(std::filesystem::absolute(material_json["specular_map"].GetString()).string());
 					if (!has_texture)
 					{
 						Vector<float, 3> diffuse{ material_json["diffuse"]["x"].GetFloat(),
 							material_json["diffuse"]["y"].GetFloat(),
 							material_json["diffuse"]["z"].GetFloat() };
-						object->set_material(Material(new Texture(diffuse), specular, shininess));
+						object->set_material(Material(new Texture2D(diffuse), specular, shininess));
 					}
 					else
-						object->set_material(Material(new Texture(std::filesystem::absolute(
+						object->set_material(Material(new Texture2D(std::filesystem::absolute(
 							material_json["texture"].GetString()).string()), specular, shininess));
 				}
 			}

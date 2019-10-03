@@ -18,9 +18,11 @@ public:
 
 private:
 	void docking();
+	void overlay_info();
 	void show_menu();
 	void show_menu_file();
 	void show_menu_edit();
 	
 	float m_time;
+	std::string m_iniFilename;
 };

@@ -14,6 +14,6 @@ public:
 	Renderer() = default;
 	virtual ~Renderer() = default;
 	 
-	virtual void Draw(const IndexBuffer& ib) const = 0;
-	virtual void Clear() const = 0;
+	virtual void draw_element(const IndexBuffer& ib) const = 0;
+	virtual void clear() const = 0;
 };

@@ -11,15 +11,15 @@ FPSCamera::~FPSCamera()
 {
 }
 
-void FPSCamera::Update()
+void FPSCamera::update()
 {
-	Translate();
-	Rotate();
+	translate();
+	rotate();
 
 	m_view = LookAt(m_position, (m_position + m_direction), { 0.0f, 1.0f, 0.0f });
 }
 
-void FPSCamera::Rotate()
+void FPSCamera::rotate()
 {
 	std::pair<float, float> mouse_current_pos(Input::Get().GetMousePosition()); //get current mouse position
 
@@ -30,7 +30,7 @@ void FPSCamera::Rotate()
 	m_mouse_pos = mouse_current_pos;
 }
 
-void FPSCamera::Translate()
+void FPSCamera::translate()
 {
 	if (Input::Get().IsKeyPressed(KEY_W))
 		m_position += m_speed * m_direction;
@@ -40,5 +40,4 @@ void FPSCamera::Translate()
 		m_position -= m_speed * Cross(m_direction, { 0.0f, 1.0f, 0.0f });
 	if (Input::Get().IsKeyPressed(KEY_D))
 		m_position += m_speed * Cross(m_direction, { 0.0f, 1.0f, 0.0f });
-
 }

@@ -40,21 +40,21 @@ void ProjectFileWriter::write_camera(rapidjson::PrettyWriter<rapidjson::StringBu
 
 	writer.StartObject(); // Camera Position
 	writer.Key("x");
-	writer.Double(camera->GetPosition()[0]);
+	writer.Double(camera->get_position()[0]);
 	writer.Key("y");
-	writer.Double(camera->GetPosition()[1]);
+	writer.Double(camera->get_position()[1]);
 	writer.Key("z");
-	writer.Double(camera->GetPosition()[2]);
+	writer.Double(camera->get_position()[2]);
 	writer.EndObject(); // End Camera Position
 
 	writer.Key("direction");
 	writer.StartObject(); // Camera Direction
 	writer.Key("x");
-	writer.Double(camera->GetDirection()[0]);
+	writer.Double(camera->get_direction()[0]);
 	writer.Key("y");
-	writer.Double(camera->GetDirection()[1]);
+	writer.Double(camera->get_direction()[1]);
 	writer.Key("z");
-	writer.Double(camera->GetDirection()[2]);
+	writer.Double(camera->get_direction()[2]);
 	writer.EndObject(); // End Camera Direction
 	writer.EndObject(); // End Camera
 }

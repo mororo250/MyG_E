@@ -19,6 +19,7 @@ class Mesh
 public:
 
 	Mesh(Shape shape = Shape::CUBE);
+
 	// copy It's a very expensive call should be avoid as much as possible.
 	Mesh(Mesh const& other);
 	Mesh& operator=(Mesh const& other);
@@ -33,15 +34,6 @@ private:
 	void copy_other(Mesh const& other);
 
 	void CreateMesh();
-
-	static const std::vector<float> Mesh::plane_vertices;
-	static const std::vector<unsigned int> Mesh::plane_indices;
-	static const std::vector<float> cube_vertices;
-	static const std::vector<unsigned int> cube_indices;
-	static const std::vector<float> pyramid_vertices;
-	static const std::vector<unsigned int> pyramid_indices;
-	static const std::vector<float> sphere_vertices;
-	static const std::vector<unsigned int> sphere_indices;
 
 	Shape m_shape;
 	std::vector<float> m_vertex_data;

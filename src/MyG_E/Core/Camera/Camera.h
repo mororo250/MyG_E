@@ -10,26 +10,26 @@ public:
 	Camera(float speed = 0.5f, float sensitivity = 0.005f);
 	virtual ~Camera();
 
-	inline Matrix<float, 4, 4> & GetView() { return m_view; }
+	inline Matrix<float, 4, 4> & get_view() { return m_view; }
 
-	inline Vector<float, 3> GetPosition() const { return m_position; }
-	inline void SetPosition(const Vector<float, 3> position) { m_position = position; }
+	inline Vector<float, 3> get_position() const { return m_position; }
+	inline void set_position(const Vector<float, 3> position) { m_position = position; }
 
-	inline float GetSpeed() const { return m_speed; }
-	inline void SetSpeed(const float speed) { m_speed = speed; }
+	inline Vector<float, 3> get_direction() const { return m_direction; }
+	void set_direction(Vector<float, 3> direction) { m_direction = direction; }
 
-	inline float GetSensitivity() const { return m_sensitivity; }
-	inline void SetSensitivity(const float sensitivity) { m_sensitivity = sensitivity; }
+	inline float get_speed() const { return m_speed; }
+	inline void set_speed(const float speed) { m_speed = speed; }
 
-	inline Vector<float, 3> GetDirection() const { return m_direction; }
-	void SetDirection(Vector<float, 3> direction) { m_direction = direction; }
+	inline float get_sensitivity() const { return m_sensitivity; }
+	inline void set_sensitivity(const float sensitivity) { m_sensitivity = sensitivity; }
 
-	virtual void ImGuiRenderer();
-	virtual void Update() = 0;
+	virtual void imgui_renderer();
+	virtual void update() = 0;
 
 protected:
-	virtual void Translate() = 0;
-	virtual void Rotate() = 0;
+	virtual void translate() = 0;
+	virtual void rotate() = 0;
 
 	float m_speed; //speed of camera moviment
 	float m_sensitivity; //velocity in witch the camera will change front_camera

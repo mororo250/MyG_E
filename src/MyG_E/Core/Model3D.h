@@ -2,7 +2,7 @@
 
 #include "Core\Mesh.h"
 #include "Foundation\Math\Matrix.h"
-#include "Core/Material.h"
+#include "Core\Material.h"
 
 // write copy contructor
 class Model3D

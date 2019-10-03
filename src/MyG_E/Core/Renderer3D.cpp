@@ -14,12 +14,12 @@ Renderer3D::~Renderer3D()
 	GLcall(glDisable(GL_MULTISAMPLE))
 }
 
-void Renderer3D::Draw(const IndexBuffer & ib) const
+void Renderer3D::draw_element(const IndexBuffer & ib) const
 {
 	GLcall(glDrawElements(GL_TRIANGLES, ib.GetNumIndex(), GL_UNSIGNED_INT, nullptr));
 }
 
-void Renderer3D::Clear() const
+void Renderer3D::clear() const
 {
 	GLcall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }

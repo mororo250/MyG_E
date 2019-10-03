@@ -12,12 +12,11 @@ Camera::~Camera()
 {
 }
 
-void Camera::ImGuiRenderer()
+void Camera::imgui_renderer()
 {
 	ImGui::Begin("Camera_infomation");
-	ImGui::Text("Mouse Position: %f %f", m_mouse_pos.first, m_mouse_pos.second);
 	ImGui::Text("Camera Position: X:%f Y:%f Z:%f", m_position[0], m_position[1], m_position[2]);
-	ImGui::SliderFloat("Speed: ", &m_speed, 0.0f, 10.0f);
-	ImGui::SliderFloat("Sensitivity: ", &m_sensitivity, 0.010, 0.000);
+	ImGui::DragFloat("Speed: ", &m_speed, 0.0f, 10.0f);
+	ImGui::DragFloat("Sensitivity: ", &m_sensitivity, 0.000f, 0.010f);
 	ImGui::End();
 }

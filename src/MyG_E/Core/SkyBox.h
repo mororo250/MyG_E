@@ -1,15 +1,22 @@
 #pragma once
 
-#include "Core/Model3D.h"
+#include "Core/Mesh.h"
+#include "Core/Texture/TextureCubMap.h"
+#include "Core/Shader.h"
 
 class SkyBox
 {
 public:
 	SkyBox();
-	~SkyBox();
+	~SkyBox() = default;
 
+	void imgui_rederer();
+	void begin();
+	void end();
+	void draw();
 
 private:
-	std::vector<std::string> m_texture_files;
-	std::unique_ptr<Model3D> m_model;
+	std::unique_ptr<TextureCubMap> m_skybox_texture;
+	std::unique_ptr<VertexArray> m_vao;
+	std::unique_ptr<VertexBuffer> m_vb;
 };

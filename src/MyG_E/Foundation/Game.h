@@ -28,7 +28,7 @@ public:
 	inline int GetWidth() const { return m_window_width; }
 
 	void open_project(std::string const& path);
-	void save_project(std::string const& path);
+	void save_project(std::string const& path) const;
 	void set_project(ProjectController* project_controller);
 
 	inline static Game& Get() 

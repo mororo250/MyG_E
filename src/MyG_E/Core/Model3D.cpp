@@ -89,7 +89,7 @@ void Model3D::ImGuiRenderer()
 {
 	ImGui::DragFloat3("Translate", &m_position[0], 0.1f);
 	ImGui::DragFloat3("Scale", &m_scale[0], 0.1f, 0.0f, 100.0f);
-	ImGui::SliderFloat3("Rotate", &m_rotate[0], -6.28f, 6.28f);
+	ImGui::DragFloat3("Rotate", &m_rotate[0], -6.28f, 6.28f);
 	ImGui::Separator();
 	
 	m_material.get_diffuse()->imgui_renderer("diffuse");

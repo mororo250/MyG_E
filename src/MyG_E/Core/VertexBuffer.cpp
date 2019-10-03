@@ -4,7 +4,8 @@
 #include "Foundation/Gldebug.h"
 #include "VertexBuffer.h"
 
-VertexBuffer::VertexBuffer(const float *verts, const unsigned int num_vertex, const unsigned int stride, BufferUsage usage)
+VertexBuffer::
+VertexBuffer(const float *verts, const unsigned int num_vertex, const unsigned int stride, BufferUsage usage)
 :m_stride(stride)
 {
 	GLcall(glGenBuffers(1, &m_vertex_buffer));

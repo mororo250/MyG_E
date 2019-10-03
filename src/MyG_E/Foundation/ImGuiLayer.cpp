@@ -2,6 +2,7 @@
 #include "Foundation/Game.h"
 
 #include "imgui.h"
+#include "imgui_internal.h"
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_glfw.h"
 
@@ -11,7 +12,7 @@
 #include "GLFW/glfw3.h"
 
 ImGuiLayer::ImGuiLayer()
-:m_time(0.0)
+	:m_time(0.0)
 {
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
@@ -19,6 +20,9 @@ ImGuiLayer::ImGuiLayer()
 	ImGui::StyleColorsDark();
 
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+	m_iniFilename = std::filesystem::absolute("..//..//..//imgui.ini").string();
+	io.IniFilename = m_iniFilename.c_str();
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;			// Enable Docking
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
@@ -50,9 +54,10 @@ void ImGuiLayer::event()
 void ImGuiLayer::imgui_renderer()
 {
 	// Use this to learn how to properly use imgui
-	// static bool show = true;
-	// ImGui::ShowDemoWindow(&show);
+	//static bool show = true;
+	//ImGui::ShowDemoWindow(&show);
 	docking();
+	overlay_info();
 	show_menu();
 }
 
@@ -87,7 +92,7 @@ void ImGuiLayer::docking()
 	static bool show = true;
 	static bool opt_fullscreen_persistant = true;
 	bool opt_fullscreen = opt_fullscreen_persistant;
-	static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+	static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
 
 	// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
 	// because it would be confusing to have two docking targets within each others.
@@ -98,14 +103,12 @@ void ImGuiLayer::docking()
 		ImGui::SetNextWindowPos(viewport->Pos);
 		ImGui::SetNextWindowSize(viewport->Size);
 		ImGui::SetNextWindowViewport(viewport->ID);
+
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
 	}
-
-	dockspace_flags |= ImGuiDockNodeFlags_PassthruCentralNode;
-	window_flags |= ImGuiWindowFlags_NoBackground;
 
 	// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
 	// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive, 
@@ -113,7 +116,7 @@ void ImGuiLayer::docking()
 	// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise 
 	// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-	ImGui::Begin("DockSpace Demo", &show, window_flags);
+	ImGui::Begin("DockSpace", &show, window_flags);
 	ImGui::PopStyleVar();
 
 	if (opt_fullscreen)
@@ -124,9 +127,52 @@ void ImGuiLayer::docking()
 	if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 	{
 		ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+		// Set dock layout
+		/*
+		if (!ImGui::DockBuilderGetNode(dockspace_id))
+		{
+			ImGui::DockBuilderRemoveNode(dockspace_id); // Clear out existing layout
+			ImGui::DockBuilderAddNode(dockspace_id, 0); // Add empty node
+			ImGui::DockBuilderSetNodeSize(dockspace_id, ImGui::GetMainViewport()->Size);
+		
+			ImGuiID dock_main_id = dockspace_id; // This variable will track the document node, however we are not using it here as we aren't docking anything into it.
+			ImGuiID dock_id_prop = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.20f, nullptr, &dock_main_id);
+			ImGuiID dock_id_bottom = ImGui::DockBuilderSplitNode(dock_id_prop, ImGuiDir_Down, 0.20f, nullptr, &dock_id_prop);
+		
+			ImGui::DockBuilderDockWindow("Camera_infomation", dock_id_bottom);
+			ImGui::DockBuilderDockWindow("Editor", dock_id_prop);
+			ImGui::DockBuilderFinish(dockspace_id);
+		}
+		*/
+		ImGui::DockSpace(dockspace_id, ImGui::GetMainViewport()->Size, dockspace_flags);
 	}
 
+	ImGui::End();
+}
+
+void ImGuiLayer::overlay_info()
+{
+	static bool show = true;
+	ImGuiIO& io = ImGui::GetIO();
+	
+	ImGuiViewport* viewport = ImGui::GetMainViewport();
+	ImVec2 window_pos = ImVec2((viewport->Pos.x + viewport->Size.x), (viewport->Pos.y + viewport->Size.y));
+	ImVec2 window_pos_pivot = ImVec2();
+	ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, ImVec2(1.01f, 1.01f));
+	ImGui::SetNextWindowViewport(viewport->ID);
+	
+	ImGui::SetNextWindowBgAlpha(0.20f); // Transparent background
+	if (ImGui::Begin("info", &show, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking | 
+		ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | 
+		ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
+	{
+		ImGui::Text("(%.1f FPS)", ImGui::GetIO().Framerate);
+		ImGui::Separator();
+		if (ImGui::IsMousePosValid())
+			ImGui::Text("Mouse Position: (%.1f,%.1f)", io.MousePos.x, io.MousePos.y);
+		else
+			ImGui::Text("Mouse Position: <invalid>");
+	}
 	ImGui::End();
 }
 

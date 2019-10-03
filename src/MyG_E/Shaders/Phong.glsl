@@ -25,8 +25,6 @@ void main()
 #shader fragment
 #version 330 core
 
-in vec2 v_tex_coord;
-
 layout(location = 0) out vec4 Frag_color;
 
 struct Material 
@@ -75,6 +73,7 @@ struct DirectionalLight
 
 in vec4 v_Position;
 in vec3 v_Normal;
+in vec2 v_tex_coord;
 
 uniform vec3 u_ViewPos;
 uniform sampler2D u_texture;

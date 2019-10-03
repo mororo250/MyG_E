@@ -8,6 +8,6 @@ public:
 	Renderer2D() = default;
 	~Renderer2D() = default;
 
-	void Draw(const IndexBuffer& ib) const override;
-	void Clear() const override;
+	void draw_element(const IndexBuffer& ib) const override;
+	void clear() const override;
 };
