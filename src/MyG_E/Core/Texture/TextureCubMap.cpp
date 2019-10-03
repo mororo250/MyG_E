@@ -36,11 +36,12 @@ void TextureCubMap::unbind() const
 void TextureCubMap::imgui_renderer(std::string const& texture_name)
 {
 	if(ImGui::Button(texture_name.c_str()))
-		change_texture(open_file_browser("select folder"));
+		change_texture(open_file_browser(""));
 }
 
 void TextureCubMap::change_texture(std::string const& folder_name)
 {
+	GLcall(glDeleteTextures(1, &m_texture));
 	std::array<std::string, 6> texture_files({ 
 		folder_name + "//right.jpg",
 		folder_name + "//left.jpg",
@@ -48,10 +49,12 @@ void TextureCubMap::change_texture(std::string const& folder_name)
 		folder_name + "//bottom.jpg",
 		folder_name + "//front.jpg",
 		folder_name + "//back.jpg" });
+	create_texture(texture_files);
 }
 
 void TextureCubMap::change_texture(std::array<std::string, 6> const& texture_files)
 {
+	GLcall(glDeleteTextures(1, &m_texture));
 	create_texture(texture_files);
 }
 
