@@ -1,84 +1,128 @@
 #include "FileBrowser.h"
 
-void check_errors()
+
+HRESULT create_file_dialog(IFileDialog** file_dialog, CLSID dialog_type)
 {
-	// All this stuff below is to tell you exactly how you messed up above. 
-	// Once you've got that fixed, you can often (not always!) reduce it to a 'user cancelled' assumption.
-	switch (CommDlgExtendedError())
+	// initialize the COM library.
+	HRESULT result = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED |
+		COINIT_DISABLE_OLE1DDE);
+
+	if (SUCCEEDED(result))
 	{
-	case CDERR_DIALOGFAILURE: std::cout << "CDERR_DIALOGFAILURE\n";   break;
-	case CDERR_FINDRESFAILURE: std::cout << "CDERR_FINDRESFAILURE\n";  break;
-	case CDERR_INITIALIZATION: std::cout << "CDERR_INITIALIZATION\n";  break;
-	case CDERR_LOADRESFAILURE: std::cout << "CDERR_LOADRESFAILURE\n";  break;
-	case CDERR_LOADSTRFAILURE: std::cout << "CDERR_LOADSTRFAILURE\n";  break;
-	case CDERR_LOCKRESFAILURE: std::cout << "CDERR_LOCKRESFAILURE\n";  break;
-	case CDERR_MEMALLOCFAILURE: std::cout << "CDERR_MEMALLOCFAILURE\n"; break;
-	case CDERR_MEMLOCKFAILURE: std::cout << "CDERR_MEMLOCKFAILURE\n";  break;
-	case CDERR_NOHINSTANCE: std::cout << "CDERR_NOHINSTANCE\n";     break;
-	case CDERR_NOHOOK: std::cout << "CDERR_NOHOOK\n";          break;
-	case CDERR_NOTEMPLATE: std::cout << "CDERR_NOTEMPLATE\n";      break;
-	case CDERR_STRUCTSIZE: std::cout << "CDERR_STRUCTSIZE\n";      break;
-	case FNERR_BUFFERTOOSMALL: std::cout << "FNERR_BUFFERTOOSMALL\n";  break;
-	case FNERR_INVALIDFILENAME: std::cout << "FNERR_INVALIDFILENAME\n"; break;
-	case FNERR_SUBCLASSFAILURE: std::cout << "FNERR_SUBCLASSFAILURE\n"; break;
-	default: std::cout << "You cancelled.\n";
+		// Create the FileOpenDialog object.
+		result = CoCreateInstance(dialog_type, NULL,
+			CLSCTX_INPROC_SERVER, IID_PPV_ARGS(file_dialog));
 	}
+	return result;
 }
 
-std::string open_file_browser(const char* filter)
+bool show_file_dialog(IFileDialog* file_dialog, std::string& filename)
 {
-	OPENFILENAME ofn; // common dialog box structure
-	char filename[MAX_PATH]; // buffer for file name
+	// Show the Open dialog box.
+	HRESULT result = file_dialog->Show(NULL);
 
-	ZeroMemory(&ofn, sizeof(ofn));
-	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = NULL; // Set window you want to centralize
-	ofn.lpstrFile = filename;
-	ofn.lpstrFile[0] = '\0';
-	ofn.nMaxFile = sizeof(filename);
-	ofn.lpstrFilter = filter;
-	ofn.nFilterIndex = 1; 
-	ofn.lpstrFileTitle = NULL;
-	ofn.nMaxFileTitle = 0;
-	ofn.lpstrInitialDir = NULL;
-	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-
-
-	if (GetOpenFileNameA(&ofn))
+	// Get the file name from the dialog box.
+	if (SUCCEEDED(result))
 	{
-		return filename;
+		IShellItem* item;
+		result = file_dialog->GetResult(&item);
+		if (SUCCEEDED(result))
+		{
+			PWSTR file_path;
+			result = item->GetDisplayName(SIGDN_FILESYSPATH, &file_path);
+
+			// Display the file name to the user.
+			if (SUCCEEDED(result))
+			{
+				//MessageBox(NULL, file_path, L"File Path", MB_OK);
+				CoTaskMemFree(file_path);
+			}
+			else
+				return false;
+
+			// convert to string
+			std::wstring aux(file_path);
+			filename.assign(aux.begin(), aux.end());
+
+			item->Release();
+		}
+		else
+			return false;
+
+		return true;
 	}
 	else
-	{
-		check_errors();
-		return "";
-	}
+		return false;
 }
 
-std::string save_file_browser(const char* filter)
+std::string open_file_browser(std::wstring const& file_types, std::wstring const& filter_name)
 {
-	OPENFILENAME ofn; // common dialog box structure
-	char filename[MAX_PATH]; // buffer for file name
+	std::string filename = "";
 
-	ZeroMemory(&ofn, sizeof(ofn));
-	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = NULL; // Set window you want to centralize
-	ofn.lpstrFile = filename;
-	ofn.lpstrFile[0] = '\0';
-	ofn.nMaxFile = sizeof(filename);
-	ofn.lpstrFilter = filter;
-	ofn.nFilterIndex = 1;
-	ofn.lpstrFileTitle = NULL;
-	ofn.nMaxFile = MAX_PATH;
-	ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+	IFileDialog* file_dialog = nullptr;
+	HRESULT result = create_file_dialog(&file_dialog, CLSID_FileOpenDialog);
+			
+	if (SUCCEEDED(result))
+	{
+		// Set file types.
+		COMDLG_FILTERSPEC filter_spec[] =
+		{
+			{ file_types.c_str(), filter_name.c_str() }
+		};
+		file_dialog->SetFileTypes(1, filter_spec);
 
-	if (GetSaveFileName(&ofn))
-	{
-		return filename;
+		show_file_dialog(file_dialog, filename);
+		
+		file_dialog->Release();
 	}
-	else
+	CoUninitialize();
+
+	return filename;
+}
+
+std::string save_file_browser(std::wstring const& file_types, std::wstring const& filter_name)
+{
+	std::string filename;
+
+	IFileDialog* file_dialog = nullptr;
+	HRESULT result = create_file_dialog(&file_dialog, CLSID_FileSaveDialog);
+
+	if (SUCCEEDED(result))
 	{
-		check_errors();
-		return "";
+		// Set file types.
+		COMDLG_FILTERSPEC filter_spec[] =
+		{
+			{ file_types.c_str(), filter_name.c_str() }
+		};
+		file_dialog->SetFileTypes(1, filter_spec);
+
+		show_file_dialog(file_dialog, filename);
+		
+		file_dialog->Release();
 	}
+	CoUninitialize();
+
+	return filename;
+}
+
+std::string open_folder_browser()
+{
+	std::string folder_name;
+
+	IFileDialog* file_dialog = nullptr;
+	HRESULT result = create_file_dialog(&file_dialog, CLSID_FileOpenDialog);
+
+	if (SUCCEEDED(result))
+	{
+		DWORD dwOptions;
+		if (SUCCEEDED(file_dialog->GetOptions(&dwOptions)))
+			file_dialog->SetOptions(dwOptions | FOS_PICKFOLDERS);
+
+		show_file_dialog(file_dialog, folder_name);
+
+		file_dialog->Release();
+	}
+	CoUninitialize();
+
+	return folder_name;
 }

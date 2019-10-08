@@ -22,8 +22,8 @@ struct VertexData2C : public Base
 
 struct VertexData3C : public Base
 {
-	Vector<float, 3> Position;
-	Vector<float, 3> Normals;
+	Vector3f Position;
+	Vector3f Normals;
 };
 
 enum class VertexUsage

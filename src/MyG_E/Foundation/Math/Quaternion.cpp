@@ -1,6 +1,6 @@
 #include "Quaternion.h"
 
-Quaternion::Quaternion(const float scale, const Vector<float, 3>& vector)
+Quaternion::Quaternion(const float scale, const Vector3f& vector)
 	: m_scalar(scale)
 	, m_vector(vector)
 {
@@ -36,8 +36,8 @@ Quaternion& Quaternion::operator-=(const Quaternion& other)
 Quaternion& Quaternion::operator*=(const Quaternion& rhs)
 {
 	float scalar = m_scalar;
-	m_scalar = m_scalar * rhs.m_scalar - Vector<float, 3>::Dot(m_vector, rhs.m_vector);
-	m_vector = scalar * rhs.m_vector + m_vector * rhs.m_scalar + Cross(m_vector, rhs.m_vector);
+	m_scalar = m_scalar * rhs.m_scalar - Vector3f::Dot(m_vector, rhs.m_vector);
+	m_vector = scalar * rhs.m_vector + m_vector * rhs.m_scalar + Vector3f::Cross(m_vector, rhs.m_vector);
 	return *this;
 }
 
@@ -53,7 +53,7 @@ Matrix<float, 4, 4> Quaternion::GetRotationMatrix()
 	return CreateRotationMatrix(*this);
 }
 
-Quaternion Quaternion::MakeRotate(const float angle, Vector<float, 3> axis)
+Quaternion Quaternion::MakeRotate(const float angle, Vector3f axis)
 {
 	if (!axis.isNormalized())
 		axis.Normalize();
@@ -71,24 +71,24 @@ Matrix<float, 4, 4> Quaternion::CreateRotationMatrix(const Quaternion& quat)
 		});
 }
 
-Matrix<float, 4, 4> Quaternion::CreateRotationMatrix(const float angle, const Vector<float, 3>& axis)
+Matrix<float, 4, 4> Quaternion::CreateRotationMatrix(const float angle, const Vector3f& axis)
 {
 	return CreateRotationMatrix(MakeRotate(angle, axis));
 }
 
-Vector<float, 3> Quaternion::rotate(const Quaternion& quat, Vector<float, 3> vector)
+Vector3f Quaternion::rotate(const Quaternion& quat, Vector3f vector)
 {
 	// Reference for the optimized implementation:
 	//
 	//   https://fgiesen.wordpress.com/2019/02/09/rotating-a-single-vector-using-a-quaternion/
 	//
-	const Vector<float, 3> temp = 2.0f * Cross(quat.m_vector, vector);
-	return vector + quat.m_scalar * temp + Cross(quat.m_vector, temp);
+	const Vector3f temp = 2.0f * Vector3f::Cross(quat.m_vector, vector);
+	return vector + quat.m_scalar * temp + Vector3f::Cross(quat.m_vector, temp);
 }
 
-Vector<float, 3> Quaternion::ToEulerAngles(const Quaternion & quat)
+Vector3f Quaternion::ToEulerAngles(const Quaternion & quat)
 {
-	return Vector<float, 3> (
+	return Vector3f (
 		{
 			std::atan2(2.0f*(quat.m_scalar*quat.m_vector[0] + quat.m_vector[1]*quat.m_vector[2]), 1.0f - 2.0f*(quat.m_vector[0]*quat.m_vector[0] + quat.m_vector[1]*quat.m_vector[1])),
 			std::asin(2.0f*(quat.m_scalar*quat.m_vector[1] - quat.m_vector[2]*quat.m_vector[0])),

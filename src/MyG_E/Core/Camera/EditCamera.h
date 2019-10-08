@@ -5,7 +5,7 @@
 class EditCamera : public Camera
 {
 public:
-	EditCamera(const Vector<float, 3>& position, const Vector<float, 3>& direction = {0.0f, 0.0f, 0.0f});
+	EditCamera(const Vector3f& position, const Vector3f& direction = {0.0f, 0.0f, 0.0f});
 	~EditCamera();
 
 	void update() override;

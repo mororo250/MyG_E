@@ -44,7 +44,7 @@ bool Input::IsMouseButtonPressed(MouseButtonCode mousebutton)
 
 
 
-std::pair<float, float> Input::GetMousePosition()
+std::pair<float, float> Input::GetMousePosition() const
 {
 	double xpos, ypos;
 	glfwGetCursorPos(mWindow, &xpos, &ypos);

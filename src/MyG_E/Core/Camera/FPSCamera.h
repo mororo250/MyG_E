@@ -5,7 +5,7 @@
 class FPSCamera : public Camera
 {
 public:
-	FPSCamera(Vector<float, 3> position, Vector<float, 3> direction);
+	FPSCamera(Vector3f position, Vector3f direction);
 	~FPSCamera();
 
 	void update() override;

@@ -11,7 +11,14 @@ bool ProjectFileWriter::write_file(ProjectController const* project_controller, 
 	write_camera(writer, project_controller);
 	write_objects(writer, project_controller);
 	write_lights(writer, project_controller);
-
+	
+	// skybox
+	if (project_controller->get_skybox())
+	{
+		writer.Key("skybox");
+		writer.String(std::filesystem::relative(
+			project_controller->get_skybox()->get_texture()->get_folder()).string().c_str());
+	}
 	writer.EndObject(); // root
 
 	// Write file
@@ -69,25 +76,8 @@ void ProjectFileWriter::write_objects(rapidjson::PrettyWriter<rapidjson::StringB
 	{
 		writer.StartObject(); // Object
 
-		writer.Key("model");
-		switch (object_buffer[i]->get_shape())
-		{
-		case Shape::PLANE:
-			writer.String("plane");
-			break;
-		case Shape::CUBE:
-			writer.String("cube");
-			break;
-		case Shape::SPHERE:
-			writer.String("sphere");
-			break;
-		case Shape::PYRAMID:
-			writer.String("pyramid");
-			break;
-		default:
-			break;
-		}
-
+		writer.Key("path");
+		writer.String(object_buffer[i]->get_path().c_str());
 		writer.Key("visibility");
 		writer.Bool(object_buffer[i]->is_visible());
 

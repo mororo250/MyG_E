@@ -24,8 +24,8 @@ public:
 
 	inline GLFWwindow* GetWindow() const { return m_window; }
 	inline float GetDelta() const { return m_delta; }
-	inline int GetHeight() const { return m_window_height; }
-	inline int GetWidth() const { return m_window_width; }
+	std::pair<int, int> get_window_size() const;
+	float get_window_aspect_ratio() const;
 
 	void open_project(std::string const& path);
 	void save_project(std::string const& path) const;
@@ -40,8 +40,6 @@ public:
 
 private:
 	float m_delta; //time between this frame and the last one
-	int m_window_height;
-	int m_window_width;
 	GLFWwindow* m_window;
 	static Game *s_Instance;
 

@@ -10,20 +10,20 @@ public:
 	Material& operator=(Material const& other);
 	~Material() = default;
 
-	inline Texture2D* get_diffuse() const { return m_diffuse.get(); }
+	inline Texture2D const* get_diffuse() const { return m_diffuse.get(); }
 	inline void set_diffuse(std::string const& file_path) { m_diffuse->change_texture(file_path); }
-	inline void set_diffuse(Vector<float, 3> const& color) { m_diffuse->change_texture(color); }
+	inline void set_diffuse(Vector3f const& color) { m_diffuse->change_texture(color); }
 	inline void set_diffuse(Texture2D const& texture) { m_diffuse.reset(new Texture2D(texture)); }
 
-	inline Texture2D* get_specular() const { return m_specular.get(); }
+	inline Texture2D const* get_specular() const { return m_specular.get(); }
 	inline void set_specular(std::string const& file_path) { m_specular->change_texture(file_path); }
-	inline void set_specular(Vector<float, 3> const& color) { m_specular->change_texture(color); }
+	inline void set_specular(Vector3f const& color) { m_specular->change_texture(color); }
 	inline void set_specular(Texture2D const& texture) { m_specular.reset(new Texture2D(texture)); }
 
 	inline float get_shininess() const { return m_shininess; }
 	inline void set_shininess(float shininess) { m_shininess = shininess; }
 
-
+	void imgui_renderer();
 private:
 	void copy_other(Material const& other);
 

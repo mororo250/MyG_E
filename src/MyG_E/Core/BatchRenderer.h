@@ -8,12 +8,12 @@ class BatchRenderer
 {
 public:
 	BatchRenderer(unsigned int max_sprites, unsigned int indices_count, unsigned int vertex_count)//indices_count - Number of indices per sprite / vertex_count - Number of Vertex per sprite  
-		:m_max_sprites(max_sprites),
-		m_vertex_size(sizeof(T)),
-		m_indices_size(max_sprites * indices_count),
-		m_sprite_size(m_vertex_size * vertex_count),
-		m_buffer_size(max_sprites * m_sprite_size),
-		m_renderer()
+		: m_max_sprites(max_sprites)
+		, m_vertex_size(sizeof(T))
+		, m_indices_size(max_sprites * indices_count)
+		, m_sprite_size(m_vertex_size * vertex_count)
+		, m_buffer_size(max_sprites * m_sprite_size)
+		, m_renderer()
 	{
 		GLcall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		m_vao = std::make_unique<VertexArray>();

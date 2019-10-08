@@ -5,9 +5,9 @@
 class SpotLight : public Light
 {
 public:
-	SpotLight(Vector<float, 3> const& position, const Vector<float, 3> const& color = Vector<float, 3>({ 1.0f, 1.0f, 1.0f }),
+	SpotLight(Vector3f const& position, Vector3f const& color = Vector3f({ 1.0f, 1.0f, 1.0f }),
 		float in_angle = 0.436332f, float out_angle = 0.523599f,
-		Vector<float, 3>const& direction = Vector<float, 3>({ 0.0f, -1.0f, 0.0f }));
+		Vector3f const& direction = Vector3f({ 0.0f, -1.0f, 0.0f }));
 	~SpotLight() { s_count--; }
 
 	inline float GetInAngle() { return m_in_angle; }
@@ -16,8 +16,8 @@ public:
 	inline float GetOutAngle() { return m_out_angle; }
 	inline void SetOutAngle(float angle) { m_out_angle = angle; }
 
-	inline Vector<float, 3> GetDirection() { return m_direction; }
-	inline void SetDirection(Vector<float, 3> direction) { m_direction = direction; }
+	inline Vector3f GetDirection() { return m_direction; }
+	inline void SetDirection(Vector3f direction) { m_direction = direction; }
 
 	void ImGuiRenderer() override;
 	void set_uniform(Shader const* shader) override;
@@ -27,7 +27,7 @@ public:
 private:
 	float m_in_angle;
 	float m_out_angle;
-	Vector<float, 3> m_direction;
+	Vector3f m_direction;
 	static unsigned short s_count;
 	static unsigned short s_id;
 };

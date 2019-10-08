@@ -8,34 +8,44 @@
 class Model3D
 {
 public:
-	Model3D(Mesh* mesh);
-	Model3D(Mesh* mesh, std::string& const name);
+	Model3D(std::vector<Mesh*> const& mesh, std::string const& file_path);
+	Model3D(std::vector<Mesh*>&& mesh, std::string const& file_path);
+	Model3D(std::vector<Mesh*> const& mesh, std::string const& name, std::string const& file_path);
+	Model3D(std::vector<Mesh*>&& mesh, std::string const& name, std::string const& file_path);
+	
+	// copy
 	Model3D(Model3D const& other);
 	Model3D& operator=(Model3D const& other);
+
+	// move
+	Model3D(Model3D&& other);
+	Model3D& operator=(Model3D&& other);
+	
 	~Model3D();
 
-	inline Vector<float, 3> get_position() const { return m_position; };
-	inline void set_position(Vector<float, 3> const& pos) { set_translation(pos); }
+	inline Vector3f get_position() const { return m_position; };
+	inline void set_position(Vector3f const& pos) { set_translation(pos); }
 
 	inline TranslationMatrix4 get_translation() const { return m_trans_matrix; }
-	void set_translation(Vector<float, 3> const& trans);
+	void set_translation(Vector3f const& trans);
 
 	inline ScaleMatrix4 get_scale_matrix() const { return m_scale_matrix; }
-	inline Vector<float, 3> get_scale() const { return m_scale; }
-	void set_scale(Vector<float, 3> const& Scale);
+	inline Vector3f get_scale() const { return m_scale; }
+	void set_scale(Vector3f const& Scale);
 
 	inline Matrix<float, 4, 4> get_rotation_matrix() { return m_rotation_matrix; }
-	inline Vector<float, 3> get_rotation() { return m_rotate; };
-	void set_rotation(Vector<float, 3> const& Rotation);
+	inline Vector3f get_rotation() { return m_rotate; };
+	void set_rotation(Vector3f const& Rotation);
 
-	inline Mesh const* get_mesh() { return m_mesh; }
-	inline Shape get_shape() { return m_mesh->get_shape(); }
+	inline std::vector<Mesh*> const* const get_meshes() { return &m_meshes; }
 
 	inline Material const& get_material() const { return m_material; }
 	inline void set_material(Material const& material) { m_material = material; };
 
+	inline std::string get_path() const { return m_file_path; }
+
 	inline void rename_object(std::string const& name) { m_object_name = name; }
-	inline std::string& get_object() { return m_object_name; }
+	inline std::string get_name() const { return m_object_name; }
 
 	inline void change_visibility() { m_is_visible = !m_is_visible; }
 	inline void set_visibility(bool is_visible) { m_is_visible = is_visible; }
@@ -43,23 +53,29 @@ public:
 
 	void ImGuiRenderer();
 
-	static unsigned int get_number_of_object() { return m_number_of_objects; }
+	static unsigned int get_number_of_object() { return m_number_of_objects; } 
+	static Model3D load_model(std::string const& file_path);
 
 private:
-	void copy_other(Model3D const& other);
+	static void process_assimp_node(struct aiNode* node, struct aiScene const* scene, std::vector<Mesh*>& meshes);
+	static Mesh* process_mesh(struct aiMesh* mesh, const aiScene* scene);
 
-	Mesh* m_mesh;
+	void copy_other(Model3D const& other);
+	void move_other(Model3D&& other);
+
+	std::vector<Mesh*> m_meshes;
 	Material m_material;
 
-	Vector<float, 3> m_position;
-	Vector<float, 3> m_scale;
-	Vector<float, 3> m_rotate;
+	Vector3f m_position;
+	Vector3f m_scale;
+	Vector3f m_rotate;
 
 	//matrices
 	TranslationMatrix4 m_trans_matrix;
 	ScaleMatrix4 m_scale_matrix;
 	Matrix<float, 4, 4> m_rotation_matrix;
 	
+	std::string m_file_path;
 	std::string m_object_name;
 	bool m_is_visible;
 

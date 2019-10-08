@@ -10,10 +10,16 @@
 
 
 TextureCubMap::TextureCubMap(std::array<std::string, 6> const& texture_files)
-	:m_texture(0),
-	m_texture_files(texture_files)
+	: m_texture(0)
+	, m_texture_files(texture_files)
 {
-	create_texture(texture_files);
+	create_texture();
+}
+
+TextureCubMap::TextureCubMap(std::string const& folder)
+{
+	get_texture_files_from_folder(folder);
+	create_texture();
 }
 
 TextureCubMap::~TextureCubMap()
@@ -36,29 +42,35 @@ void TextureCubMap::unbind() const
 void TextureCubMap::imgui_renderer(std::string const& texture_name)
 {
 	if(ImGui::Button(texture_name.c_str()))
-		change_texture(open_file_browser(""));
+		change_texture(open_folder_browser());
 }
 
 void TextureCubMap::change_texture(std::string const& folder_name)
 {
 	GLcall(glDeleteTextures(1, &m_texture));
-	std::array<std::string, 6> texture_files({ 
-		folder_name + "//right.jpg",
-		folder_name + "//left.jpg",
-		folder_name + "//top.jpg",
-		folder_name + "//bottom.jpg",
-		folder_name + "//front.jpg",
-		folder_name + "//back.jpg" });
-	create_texture(texture_files);
+	get_texture_files_from_folder(folder_name);
+	create_texture();
 }
 
 void TextureCubMap::change_texture(std::array<std::string, 6> const& texture_files)
 {
+	m_texture_files = texture_files;
 	GLcall(glDeleteTextures(1, &m_texture));
-	create_texture(texture_files);
+	create_texture();
 }
 
-void TextureCubMap::create_texture(std::array <std::string, 6> const& files_names)
+void TextureCubMap::get_texture_files_from_folder(std::string const& folder_name)
+{
+	m_texture_files = {
+	folder_name + "\\right.jpg",
+	folder_name + "\\left.jpg",
+	folder_name + "\\top.jpg",
+	folder_name + "\\bottom.jpg",
+	folder_name + "\\front.jpg",
+	folder_name + "\\back.jpg" };
+}
+
+void TextureCubMap::create_texture()
 {
 	GLcall(glGenTextures(1, &m_texture));
 	GLcall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_texture));
@@ -74,7 +86,7 @@ void TextureCubMap::create_texture(std::array <std::string, 6> const& files_name
 		}
 		else
 		{
-			std::cout << "Cubemap texture failed to load at path: " << m_texture_files[i] << std::endl;
+			std::cout << "Cubemap texture failed to load at path: " << m_texture_files[i] << "\n\n";
 			stbi_image_free(data);
 		}
 	}

@@ -7,7 +7,7 @@ class Texture2D : public Texture
 {
 public:
 	Texture2D(std::string const& file_path);
-	Texture2D(Vector<float, 3> const& color = { 1.0f, 1.0f, 1.0f }); // Create a 1 x 1 texture of a specTific color.
+	Texture2D(Vector3f const& color = { 1.0f, 1.0f, 1.0f }); // Create a 1 x 1 texture of a specTific color.
 	Texture2D(Texture2D const& other);
 	Texture2D& operator=(Texture2D const& other);
 	~Texture2D();
@@ -22,7 +22,7 @@ public:
 	inline float const* get_color() const { return m_color.get(); }
 
 	void change_texture(std::string const& file_path);
-	void change_texture(Vector<float, 3> const& color);
+	void change_texture(Vector3f const& color);
 
 	void imgui_renderer(std::string const& texture_name) override;
 

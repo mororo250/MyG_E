@@ -15,7 +15,7 @@ public:
 	inline std::vector<Layer*>::iterator begin() { return m_layer_collection.begin(); }
 	inline std::vector<Layer*>::iterator end() { return m_layer_collection.end(); }
 
-	unsigned int count() { return m_layer_collection.size(); }
+	std::size_t count() { return m_layer_collection.size(); }
 
 	Layer*& operator[](unsigned int index)
 	{

@@ -182,11 +182,13 @@ source_group ("Shaders" FILES
 add_executable (MyG_E
     ${MyG_E_sources}
 )
+set_property(TARGET MyG_E 
+    PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded"
+)
+
 
 #Precompiled
 add_precompiled_header(MyG_E Foundation/Precompiled/pch.h SOURCE_CXX Foundation/Precompiled/pch.cpp FORCEINCLUDE)
-
-set_target_properties (MyG_E PROPERTIES FOLDER "Core")
 
 #Link
 
@@ -198,7 +200,10 @@ target_link_libraries (MyG_E
 )
 
 target_link_libraries (MyG_E     
+    ${ASSIMP_LIBRARIES}
     ${GLFW3_LIBRARIES}
+    ${IRRXML_LIBRARIES}
+    ${ZLIB_LIBRARIES}
 )
 
 #Opengl

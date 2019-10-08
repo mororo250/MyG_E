@@ -1,25 +1,25 @@
 #include "Foundation/Math/Matrix.h"
 
-Matrix<float, 4, 4> LookAt(const Vector<float, 3> cameraPosition, const Vector<float, 3> targetPosition, const Vector<float, 3> up)
+Matrix<float, 4, 4> LookAt(const Vector3f cameraPosition, const Vector3f targetPosition, const Vector3f up)
 {
-	Vector<float, 3> Zaxis = cameraPosition - targetPosition;
+	Vector3f Zaxis = cameraPosition - targetPosition;
 	Zaxis.Normalize();
-	Vector<float, 3> Xaxis = Cross(up, Zaxis);
+	Vector3f Xaxis = Vector3f::Cross(up, Zaxis);
 	Xaxis.Normalize();
-	Vector<float, 3> Yaxis = Cross(Zaxis, Xaxis);
+	Vector3f Yaxis = Vector3f::Cross(Zaxis, Xaxis);
 	Yaxis.Normalize();
 	return Matrix<float, 4, 4>{ 
 		{Xaxis[0], Yaxis[0], Zaxis[0], 0},
 		{ Xaxis[1], Yaxis[1], Zaxis[1], 0 },
 		{ Xaxis[2], Yaxis[2], Zaxis[2], 0 },
-		{ -Vector<float, 3>::Dot(Xaxis, cameraPosition), -Vector<float, 3>::Dot(Yaxis, cameraPosition), -Vector<float, 3>::Dot(Zaxis, cameraPosition), 1 }
+		{ -Vector3f::Dot(Xaxis, cameraPosition), -Vector3f::Dot(Yaxis, cameraPosition), -Vector3f::Dot(Zaxis, cameraPosition), 1 }
 	};
 }
 
 
 inline float ToRadiants(float angle)
 {
-	return angle * 3.14 / 180;
+	return angle * 3.14f / 180.0f;
 }
 
 Matrix<float, 3, 3> CreateOrthoMatrix(const float left, const float right, const float up, const float down)
@@ -39,9 +39,8 @@ Matrix<float, 4, 4> CreateOrthographicMatrix(const float left, const float right
 	return OrthoMatrix;
 }
 
-Matrix<float, 4, 4> CreatePerspectiveMatrix(float const fov, float const width, float const height, float const l_near)
+Matrix<float, 4, 4> CreatePerspectiveMatrix(float const fov, float const aspect_ratio, float const l_near)
 {
-	float aspect_ratio = width / height;
 	float projec_width = tan(ToRadiants(fov) / 2.0f);
 	Matrix<float, 4, 4> PerspectiveMatrix{{ 1.0f / (aspect_ratio * (projec_width)), 0.0f,					0.0f,				0.0f},
 											{ 0.0f,									1.0f / (projec_width),	0.0f,				0.0f},
@@ -61,7 +60,7 @@ TranslationMatrix4::TranslationMatrix4(const float xTrans, const float yTrans, c
 {
 }
 
-TranslationMatrix4::TranslationMatrix4(const Vector<float, 3>& trans)
+TranslationMatrix4::TranslationMatrix4(const Vector3f& trans)
 	: TranslationMatrix4(trans[0], trans[1], trans[2])
 {
 }

@@ -43,7 +43,7 @@ void ImGuiLayer::update()
 {
 	ImGuiIO& io = ImGui::GetIO();
 	float time = static_cast<float>(glfwGetTime());
-	io.DeltaTime = m_time > 0.0f ? (time - m_time) : (1.0 / 60.0f);
+	io.DeltaTime = m_time > 0.0f ? (time - m_time) : (1.0f / 60.0f);
 	m_time = time;
 }
 
@@ -65,7 +65,8 @@ void ImGuiLayer::begin()
 {
 	ImGuiIO& io = ImGui::GetIO();
 	Game& app = Game::Get();
-	io.DisplaySize = ImVec2(app.GetWidth(), app.GetHeight());
+	std::pair<int, int> display_size(app.get_window_size());
+	io.DisplaySize = ImVec2(static_cast<float>(display_size.first), static_cast<float>(display_size.second));
 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -200,7 +201,7 @@ void ImGuiLayer::show_menu_file()
 	if (ImGui::MenuItem("New")) {}
 	if (ImGui::MenuItem("Open", "Ctrl+O")) 
 	{
-		std::string project_file = open_file_browser("(*.json) Project File\0*.json\0");
+		std::string project_file = open_file_browser(L".Project files", L"*.json");
 		if (!project_file.empty())
 			Game::Get().open_project(project_file);
 	}
@@ -211,7 +212,7 @@ void ImGuiLayer::show_menu_file()
 	if (ImGui::MenuItem("Save", "Ctrl+S")) {}
 	if (ImGui::MenuItem("Save As.."))
 	{
-		std::string project_file = save_file_browser("(*.json) Project File\0*.json\0");
+		std::string project_file = save_file_browser(L".json", L"*.json");
 		if (!project_file.empty())
 			Game::Get().save_project(project_file);
 	}

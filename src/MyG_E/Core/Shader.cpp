@@ -45,7 +45,7 @@ void Shader::set_uniform4f(int location, float v1, float v2, float v3, float v4)
 	GLcall(glUniform4f(location, v1, v2, v3, v4));
 }
 
-void Shader::set_uniform3f(int location, const Vector<float, 3>& vector) const
+void Shader::set_uniform3f(int location, const Vector3f& vector) const
 {
 	GLcall(glUniform3f(location, vector[0], vector[1], vector[2]));
 }
@@ -77,7 +77,7 @@ int Shader::get_uniform_location(const std::string& name) const
 void Shader::read_shader_file(const std::string& shader_name, std::string& vertex_string, std::string& frag_string)
 {
 	// Shader directory.
-	std::string file_path = std::filesystem::current_path().parent_path().string();
+	std::string file_path = std::filesystem::current_path().parent_path().parent_path().parent_path().string();
 	file_path += "\\src\\MyG_E\\Shaders\\" + shader_name;
 	std::ifstream shader_file(file_path);
 

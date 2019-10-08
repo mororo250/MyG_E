@@ -1,6 +1,6 @@
 #include "FPSCamera.h"
 
-FPSCamera::FPSCamera(Vector<float, 3> position, Vector<float, 3> direction)
+FPSCamera::FPSCamera(Vector3f position, Vector3f direction)
 {
 	m_position = position;
 	m_direction = direction;
@@ -37,7 +37,7 @@ void FPSCamera::translate()
 	if (Input::Get().IsKeyPressed(KEY_S))
 		m_position -= m_speed * m_direction;
 	if (Input::Get().IsKeyPressed(KEY_A))
-		m_position -= m_speed * Cross(m_direction, { 0.0f, 1.0f, 0.0f });
+		m_position -= m_speed * Vector3f::Cross(m_direction, { 0.0f, 1.0f, 0.0f });
 	if (Input::Get().IsKeyPressed(KEY_D))
-		m_position += m_speed * Cross(m_direction, { 0.0f, 1.0f, 0.0f });
+		m_position += m_speed * Vector3f::Cross(m_direction, { 0.0f, 1.0f, 0.0f });
 }

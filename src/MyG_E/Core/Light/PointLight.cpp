@@ -6,7 +6,7 @@
 unsigned short PointLight::s_count = 0;
 unsigned short PointLight::s_id = 0;
 
-PointLight::PointLight(const Vector<float, 3>& position, const Vector<float, 3>& color)
+PointLight::PointLight(const Vector3f& position, const Vector3f& color)
 	: m_attenuation_constants({ 1.0f, 0.09f, 0.032f }) // Light cover 50m. 
 	, Light(position, color)
 {
@@ -16,7 +16,7 @@ PointLight::PointLight(const Vector<float, 3>& position, const Vector<float, 3>&
 void PointLight::ImGuiRenderer()
 {
 	Light::ImGuiRenderer();
-	ImGui::DragFloat("Constant:", &m_attenuation_constants[0], 0.05, 0.0f, 1.0f);
+	ImGui::DragFloat("Constant:", &m_attenuation_constants[0], 0.05f, 0.0f, 1.0f);
 	ImGui::DragFloat("Linear:", &m_attenuation_constants[1], 0.05f, 0.0f, 1.0f);
 	ImGui::DragFloat("Quadratic:", &m_attenuation_constants[2], 0.05f, 0.0f, 1.0f);
 }

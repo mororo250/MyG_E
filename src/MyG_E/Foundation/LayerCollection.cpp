@@ -12,7 +12,7 @@ LayerCollection::~LayerCollection()
 
 void LayerCollection::push_layer(Layer* layer)
 {
-	m_layer_collection.push_back(layer);
+	m_layer_collection.emplace_back(layer);
 }
 
 void LayerCollection::pop_layer(Layer* layer)

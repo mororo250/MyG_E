@@ -6,16 +6,16 @@
 class Light
 {
 public:
-	Light(Vector<float, 3> const& position, Vector<float, 3> const& color);
+	Light(Vector3f const& position, Vector3f const& color);
 	Light(Light const& other);
 	Light& operator=(Light const& other);
 	virtual ~Light();
 
-	inline Vector<float, 3> get_light_position() const { return m_model->get_position(); }
-	inline void set_light_position(Vector<float, 3> const& position) { m_model->set_position(position); }
+	inline Vector3f get_light_position() const { return m_model->get_position(); }
+	inline void set_light_position(Vector3f const& position) { m_model->set_position(position); }
 
-	inline Vector<float, 3> get_light_color() const { return m_color; }
-	inline void set_light_color(Vector<float, 3> const& color) { m_color = color; }
+	inline Vector3f get_light_color() const { return m_color; }
+	inline void set_light_color(Vector3f const& color) { m_color = color; }
 
 	inline float get_ambient_strength() const { return m_ambient_strength; }
 	inline void set_ambient_strength(const float ambient_strength) { m_ambient_strength = ambient_strength; }
@@ -37,7 +37,7 @@ protected:
 private:
 	void copy_other(Light const& other);
 
-	Vector<float, 3> m_color;
+	Vector3f m_color;
 	Model3D* m_model;
 	float m_ambient_strength;
 	float m_diffuse_strength;

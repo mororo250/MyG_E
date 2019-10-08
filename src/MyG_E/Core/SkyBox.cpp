@@ -48,21 +48,11 @@ std::array<float, 108> m_skybox_vertices = {
 	 1.0f, -1.0f,  1.0f
 };
 
-SkyBox::SkyBox()
+SkyBox::SkyBox(TextureCubMap* texture)
+	:m_skybox_texture(texture)
+	,m_vao(new VertexArray())
+	,m_vb(new VertexBuffer(reinterpret_cast<float*>(m_skybox_vertices.data()), static_cast<unsigned int>(m_skybox_vertices.size()) / 3, 3))
 {
-	constexpr int NumAttrib = 3;
-	std::array<std::string, 6> skymap = { 
-		"C://Users//joao_//OneDrive//Desktop//git//MyG_E//src//MyG_E//Resources//skyboxs//lake//right.jpg",
-		"C://Users//joao_//OneDrive//Desktop//git//MyG_E//src//MyG_E//Resources//skyboxs//lake//left.jpg",
-		"C://Users//joao_//OneDrive//Desktop//git//MyG_E//src//MyG_E//Resources//skyboxs//lake//top.jpg",
-		"C://Users//joao_//OneDrive//Desktop//git//MyG_E//src//MyG_E//Resources//skyboxs//lake//bottom.jpg",
-		"C://Users//joao_//OneDrive//Desktop//git//MyG_E//src//MyG_E//Resources//skyboxs//lake//front.jpg",
-		"C://Users//joao_//OneDrive//Desktop//git//MyG_E//src//MyG_E//Resources//skyboxs//lake//back.jpg"
-	};
-	m_skybox_texture.reset(new TextureCubMap(skymap));
-	m_vao = std::make_unique<VertexArray>();
-	m_vb = std::make_unique<VertexBuffer>(reinterpret_cast<float*>(m_skybox_vertices.data()), m_skybox_vertices.size() / NumAttrib, NumAttrib);
-	
 	m_vao->PushLayout(3, GL_FLOAT, GL_FALSE, 0);
 	m_vao->AddBuffer(*m_vb);
 	
@@ -72,7 +62,7 @@ SkyBox::SkyBox()
 
 void SkyBox::imgui_rederer()
 {
-	m_skybox_texture->imgui_renderer("skybox");
+	m_skybox_texture->imgui_renderer("Change skybox");
 }
 
 void SkyBox::begin()

@@ -2,15 +2,15 @@
 #include "imgui.h"
 #include "Core/Shader.h"
 
-Light::Light(const Vector<float, 3>& position, const Vector<float, 3>& color)
+Light::Light(const Vector3f& position, const Vector3f& color)
 	: m_color(color)
-	, m_model(new Model3D(new Mesh(Shape::SPHERE)))
+	, m_model(new Model3D(Model3D::load_model("..\\..\\..\\Resources\\basic_meshes\\sphere.obj")))
 	, m_ambient_strength(0.1f)
 	, m_diffuse_strength(1.0f)
 	, m_specular_strength(1.0f)
 {
 	m_model->set_position(position);
-	m_model->set_scale({0.01f, 0.01f, 0.01f});
+	m_model->set_scale({ 0.2f, 0.2f, 0.2f });
 }
 
 Light::Light(Light const& other)
@@ -35,7 +35,7 @@ Light::~Light()
 
 void Light::ImGuiRenderer()
 {
-	Vector<float, 3> position = m_model->get_position();
+	Vector3f position = m_model->get_position();
 	ImGui::DragFloat3("Translate", &position[0], 0.1f);
 	m_model->set_position(position);
 	ImGui::ColorEdit3("Light Color", &m_color[0]);

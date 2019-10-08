@@ -1,18 +1,20 @@
 #include "ProjectController.h"
+
 #include "imgui.h"
 #include "imgui_internal.h"
 
 #include "Foundation/ImGuiLayer.h"
+#include "Foundation/UI/FileBrowser.h"
 
 ProjectController::ProjectController()
-	:m_camera(nullptr),
-	m_skybox_shader(new Shader("SkyBox.glsl")),
-	m_light_shader(new Shader("Light.glsl")),
-	m_shader(new Shader("Phong.glsl")),
-	m_renderer(new Renderer3D()),
-	m_fov(60.0f),
-	m_persp_matrix(CreatePerspectiveMatrix(m_fov, Game::Get().GetWidth(), Game::Get().GetHeight(), 0.01f)),
-	m_skybox(new SkyBox())
+	: m_camera(nullptr)
+	, m_skybox_shader(new Shader("SkyBox.glsl"))
+	, m_light_shader(new Shader("Light.glsl"))
+	, m_shader(new Shader("Phong.glsl"))
+	, m_renderer(new Renderer3D())
+	, m_fov(60.0f)
+	, m_persp_matrix(CreatePerspectiveMatrix(60.0f, Game::Get().get_window_aspect_ratio(), 0.01f))
+	, m_skybox(nullptr)
 {
 }
 
@@ -67,12 +69,14 @@ void ProjectController::update()
 			m_shader->set_uniform1i(m_shader->get_uniform_location("u_texture"), 0);
 			m_shader->set_uniform1i(m_shader->get_uniform_location("u_specular_map"), 1);
 			m_shader->set_uniform1f(m_shader->get_uniform_location("u_shininess"), aux->get_material().get_shininess());
-
-			aux->get_mesh()->GetVertexArray().bind();
-			aux->get_mesh()->GetIndexBuffer().bind();
-			m_renderer->draw_element(aux->get_mesh()->GetIndexBuffer());
-			aux->get_mesh()->GetVertexArray().unbind();
-			aux->get_mesh()->GetIndexBuffer().unbind();
+			for (auto& meshes : *aux->get_meshes())
+			{
+				meshes->GetVertexArray().bind();
+				meshes->GetIndexBuffer().bind();
+				m_renderer->draw_element(meshes->GetIndexBuffer());
+				meshes->GetVertexArray().unbind();
+				meshes->GetIndexBuffer().unbind();
+			}
 			aux->get_material().get_diffuse()->unbind();
 		}
 	}
@@ -84,34 +88,39 @@ void ProjectController::update()
 	{
 		if (aux->GetModel()->is_visible())
 		{
-			Matrix<float, 4, 4> model_matrix = aux->GetModel()->get_scale_matrix() * aux->GetModel()->get_rotation_matrix() * aux->GetModel()->get_translation(); //Model view projection
+			Matrix<float, 4, 4> model_matrix = aux->GetModel()->get_scale_matrix() * aux->GetModel()->get_rotation_matrix() * aux->GetModel()->get_translation(); // Model view projection
 			Matrix<float, 4, 4> view_projection = m_camera->get_view() * m_persp_matrix;
 
 			m_light_shader->set_uniformMatrix4f(m_light_shader->get_uniform_location("u_Model"), model_matrix);
 			m_light_shader->set_uniformMatrix4f(m_light_shader->get_uniform_location("u_ViewProjection"), view_projection);
 			m_light_shader->set_uniform3f(m_light_shader->get_uniform_location("u_Color"), aux->get_light_color());
 
-			aux->GetModel()->get_mesh()->GetVertexArray().bind();
-			aux->GetModel()->get_mesh()->GetIndexBuffer().bind();
-			m_renderer->draw_element(aux->GetModel()->get_mesh()->GetIndexBuffer());
-			aux->GetModel()->get_mesh()->GetVertexArray().unbind();
-			aux->GetModel()->get_mesh()->GetIndexBuffer().unbind();
+			for (auto& meshes : *aux->GetModel()->get_meshes())
+			{
+				meshes->GetVertexArray().bind();
+				meshes->GetIndexBuffer().bind();
+				m_renderer->draw_element(meshes->GetIndexBuffer());
+				meshes->GetVertexArray().unbind();
+				meshes->GetIndexBuffer().unbind();
+			}
 		}
 	}
 	m_light_shader->unbind();
 	
 	// SkyBox
-	m_skybox->begin();
-	m_skybox_shader->bind();
+	if (m_skybox)
+	{
+		m_skybox->begin();
+		m_skybox_shader->bind();
 
-	Matrix<float, 4, 4> view_projection = m_camera->get_view() * m_persp_matrix;;
-
-	m_skybox_shader->set_uniformMatrix4f(m_skybox_shader->get_uniform_location("u_view_projection"), view_projection);
-	m_skybox_shader->set_uniformMatrix4f(m_skybox_shader->get_uniform_location("scale"), ScaleMatrix4(10000.0f, 10000.0f, 10000.0f)); // this is temporary.
-	m_skybox_shader->set_uniform1i(m_skybox_shader->get_uniform_location("u_skybox"), 0);
-	m_skybox->draw();
-	m_skybox_shader->unbind();
-	m_skybox->end();
+		Matrix<float, 4, 4> view_projection = m_camera->get_view() * m_persp_matrix;;
+		m_skybox_shader->set_uniformMatrix4f(m_skybox_shader->get_uniform_location("u_view_projection"), view_projection);
+		m_skybox_shader->set_uniformMatrix4f(m_skybox_shader->get_uniform_location("scale"), ScaleMatrix4(10000.0f, 10000.0f, 10000.0f)); // this is temporary.
+		m_skybox_shader->set_uniform1i(m_skybox_shader->get_uniform_location("u_skybox"), 0);
+		m_skybox->draw();
+		m_skybox_shader->unbind();
+		m_skybox->end();
+	}
 }
 
 // It need to improve (remove code repretition)
@@ -125,7 +134,7 @@ void ProjectController::imgui_renderer()
 	{
 
 		// Left
-		static int selected = 0;
+		static std::size_t selected = 0;
 		ImGui::BeginChild("left pane", ImVec2(100, 0), true);
 		
 		// Lights
@@ -138,10 +147,10 @@ void ProjectController::imgui_renderer()
 		}
 
 		// Objects
-		for (unsigned int i = m_light_buffer.size(); i < (m_light_buffer.size() + m_object_buffer.size()); i++)
+		for (std::size_t i = m_light_buffer.size(); i < (m_light_buffer.size() + m_object_buffer.size()); i++)
 		{
 			char label[128];
-			sprintf(label, "object %d", i - m_light_buffer.size());
+			sprintf(label, m_object_buffer[i - m_light_buffer.size()]->get_name().c_str());
 			if (ImGui::Selectable(label, selected == i))
 				selected = i;
 		}
@@ -163,14 +172,20 @@ void ProjectController::imgui_renderer()
 			if (ImGui::BeginMenu("Object"))
 			{
 				if (ImGui::MenuItem("Plane"))
-					create_object(Shape::PLANE);
+					create_object("..\\..\\..\\Resources\\basic_meshes\\plane.obj");
 				if (ImGui::MenuItem("Cube"))
-					create_object(Shape::CUBE);
-				if (ImGui::MenuItem("Pyramid"))
-					create_object(Shape::PYRAMID);
+					create_object("..\\..\\..\\Resources\\basic_meshes\\cube.obj");
+				if (ImGui::MenuItem("Cone"))
+					create_object("..\\..\\..\\Resources\\basic_meshes\\cone.obj");
 				if (ImGui::MenuItem("Sphere"))
-					create_object(Shape::SPHERE);
-				if (ImGui::MenuItem("Import Mesh"));
+					create_object("..\\..\\..\\Resources\\basic_meshes\\sphere.obj");
+				if (ImGui::MenuItem("Torus"))
+					create_object("..\\..\\..\\Resources\\basic_meshes\\torus.obj");
+				if (ImGui::MenuItem("Import Mesh"))
+				{
+					create_object(open_file_browser(L"Model Files", L"*.obj;*.dae;*.fbx;*.bvh;*.ply;*.stl" ));
+				}
+
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();
@@ -178,8 +193,14 @@ void ProjectController::imgui_renderer()
 		
 		// skybox
 		ImGui::Separator();
-		m_skybox->imgui_rederer();
 
+		if (m_skybox)
+			m_skybox->imgui_rederer();
+		else
+			if (ImGui::Button("Attach skybox"))
+			{
+				set_skybox(new TextureCubMap(open_folder_browser()));
+			}
 		ImGui::EndChild();
 		ImGui::SameLine();
 		
@@ -200,7 +221,7 @@ void ProjectController::imgui_renderer()
 				ImGui::EndTabBar();
 			}
 		}
-		else if(selected >= m_light_buffer.size() && m_light_buffer.size() + m_light_buffer.size() >= selected)
+		else if(selected >= m_light_buffer.size() && m_object_buffer.size() + m_light_buffer.size() >= selected)
 		{
 			ImGui::Text("Object: %d", selected - m_light_buffer.size());
 			ImGui::Separator();
@@ -236,18 +257,18 @@ void ProjectController::pop_object(Model3D* object)
 
 void ProjectController::set_perspective_matrix()
 {
-	m_persp_matrix = CreatePerspectiveMatrix(m_fov, Game::Get().GetWidth(), Game::Get().GetHeight(), 0.01f);
+	m_persp_matrix = CreatePerspectiveMatrix(m_fov, Game::Get().get_window_aspect_ratio(), 0.01f);
 }
 
-void ProjectController::set_fov(float fov)
+void ProjectController::set_fov(float const fov)
 {
 	m_fov = fov;
 	set_perspective_matrix();
 }
 
-void ProjectController::create_object(Shape const shape)
+void ProjectController::create_object(std::string const& file_path)
 {
-	push_object(new Model3D(new Mesh(shape)));
+	push_object(new Model3D(Model3D::load_model(file_path)));
 }
 
 void ProjectController::create_light(unsigned int type)

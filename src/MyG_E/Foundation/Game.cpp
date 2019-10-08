@@ -17,11 +17,9 @@
 Game* Game::s_Instance = nullptr;
 
 Game::Game()
-	:m_window_height(768),
-	m_window_width(1024),
-	m_delta(1.0f),
-	m_imgui_layer(nullptr),
-	m_project_controller(nullptr)
+	: m_delta(1.0f)
+	, m_imgui_layer(nullptr)
+	, m_project_controller(nullptr)
 {
 	try
 	{
@@ -45,7 +43,7 @@ bool Game::Initialize()
 	glfwWindowHint(GLFW_SAMPLES, 4);
 
 	/* Create a windowed mode window and its OpenGL context */
-	m_window = glfwCreateWindow(m_window_width, m_window_height, "Hello World", NULL, NULL);
+	m_window = glfwCreateWindow(1024, 768, "Pixie Game Engine", NULL, NULL);
 	if (!m_window)
 	{
 		glfwTerminate();
@@ -84,7 +82,6 @@ void Game::Loop()
 	m_layer_collection.push_layer(m_imgui_layer);
 
 	/* Loop until the user closes the window */
-	std::chrono::duration<float> frametime;
 	while (!glfwWindowShouldClose(m_window))
 	{
 		m_imgui_layer->begin();
@@ -112,10 +109,21 @@ void Game::Shutdown()
 
 void Game::resize_window(int width, int height)
 {
-	m_window_height = height;
-	m_window_width = width;
 	GLcall(glViewport(0, 0, width, height));
 	m_project_controller->set_perspective_matrix();
+}
+
+std::pair<int, int> Game::get_window_size() const
+{
+	std::pair<int, int> window_size;
+	glfwGetWindowSize(m_window, &window_size.first, &window_size.second);
+	return window_size;
+}
+
+float Game::get_window_aspect_ratio() const
+{
+	std::pair<int, int> window_size = get_window_size();
+	return static_cast<float>(window_size.first) / static_cast<float>(window_size.second);
 }
 
 void Game::open_project(std::string const& path)

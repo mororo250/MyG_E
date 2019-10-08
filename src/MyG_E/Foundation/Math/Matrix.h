@@ -158,7 +158,7 @@ class TranslationMatrix4 : public Matrix<float, 4, 4>
 {
 public:
 	TranslationMatrix4(const float TranX, const float TranY, const float TranZ);
-	TranslationMatrix4(const Vector<float, 3>& trans);
+	TranslationMatrix4(const Vector3f& trans);
 
 	const float GetTranX() { return GetElement(3, 0); }
 	const float GetTranY() { return GetElement(3, 1); }
@@ -245,6 +245,6 @@ private:
 inline float ToRadiants(float angle);
 
 Matrix<float, 3, 3> CreateOrthoMatrix(const float left, const float right, const float top, const float bottom);
-Matrix<float, 4, 4> LookAt(const Vector<float, 3> cameraPosition, const Vector<float, 3> targetPosition, const Vector<float, 3>up);
+Matrix<float, 4, 4> LookAt(const Vector3f cameraPosition, const Vector3f targetPosition, const Vector3f up);
 Matrix<float, 4, 4> CreateOrthographicMatrix(const float left, const float right, const float top, const float botton, const float _near, const float _far);
-Matrix<float, 4, 4> CreatePerspectiveMatrix(float const fov, float const width, float const height, float const l_near);
+Matrix<float, 4, 4> CreatePerspectiveMatrix(float const fov, float const aspect_ratio, float const l_near);

@@ -6,7 +6,7 @@
 unsigned short DirectionalLight::s_count = 0;
 unsigned short DirectionalLight::s_id = 0;
 
-DirectionalLight::DirectionalLight(const Vector<float, 3>& position, const Vector<float, 3>& color, const Vector<float, 3>& direction)
+DirectionalLight::DirectionalLight(const Vector3f& position, const Vector3f& color, const Vector3f& direction)
 	: m_direction(direction)
 	, Light(position, color)
 {

@@ -30,6 +30,10 @@ public:
 	void pop_object(Model3D* object);
 	inline std::vector<Model3D*> const get_object_buffer() const { return m_object_buffer; }
 
+	// Skybox 
+	inline void set_skybox(TextureCubMap* texture) { m_skybox.reset(new SkyBox(texture)); }
+	inline SkyBox const* get_skybox() const { return m_skybox.get(); }
+
 	// Currente Camera
 	inline void set_camera(Camera* camera) { m_camera = camera; }
 	inline Camera const* get_camera() const { return m_camera; }
@@ -37,10 +41,10 @@ public:
 	// perspective matrix:
 	void set_perspective_matrix();
 
-	inline float get_fov() const { return m_fov; }
 	void set_fov(float fov); // Maximum m_fov = 120 and minimum = 30
+	inline float get_fov() const { return m_fov; }
 private:
-	void create_object(Shape const shape);
+	void create_object(std::string const& file_path);
 	void create_light(unsigned int type);
 
 	std::unique_ptr<Shader> m_shader;

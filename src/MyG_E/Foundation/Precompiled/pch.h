@@ -13,6 +13,7 @@
 #include <memory.h>
 #include <sstream>
 #include <string>
+#include <thread>
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
@@ -24,4 +25,5 @@
 // Windows
 #ifdef _WIN32
 #include <Windows.h>
+#include <ShObjIdl_core.h>
 #endif

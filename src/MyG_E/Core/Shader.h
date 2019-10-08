@@ -17,7 +17,7 @@ public:
 	void set_uniform3f(int location, float v1, float v2, float v3) const;
 	void set_uniform4f(int location, float v1, float v2, float v3, float v4) const;
 
-	void set_uniform3f(int location, Vector<float, 3> const& vector3) const;
+	void set_uniform3f(int location, Vector3f const& vector3) const;
 	void set_uniform4f(int location, Vector<float, 4> const& vector4) const;
 
 	void set_uniformMatrix3f(int location, Matrix< float, 3, 3> const& matrix) const;

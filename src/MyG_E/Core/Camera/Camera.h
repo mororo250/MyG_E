@@ -12,11 +12,11 @@ public:
 
 	inline Matrix<float, 4, 4> & get_view() { return m_view; }
 
-	inline Vector<float, 3> get_position() const { return m_position; }
-	inline void set_position(const Vector<float, 3> position) { m_position = position; }
+	inline Vector3f get_position() const { return m_position; }
+	inline void set_position(const Vector3f position) { m_position = position; }
 
-	inline Vector<float, 3> get_direction() const { return m_direction; }
-	void set_direction(Vector<float, 3> direction) { m_direction = direction; }
+	inline Vector3f get_direction() const { return m_direction; }
+	void set_direction(Vector3f direction) { m_direction = direction; }
 
 	inline float get_speed() const { return m_speed; }
 	inline void set_speed(const float speed) { m_speed = speed; }
@@ -36,7 +36,7 @@ protected:
 
 	std::pair<float, float> m_mouse_pos; //currenty mouse possition
 
-	Vector<float, 3> m_position;
-	Vector<float, 3> m_direction;
+	Vector3f m_position;
+	Vector3f m_direction;
 	Matrix<float, 4, 4> m_view;
 };

@@ -10,18 +10,18 @@
 
 
 Texture2D::Texture2D(std::string const& file_path)
-	:m_texture(0),
-	m_color(nullptr),
-	m_file_path(file_path), 
-	m_nrChannels(0),
-	m_width(0), 
-	m_height(0),
-	m_is_unitary(false)
+	: m_texture(0)
+	, m_color(nullptr)
+	, m_file_path(file_path)
+	, m_nrChannels(0)
+	, m_width(0)
+	, m_height(0)
+	, m_is_unitary(false)
 {
 	if_is_a_texture();
 }
 
-Texture2D::Texture2D(Vector<float, 3> const& color)
+Texture2D::Texture2D(Vector3f const& color)
 	:m_texture(0),
 	m_color(new float[3]{ color[0], color[1], color[2] }),
 	m_file_path(""),
@@ -83,7 +83,7 @@ void Texture2D::change_texture(std::string const& file_path)
 	if_is_a_texture();
 }
 
-void Texture2D::change_texture(Vector<float, 3> const& color)
+void Texture2D::change_texture(Vector3f const& color)
 {
 	m_is_unitary = true;
 	m_file_path = "";
@@ -102,12 +102,12 @@ void Texture2D::imgui_renderer(std::string const& name)
 	ImGui::SameLine();
 	std::string button_name = "import " + name;
 	if (ImGui::Button(button_name.c_str()))
-		change_texture(open_file_browser("Image Files (.png, .jpg) \0*.png; *.jpg\0"));
+		change_texture(open_file_browser(L"Image Files", L"*.png;*.jpg;*.tga"));
 	ImGui::Text("Current Texture2D: %s", m_file_path.c_str());
 
 	if (m_is_unitary)
 	{
-		Vector<float, 3> color{ m_color[0], m_color[1], m_color[2] };
+		Vector3f color{ m_color[0], m_color[1], m_color[2] };
 		ImGui::ColorEdit3(name.c_str(), &color[0]);
 		change_texture(color);
 	}
@@ -115,7 +115,7 @@ void Texture2D::imgui_renderer(std::string const& name)
 	{
 		button_name = "remove " + name;
 		if (ImGui::Button(button_name.c_str()))
-			change_texture(Vector<float, 3>{});
+			change_texture(Vector3f{});
 	}
 }
 
@@ -152,13 +152,15 @@ void Texture2D::if_is_a_color()
 
 void Texture2D::if_is_a_texture()
 {
-	stbi_set_flip_vertically_on_load(1); // Flip the image - opengl start from the top left intead of the bottom lefet
+	stbi_set_flip_vertically_on_load(1); // Flip the image - opengl start from the top left intead of the bottom left.
 	unsigned char* local_buffer = stbi_load(m_file_path.c_str(), &m_width, &m_height, &m_nrChannels, 4);
 
 	create_texture(local_buffer);
 
 	if (local_buffer)
 		stbi_image_free(local_buffer);
+
+	stbi_set_flip_vertically_on_load(0);
 }
 
 void Texture2D::create_texture(unsigned char const* local_buffer)

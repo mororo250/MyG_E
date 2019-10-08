@@ -49,7 +49,7 @@ public:
 	
 	bool IsKeyPressed(KeyCode keycode);
 	bool IsMouseButtonPressed(MouseButtonCode mousebutton);
-	std::pair<float, float> GetMousePosition();
+	std::pair<float, float> GetMousePosition() const;
 
 	void SetCursorMode(CursorMode mode);
 	inline CursorMode GetCurrentCursorMode() const { return mCurrentMode; }

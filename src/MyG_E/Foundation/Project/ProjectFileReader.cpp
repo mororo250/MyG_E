@@ -28,6 +28,9 @@ bool ProjectFileReader::read_file(std::string const& file_path)
 	// Load lights
 	load_lights(document, controller);
 
+	if (document.HasMember("skybox"))
+		controller->set_skybox(new TextureCubMap(document["skybox"].GetString()));
+
 	Game::Get().set_project(controller);
 	return true;
 }
@@ -61,12 +64,12 @@ bool ProjectFileReader::load_camera(rapidjson::Document const& document, Project
 	std::string camera_model(document["camera"]["model"].GetString());
 
 	// Load camera position
-	Vector<float, 3> position{ document["camera"]["position"]["x"].GetFloat(),
+	Vector3f position{ document["camera"]["position"]["x"].GetFloat(),
 		document["camera"]["position"]["y"].GetFloat(),
 		document["camera"]["position"]["z"].GetFloat() };
 	
 	// Load camera direction
-	Vector<float, 3> direction{ document["camera"]["direction"]["x"].GetFloat(),
+	Vector3f direction{ document["camera"]["direction"]["x"].GetFloat(),
 		document["camera"]["direction"]["y"].GetFloat(),
 		document["camera"]["direction"]["z"].GetFloat() };
 	
@@ -95,14 +98,14 @@ bool ProjectFileReader::load_lights(rapidjson::Document const& document, Project
 	for (unsigned int i = 0; i < light_buffer.Size(); i++)
 	{
 		// Load light position
-		Vector<float, 3> position;
+		Vector3f position;
 		if (light_buffer[i].HasMember("position"))
 			position = { light_buffer[i]["position"]["x"].GetFloat(),
 				light_buffer[i]["position"]["y"].GetFloat(),
 				light_buffer[i]["position"]["z"].GetFloat() };
 
 		// Load Light Color
-		Vector<float, 3> color{ 1.0, 1.0, 1.0 };
+		Vector3f color{ 1.0, 1.0, 1.0 };
 		if (light_buffer[i].HasMember("light_color"))
 			color = { light_buffer[i]["color"]["x"].GetFloat(),
 				light_buffer[i]["color"]["y"].GetFloat(),
@@ -112,11 +115,11 @@ bool ProjectFileReader::load_lights(rapidjson::Document const& document, Project
 		float diffuse_strength = 1.0f;
 		float specular_strength = 1.0f;
 		if (light_buffer[i].HasMember("ambient_strength"))
-			ambient_strength = light_buffer[i]["ambient_strength"].GetDouble();
+			ambient_strength = light_buffer[i]["ambient_strength"].GetFloat();
 		if (light_buffer[i].HasMember("diffuse_strength"))
-			ambient_strength = light_buffer[i]["diffuse_strength"].GetDouble();
+			ambient_strength = light_buffer[i]["diffuse_strength"].GetFloat();
 		if (light_buffer[i].HasMember("specular_strength"))
-			ambient_strength = light_buffer[i]["specular_strength"].GetDouble();
+			ambient_strength = light_buffer[i]["specular_strength"].GetFloat();
 
 		// Create light
 		std::string light_model = "point_light";
@@ -126,7 +129,7 @@ bool ProjectFileReader::load_lights(rapidjson::Document const& document, Project
 		if (light_model == "directional_light")
 		{
 			// Load Direction			
-			Vector<float, 3> direction{0.0f, -1.0f, 0.0f};
+			Vector3f direction{0.0f, -1.0f, 0.0f};
 			if (light_buffer[i].HasMember("direction"))
 				direction = { light_buffer[i]["direction"]["x"].GetFloat(),
 					light_buffer[i]["direction"]["y"].GetFloat(),
@@ -153,7 +156,7 @@ bool ProjectFileReader::load_lights(rapidjson::Document const& document, Project
 				out_angle = light_buffer[i]["out_angle"].GetFloat();
 
 			// Load Direction
-			Vector<float, 3> direction{0.0f, -1.0f, 0.0f};
+			Vector3f direction{0.0f, -1.0f, 0.0f};
 			if (light_buffer[i].HasMember("direction"))
 				direction = { light_buffer[i]["direction"]["x"].GetFloat(),
 					light_buffer[i]["direction"]["y"].GetFloat(),
@@ -181,18 +184,25 @@ bool ProjectFileReader::load_objects(rapidjson::Document const& document, Projec
 	for (unsigned int i = 0; i < object_buffer.Size(); i++)
 	{
 		// Load object position
-		Vector<float, 3> position{ 0.0f, 0.0f, 0.0f };
+		Vector3f position{ 0.0f, 0.0f, 0.0f };
 		if (object_buffer[i].HasMember("position"))
 			position = { object_buffer[i]["position"]["x"].GetFloat(),
 				object_buffer[i]["position"]["y"].GetFloat(),
 				object_buffer[i]["position"]["z"].GetFloat() };
 
 		// Load scale position
-		Vector<float, 3> scale{ 1.0f, 1.0f, 1.0f };
+		Vector3f scale{ 1.0f, 1.0f, 1.0f };
 		if (object_buffer[i].HasMember("scale"))
 			scale = { object_buffer[i]["scale"]["x"].GetFloat(),
 				object_buffer[i]["scale"]["y"].GetFloat(),
 				object_buffer[i]["scale"]["z"].GetFloat() };
+
+		// Load rotation
+		Vector3f rotation{ 0.0f, 0.0f, 0.0f };
+		if (object_buffer[i].HasMember("rotation"))
+			rotation = { object_buffer[i]["rotation"]["x"].GetFloat(),
+				object_buffer[i]["rotation"]["y"].GetFloat(),
+				object_buffer[i]["rotation"]["z"].GetFloat() };
 
 		// Is visible?
 		bool is_visible = true;
@@ -200,22 +210,20 @@ bool ProjectFileReader::load_objects(rapidjson::Document const& document, Projec
 			is_visible = object_buffer[i]["visibility"].GetBool();
 		
 		// Create Object
-		std::string object_model = "cube";
-		if (object_buffer[i].HasMember("model"))
-			object_model = object_buffer[i]["model"].GetString();
-		
-		Model3D* object = nullptr;
-		if (object_model == "plane")
-			object = new Model3D(new Mesh(Shape::PLANE));
-		else if (object_model == "cube")
-			object = new Model3D(new Mesh(Shape::CUBE));
-		else if (object_model == "pyramid")
-			object = new Model3D(new Mesh(Shape::PYRAMID));
-		else if (object_model == "sphere")
-			object = new Model3D(new Mesh(Shape::SPHERE));
+		std::string file_path;
+		if (object_buffer[i].HasMember("path"))
+			file_path = object_buffer[i]["path"].GetString();
+		else
+		{
+			std::cout << "It wasn't possible to load object " << i << std::endl;
+			continue;
+		}
+
+		Model3D* object = new Model3D(Model3D::load_model(file_path));
 		
 		object->set_position(position);
 		object->set_scale(scale);
+		object->set_rotation(rotation);
 
 		// Load object material
 		if (object_buffer[i].HasMember("material"))
@@ -274,14 +282,14 @@ bool ProjectFileReader::load_objects(rapidjson::Document const& document, Projec
 
 					Texture2D* specular;
 					if (!has_specular_map)
-						specular = new Texture2D(Vector<float, 3>{ material_json["specular"]["x"].GetFloat(),
+						specular = new Texture2D(Vector3f{ material_json["specular"]["x"].GetFloat(),
 							material_json["specular"]["y"].GetFloat(),
 							material_json["specular"]["z"].GetFloat() });
 					else
 						specular = new Texture2D(std::filesystem::absolute(material_json["specular_map"].GetString()).string());
 					if (!has_texture)
 					{
-						Vector<float, 3> diffuse{ material_json["diffuse"]["x"].GetFloat(),
+						Vector3f diffuse{ material_json["diffuse"]["x"].GetFloat(),
 							material_json["diffuse"]["y"].GetFloat(),
 							material_json["diffuse"]["z"].GetFloat() };
 						object->set_material(Material(new Texture2D(diffuse), specular, shininess));
@@ -301,7 +309,7 @@ bool ProjectFileReader::load_objects(rapidjson::Document const& document, Projec
 
 void ProjectFileReader::load_light_strength(Light* light, rapidjson::Value const& json)
 {
-	light->set_ambient_strength(json["ambient_strength"].GetDouble());
-	light->set_diffuse_strength(json["diffuse_strength"].GetDouble());
-	light->set_specular_strength(json["specular_strength"].GetDouble());
+	light->set_ambient_strength(json["ambient_strength"].GetFloat());
+	light->set_diffuse_strength(json["diffuse_strength"].GetFloat());
+	light->set_specular_strength(json["specular_strength"].GetFloat());
 }

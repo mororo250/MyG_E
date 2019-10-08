@@ -6,7 +6,7 @@
 unsigned short SpotLight::s_count = 0;
 unsigned short SpotLight::s_id = 0;
 
-SpotLight::SpotLight(const Vector<float, 3>& position, const Vector<float, 3>& color, float in_angle, float out_angle, const Vector<float, 3>& direction)
+SpotLight::SpotLight(const Vector3f& position, const Vector3f& color, float in_angle, float out_angle, const Vector3f& direction)
 	: m_in_angle(in_angle)
 	, m_out_angle(out_angle)
 	, m_direction(direction)
