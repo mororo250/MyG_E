@@ -22,8 +22,8 @@ Material& Material::operator=(Material const& other)
 
 void Material::imgui_renderer()
 {
-	m_specular->imgui_renderer("diffuse");
-	m_diffuse->imgui_renderer("specular map");
+	m_diffuse->imgui_renderer("diffuse");
+	m_specular->imgui_renderer("specular map");
 
 	ImGui::DragFloat("shininess", &m_shininess, 0.05f, 0.0f, 100.0f);
 }
