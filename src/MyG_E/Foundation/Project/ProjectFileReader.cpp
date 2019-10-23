@@ -219,11 +219,8 @@ bool ProjectFileReader::load_objects(rapidjson::Document const& document, Projec
 			continue;
 		}
 
-		Model3D* object = new Model3D(Model3D::load_model(file_path));
-		
-		object->set_position(position);
-		object->set_scale(scale);
-		object->set_rotation(rotation);
+		Model3D* object = nullptr;
+		Material* material = nullptr;
 
 		// Load object material
 		if (object_buffer[i].HasMember("material"))
@@ -280,27 +277,48 @@ bool ProjectFileReader::load_objects(rapidjson::Document const& document, Projec
 				{
 					float shininess = material_json["shininess"].GetFloat();
 
-					Texture2D* specular;
+					Texture2D* specular = nullptr;
 					if (!has_specular_map)
 						specular = new Texture2D(Vector3f{ material_json["specular"]["x"].GetFloat(),
 							material_json["specular"]["y"].GetFloat(),
 							material_json["specular"]["z"].GetFloat() });
 					else
 						specular = new Texture2D(std::filesystem::absolute(material_json["specular_map"].GetString()).string());
+					if (material_json.HasMember("specular_map_scale_uv"))
+						specular->set_scale_uv(Vector2f{ material_json["specular_map_scale_uv"]["x"].GetFloat(),
+							material_json["texture_scale_uv"]["y"].GetFloat() });
+
+					Texture2D* diffuse = nullptr;
 					if (!has_texture)
 					{
-						Vector3f diffuse{ material_json["diffuse"]["x"].GetFloat(),
+						diffuse = new Texture2D(Vector3f({ material_json["diffuse"]["x"].GetFloat(),
 							material_json["diffuse"]["y"].GetFloat(),
-							material_json["diffuse"]["z"].GetFloat() };
-						object->set_material(Material(new Texture2D(diffuse), specular, shininess));
+							material_json["diffuse"]["z"].GetFloat() }));
 					}
 					else
-						object->set_material(Material(new Texture2D(std::filesystem::absolute(
-							material_json["texture"].GetString()).string()), specular, shininess));
+						diffuse = new Texture2D(std::filesystem::absolute(material_json["texture"].GetString()).string());
+					if (material_json.HasMember("texture_scale_uv"))
+						diffuse->set_scale_uv(Vector2f{ material_json["texture_scale_uv"]["x"].GetFloat(),
+							material_json["texture_scale_uv"]["y"].GetFloat() });
+
+					Texture2D* normal_map = nullptr;
+					if (material_json.HasMember("normal_map"))
+						normal_map = new Texture2D(std::filesystem::absolute(material_json["normal_map"].GetString()).string());
+					else
+						normal_map = new Texture2D(Vector3f({0.0f, 0.0f, 1.0f}));
+					if (material_json.HasMember("normal_map_scale_uv"))
+						normal_map->set_scale_uv(Vector2f{ material_json["normal_map_scale_uv"]["x"].GetFloat(),
+							material_json["normal_map_scale_uv"]["y"].GetFloat() });
+
+					material = new Material(diffuse, specular, normal_map, shininess);
+					object = new Model3D(material, file_path);
 				}
 			}
 		}
-		
+
+		object->set_position(position);
+		object->set_scale(scale);
+		object->set_rotation(rotation);
 		// pass object ownership to controller.
 		controller->push_object(object);
 	}

@@ -10,4 +10,7 @@ public:
 
 	void draw_element(const IndexBuffer& ib) const override;
 	void clear() const override;
+
+	void set_active() override;
+	void set_disactive() override;
 };

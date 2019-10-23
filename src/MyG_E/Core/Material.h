@@ -5,7 +5,8 @@
 class Material
 {
 public:
-	Material(Texture2D* diff = new Texture2D(), Texture2D* spec = new Texture2D(), float shi = 32.0f);
+	Material(Texture2D* diff = new Texture2D(), Texture2D* spec = new Texture2D(), 
+		Texture2D* norm_map  = new Texture2D(), float shi = 1.0f);
 	Material(Material const& other);
 	Material& operator=(Material const& other);
 	~Material() = default;
@@ -20,6 +21,10 @@ public:
 	inline void set_specular(Vector3f const& color) { m_specular->change_texture(color); }
 	inline void set_specular(Texture2D const& texture) { m_specular.reset(new Texture2D(texture)); }
 
+	inline Texture2D const* get_normal_map() const { return m_normal_map.get(); }
+	inline void set_normal_map(Texture2D const& texture) { m_normal_map.reset(new Texture2D(texture)); }
+	inline bool is_using_normal_map() const { return m_use_normal_map; }
+
 	inline float get_shininess() const { return m_shininess; }
 	inline void set_shininess(float shininess) { m_shininess = shininess; }
 
@@ -29,5 +34,7 @@ private:
 
 	std::unique_ptr<Texture2D> m_diffuse; // a color or a texture
 	std::unique_ptr<Texture2D> m_specular; // a color or a specular map
+	std::unique_ptr<Texture2D> m_normal_map; // normal map
 	float m_shininess;
+	bool m_use_normal_map;
 };

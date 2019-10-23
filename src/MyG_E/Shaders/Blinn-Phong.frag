@@ -1,31 +1,7 @@
-//call once for each vertex
-#shader vertex
-#version 330 core
-
-layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 normal;
-layout(location = 2) in vec2 tex_coord;
-
-out vec4 v_Position;
-out vec3 v_Normal;
-out vec2 v_tex_coord;
-
-uniform mat4 u_Model;
-uniform mat4 u_ViewProjection;
-
-void main()
-{
-	v_Normal = normal;
-	v_Position = vec4(position, 1.0) * u_Model;
-	gl_Position = v_Position * u_ViewProjection;
-	v_tex_coord = tex_coord;
-};
-
-// rasterization - call once for each pixel
-#shader fragment
 #version 330 core
 
 layout(location = 0) out vec4 Frag_color;
+
 
 struct Material 
 {
@@ -71,15 +47,20 @@ struct DirectionalLight
 
 #define MAX_LIGHT 10
 
-in vec4 v_Position;
-in vec3 v_Normal;
+in vec4 v_position;
+in vec3 v_normal;
 in vec2 v_tex_coord;
+in mat3 v_world_normals;
 
-uniform vec3 u_ViewPos;
+// Material
 uniform sampler2D u_texture;
 uniform sampler2D u_specular_map;
+uniform sampler2D u_nomal_map;
+uniform bool u_is_using_normal_map;
 uniform float u_shininess;
 Material material;
+
+uniform vec3 u_ViewPos;
 
 // Lights:
 uniform int u_NumPointLight;
@@ -91,8 +72,15 @@ uniform DirectionalLight u_DirectionalLight[MAX_LIGHT];
 
 vec3 light(Light light, vec3 ray_direction)
 {
-	vec3 norm = normalize(v_Normal);
-	vec3 view_direction = normalize(u_ViewPos - v_Position.xyz);
+	vec3 norm = normalize(v_normal);
+	if (u_is_using_normal_map)
+	{
+		norm = texture(u_nomal_map, v_tex_coord).rgb;
+		// transform normal vector to range [-1,1]
+		norm = normalize(norm * 2.0 - 1.0);
+		norm = normalize(v_world_normals * norm);
+	}
+	vec3 view_direction = normalize(u_ViewPos - v_position.xyz);
 	vec3 reflect_direction = reflect(ray_direction, norm);
 
 // Ambient
@@ -103,7 +91,8 @@ vec3 light(Light light, vec3 ray_direction)
 	vec3 diffuse = diff * light.diffuse_strength * light.color * material.diffuse;
 
 // Specular
-	float spec = pow(max(dot(view_direction, reflect_direction), 0.0), material.shininess * 128);
+	vec3 halfway_dir = normalize(-ray_direction + view_direction);  
+	float spec = pow(max(dot(norm, halfway_dir), 0.0), material.shininess * 32);
 	vec3 specular = light.specular_strength * spec * light.color * material.specular;
 
 	return ambient + diffuse + specular;
@@ -111,10 +100,10 @@ vec3 light(Light light, vec3 ray_direction)
 
 vec3 point_light(const int i)
 {
-	vec3 light_direction = normalize(u_PointLight[i].position - v_Position.xyz);
+	vec3 light_direction = normalize(u_PointLight[i].position - v_position.xyz);
 
 // Attenuation
-	float distance = length(u_PointLight[i].position - v_Position.xyz);
+	float distance = length(u_PointLight[i].position - v_position.xyz);
 	float attenuation = 1.0f / (u_PointLight[i].constant + u_PointLight[i].linear * distance + u_PointLight[i].quadratic * distance * distance);
 	
 	vec3 light = light(u_PointLight[i].light, -light_direction);
@@ -123,7 +112,7 @@ vec3 point_light(const int i)
 
 vec3 spot_light(const int i)
 {
-	vec3 light_direction = normalize(u_SpotLight[i].position - v_Position.xyz);
+	vec3 light_direction = normalize(u_SpotLight[i].position - v_position.xyz);
 	
 	float theta = dot(u_SpotLight[i].direction, -light_direction);
 	float epsilon = (u_SpotLight[i].in_angle - u_SpotLight[i].out_angle);

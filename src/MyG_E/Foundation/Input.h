@@ -69,4 +69,3 @@ private:
 	GLFWwindow* mWindow;
 	double mScrollOffset;
 };
-

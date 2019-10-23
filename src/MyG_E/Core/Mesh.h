@@ -10,6 +10,8 @@ struct vertex
 {
 	Vector3f position;
 	Vector3f normal;
+	Vector3f tangent;
+	Vector3f bitagent;
 	Vector2f textcoord;
 };
 

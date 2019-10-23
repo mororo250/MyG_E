@@ -43,26 +43,12 @@ void ProjectFileWriter::write_camera(rapidjson::PrettyWriter<rapidjson::StringBu
 		writer.String("edit_camera");
 	if (dynamic_cast<FPSCamera const*>(camera))
 		writer.String("fps_camera");
+
 	writer.Key("position");
-
-	writer.StartObject(); // Camera Position
-	writer.Key("x");
-	writer.Double(camera->get_position()[0]);
-	writer.Key("y");
-	writer.Double(camera->get_position()[1]);
-	writer.Key("z");
-	writer.Double(camera->get_position()[2]);
-	writer.EndObject(); // End Camera Position
-
+	write_vector3f(writer, &camera->get_position()[0]);
 	writer.Key("direction");
-	writer.StartObject(); // Camera Direction
-	writer.Key("x");
-	writer.Double(camera->get_direction()[0]);
-	writer.Key("y");
-	writer.Double(camera->get_direction()[1]);
-	writer.Key("z");
-	writer.Double(camera->get_direction()[2]);
-	writer.EndObject(); // End Camera Direction
+	write_vector3f(writer, &camera->get_direction()[0]);
+
 	writer.EndObject(); // End Camera
 }
 
@@ -82,51 +68,24 @@ void ProjectFileWriter::write_objects(rapidjson::PrettyWriter<rapidjson::StringB
 		writer.Bool(object_buffer[i]->is_visible());
 
 		writer.Key("position");
-		writer.StartObject(); // Position
-		writer.Key("x");
-		writer.Double(object_buffer[i]->get_position()[0]);
-		writer.Key("y");
-		writer.Double(object_buffer[i]->get_position()[1]);
-		writer.Key("z");
-		writer.Double(object_buffer[i]->get_position()[2]);
-		writer.EndObject(); // Position
+		write_vector3f(writer, &object_buffer[i]->get_position()[0]);
 
 		writer.Key("scale");
-		writer.StartObject(); // Scale
-		writer.Key("x");
-		writer.Double(object_buffer[i]->get_scale()[0]);
-		writer.Key("y");
-		writer.Double(object_buffer[i]->get_scale()[1]);
-		writer.Key("z");
-		writer.Double(object_buffer[i]->get_scale()[2]);
-		writer.EndObject(); // Scale
+		write_vector3f(writer, &object_buffer[i]->get_scale()[0]);
 
 		writer.Key("rotation");
-		writer.StartObject(); // Rotation
-		writer.Key("x");
-		writer.Double(object_buffer[i]->get_rotation()[0]);
-		writer.Key("y");
-		writer.Double(object_buffer[i]->get_rotation()[1]);
-		writer.Key("z");
-		writer.Double(object_buffer[i]->get_rotation()[2]);
-		writer.EndObject(); // Rotation
+		write_vector3f(writer, &object_buffer[i]->get_rotation()[0]);
 
 		writer.Key("material");
 		writer.StartObject(); // Material
 
-		if (object_buffer[i]->get_material().get_diffuse()->is_unitary())
+		// Texture
+		if (object_buffer[i]->get_material()->get_diffuse()->is_unitary())
 		{
 			writer.Key("has_texture");
 			writer.Bool(false);
 			writer.Key("diffuse");
-			writer.StartObject(); // Diffuse
-			writer.Key("x");
-			writer.Double(object_buffer[i]->get_material().get_diffuse()->get_color()[0]);
-			writer.Key("y");
-			writer.Double(object_buffer[i]->get_material().get_diffuse()->get_color()[1]);
-			writer.Key("z");
-			writer.Double(object_buffer[i]->get_material().get_diffuse()->get_color()[2]);
-			writer.EndObject(); // Diffuse
+			write_vector3f(writer, object_buffer[i]->get_material()->get_diffuse()->get_color());
 		}
 		else
 		{
@@ -134,22 +93,18 @@ void ProjectFileWriter::write_objects(rapidjson::PrettyWriter<rapidjson::StringB
 			writer.Bool(true);
 			writer.Key("texture");
 			writer.String(
-				std::filesystem::relative(object_buffer[i]->get_material().get_diffuse()->get_filepath()).string().c_str());
+				std::filesystem::relative(object_buffer[i]->get_material()->get_diffuse()->get_filepath()).string().c_str());
 		}
+		writer.Key("texture_scale_uv");
+		write_vector2f(writer, &object_buffer[i]->get_material()->get_diffuse()->get_scale_uv()[0]);
 
-		if (object_buffer[i]->get_material().get_specular()->is_unitary())
+		// Specular Map
+		if (object_buffer[i]->get_material()->get_specular()->is_unitary())
 		{
 			writer.Key("has_specular_map");
 			writer.Bool(false);
 			writer.Key("specular");
-			writer.StartObject(); // specular
-			writer.Key("x");
-			writer.Double(object_buffer[i]->get_material().get_specular()->get_color()[0]);
-			writer.Key("y");
-			writer.Double(object_buffer[i]->get_material().get_specular()->get_color()[1]);
-			writer.Key("z");
-			writer.Double(object_buffer[i]->get_material().get_specular()->get_color()[2]);
-			writer.EndObject(); // specular
+			write_vector3f(writer, object_buffer[i]->get_material()->get_specular()->get_color());
 		}
 		else
 		{
@@ -157,11 +112,23 @@ void ProjectFileWriter::write_objects(rapidjson::PrettyWriter<rapidjson::StringB
 			writer.Bool(true);
 			writer.Key("specular_map");
 			writer.String(
-				std::filesystem::relative(object_buffer[i]->get_material().get_specular()->get_filepath()).string().c_str());
+				std::filesystem::relative(object_buffer[i]->get_material()->get_specular()->get_filepath()).string().c_str());
 		}
+		writer.Key("specular_map_scale_uv");
+		write_vector2f(writer, &object_buffer[i]->get_material()->get_specular()->get_scale_uv()[0]);
+
+		// Normal map
+		if (!object_buffer[i]->get_material()->get_normal_map()->is_unitary())
+		{
+			writer.Key("normal_map");
+			writer.String(
+				std::filesystem::relative(object_buffer[i]->get_material()->get_normal_map()->get_filepath()).string().c_str());
+		}
+		writer.Key("normal_map_scale_uv");
+		write_vector2f(writer, &object_buffer[i]->get_material()->get_normal_map()->get_scale_uv()[0]);
 
 		writer.Key("shininess");
-		writer.Double(object_buffer[i]->get_material().get_shininess());
+		writer.Double(object_buffer[i]->get_material()->get_shininess());
 		writer.EndObject(); // Material
 		writer.EndObject(); // Object
 	}
@@ -179,24 +146,10 @@ void ProjectFileWriter::write_lights(rapidjson::PrettyWriter<rapidjson::StringBu
 		writer.StartObject(); // Light
 
 		writer.Key("position");
-		writer.StartObject(); // Position
-		writer.Key("x");
-		writer.Double(light_buffer[i]->get_light_position()[0]);
-		writer.Key("y");
-		writer.Double(light_buffer[i]->get_light_position()[1]);
-		writer.Key("z");
-		writer.Double(light_buffer[i]->get_light_position()[2]);
-		writer.EndObject(); // Position
+		write_vector3f(writer, &light_buffer[i]->get_light_position()[0]);
 
 		writer.Key("color");
-		writer.StartObject(); // color
-		writer.Key("x");
-		writer.Double(light_buffer[i]->get_light_color()[0]);
-		writer.Key("y");
-		writer.Double(light_buffer[i]->get_light_color()[1]);
-		writer.Key("z");
-		writer.Double(light_buffer[i]->get_light_color()[0]);
-		writer.EndObject(); // color
+		write_vector3f(writer, &light_buffer[i]->get_light_color()[0]);
 
 		writer.Key("ambient_strength");
 		writer.Double(light_buffer[i]->get_ambient_strength());
@@ -212,14 +165,7 @@ void ProjectFileWriter::write_lights(rapidjson::PrettyWriter<rapidjson::StringBu
 			DirectionalLight* light = static_cast<DirectionalLight*>(light_buffer[i]);
 
 			writer.Key("direction");
-			writer.StartObject(); // Direction
-			writer.Key("x");
-			writer.Double(light->GetDirection()[0]);
-			writer.Key("y");
-			writer.Double(light->GetDirection()[1]);
-			writer.Key("z");
-			writer.Double(light->GetDirection()[2]);
-			writer.EndObject(); // Direction
+			write_vector3f(writer, &light->GetDirection()[0]);
 		}
 		else if (dynamic_cast<SpotLight*>(light_buffer[i]))
 		{
@@ -229,14 +175,7 @@ void ProjectFileWriter::write_lights(rapidjson::PrettyWriter<rapidjson::StringBu
 			SpotLight* light = static_cast<SpotLight*>(light_buffer[i]);
 
 			writer.Key("direction");
-			writer.StartObject(); // Direction
-			writer.Key("x");
-			writer.Double(light->GetDirection()[0]);
-			writer.Key("y");
-			writer.Double(light->GetDirection()[1]);
-			writer.Key("z");
-			writer.Double(light->GetDirection()[2]);
-			writer.EndObject(); // Direction
+			write_vector3f(writer, &light->GetDirection()[0]);
 
 			writer.Key("in_angle");
 			writer.Double(light->GetInAngle());
@@ -252,4 +191,26 @@ void ProjectFileWriter::write_lights(rapidjson::PrettyWriter<rapidjson::StringBu
 		writer.EndObject(); // Light
 	}
 	writer.EndArray();
+}
+
+void ProjectFileWriter::write_vector3f(rapidjson::PrettyWriter<rapidjson::StringBuffer>& writer, float const* vec)
+{
+	writer.StartObject();
+	writer.Key("x");
+	writer.Double(vec[0]);
+	writer.Key("y");
+	writer.Double(vec[1]);
+	writer.Key("z");
+	writer.Double(vec[2]);
+	writer.EndObject();
+}
+
+void ProjectFileWriter::write_vector2f(rapidjson::PrettyWriter<rapidjson::StringBuffer>& writer, float const* vec)
+{
+	writer.StartObject();
+	writer.Key("x");
+	writer.Double(vec[0]);
+	writer.Key("y");
+	writer.Double(vec[1]);
+	writer.EndObject();
 }

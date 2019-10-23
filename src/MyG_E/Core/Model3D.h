@@ -8,11 +8,13 @@
 class Model3D
 {
 public:
-	Model3D(std::vector<Mesh*> const& mesh, std::string const& file_path);
-	Model3D(std::vector<Mesh*>&& mesh, std::string const& file_path);
-	Model3D(std::vector<Mesh*> const& mesh, std::string const& name, std::string const& file_path);
-	Model3D(std::vector<Mesh*>&& mesh, std::string const& name, std::string const& file_path);
-	
+	Model3D(Material* material, std::string const& file_path);
+	Model3D(Material* material, std::string const& name, std::string const& file_path);
+	Model3D(std::vector<Mesh*> const& mesh, Material* material, std::string const& file_path);
+	Model3D(std::vector<Mesh*>&& mesh, Material* material, std::string const& file_path);
+	Model3D(std::vector<Mesh*> const& mesh, Material* material, std::string const& name, std::string const& file_path);
+	Model3D(std::vector<Mesh*>&& mesh, Material* material, std::string const& name, std::string const& file_path);
+
 	// copy
 	Model3D(Model3D const& other);
 	Model3D& operator=(Model3D const& other);
@@ -39,8 +41,8 @@ public:
 
 	inline std::vector<Mesh*> const* const get_meshes() { return &m_meshes; }
 
-	inline Material const& get_material() const { return m_material; }
-	inline void set_material(Material const& material) { m_material = material; };
+	inline Material const* get_material() const { return m_material.get(); }
+	inline void set_material(Material* material);
 
 	inline std::string get_path() const { return m_file_path; }
 
@@ -54,17 +56,17 @@ public:
 	void ImGuiRenderer();
 
 	static unsigned int get_number_of_object() { return m_number_of_objects; } 
-	static Model3D load_model(std::string const& file_path);
 
 private:
-	static void process_assimp_node(struct aiNode* node, struct aiScene const* scene, std::vector<Mesh*>& meshes);
-	static Mesh* process_mesh(struct aiMesh* mesh, const aiScene* scene);
+	void load_model();
+	void process_assimp_node(struct aiNode* node, struct aiScene const* scene);
+	Mesh* process_mesh(struct aiMesh* mesh, struct aiScene const* scene);
 
 	void copy_other(Model3D const& other);
 	void move_other(Model3D&& other);
 
 	std::vector<Mesh*> m_meshes;
-	Material m_material;
+	std::unique_ptr<Material> m_material;
 
 	Vector3f m_position;
 	Vector3f m_scale;

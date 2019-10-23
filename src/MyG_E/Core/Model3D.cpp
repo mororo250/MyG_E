@@ -12,7 +12,45 @@
 
 unsigned int Model3D::m_number_of_objects = 0;
 
-Model3D::Model3D(std::vector<Mesh*> const& meshes, std::string const& file_path)
+// Still need to check assimp documentation for more flags...
+constexpr unsigned int mesh_import_flags =
+aiProcess_CalcTangentSpace |        // Gen binormals/tangents if required.
+aiProcess_Triangulate |             // Use triangles.
+aiProcess_SortByPType |             // Split meshes by primitive type.
+aiProcess_GenNormals |              // Gen normals if required.
+aiProcess_GenUVCoords |             // Gen UVs if required. 
+aiProcess_ValidateDataStructure;    // Validation.
+
+Model3D::Model3D(Material* material, std::string const& file_path)
+	: m_position({ 0.0f, 0.0f, 0.0f })
+	, m_trans_matrix(0.0f, 0.0f, 0.0f)
+	, m_scale_matrix(1.0f, 1.0f, 1.0f)
+	, m_scale({ 1.0f, 1.0f, 1.0f })
+	, m_rotation_matrix(Matrix<float, 4, 4>::make_identity())
+	, m_file_path(file_path)
+	, m_is_visible(true)
+{
+	load_model();
+	set_material(material);
+	m_object_name = "Object " + std::to_string(m_number_of_objects);
+	m_number_of_objects++;
+}
+
+Model3D::Model3D(Material* material, std::string const& name, std::string const& file_path)
+	: m_position({ 0.0f, 0.0f, 0.0f })
+	, m_trans_matrix(0.0f, 0.0f, 0.0f)
+	, m_scale_matrix(1.0f, 1.0f, 1.0f)
+	, m_scale({ 1.0f, 1.0f, 1.0f })
+	, m_rotation_matrix(Matrix<float, 4, 4>::make_identity())
+	, m_object_name(name)
+	, m_file_path(file_path)
+	, m_is_visible(true)
+{
+	load_model();
+	set_material(material);
+}
+
+Model3D::Model3D(std::vector<Mesh*> const& meshes, Material* material, std::string const& file_path)
 	: m_position({ 0.0f, 0.0f, 0.0f })
 	, m_trans_matrix(0.0f, 0.0f, 0.0f)
 	, m_scale_matrix(1.0f, 1.0f, 1.0f)
@@ -24,12 +62,13 @@ Model3D::Model3D(std::vector<Mesh*> const& meshes, std::string const& file_path)
 	m_meshes.reserve(meshes.size());
 	for (auto& aux : meshes)
 		m_meshes.emplace_back(new Mesh(*aux));
-
+	
+	set_material(material);
 	m_object_name = "Object " + std::to_string(m_number_of_objects);
 	m_number_of_objects++;
 }
 
-Model3D::Model3D(std::vector<Mesh*>&& meshes, std::string const& file_path)
+Model3D::Model3D(std::vector<Mesh*>&& meshes, Material* material, std::string const& file_path)
 	: m_position({ 0.0f, 0.0f, 0.0f })
 	, m_trans_matrix(0.0f, 0.0f, 0.0f)
 	, m_scale_matrix(1.0f, 1.0f, 1.0f)
@@ -39,11 +78,12 @@ Model3D::Model3D(std::vector<Mesh*>&& meshes, std::string const& file_path)
 	, m_file_path(file_path)
 	, m_is_visible(true)
 {
+	set_material(material);
 	m_object_name = "Object " + std::to_string(m_number_of_objects);
 	m_number_of_objects++;
 }
 
-Model3D::Model3D(std::vector<Mesh*> const& meshes, std::string const& name, std::string const& file_path)
+Model3D::Model3D(std::vector<Mesh*> const& meshes, Material* material, std::string const& name, std::string const& file_path)
 	: m_position({ 0.0f, 0.0f, 0.0f })
 	, m_trans_matrix(0.0f, 0.0f, 0.0f)
 	, m_scale_matrix(1.0f, 1.0f, 1.0f)
@@ -53,12 +93,13 @@ Model3D::Model3D(std::vector<Mesh*> const& meshes, std::string const& name, std:
 	, m_file_path(file_path)
 	, m_is_visible(true)
 {
+	set_material(material);
 	m_meshes.reserve(meshes.size());
 	for (auto& aux : meshes)
 		m_meshes.emplace_back(new Mesh(*aux));
 }
 
-Model3D::Model3D(std::vector<Mesh*>&& meshes, std::string const& name, std::string const& file_path)
+Model3D::Model3D(std::vector<Mesh*>&& meshes, Material* material, std::string const& name, std::string const& file_path)
 	: m_position({ 0.0f, 0.0f, 0.0f })
 	, m_trans_matrix(0.0f, 0.0f, 0.0f)
 	, m_scale_matrix(1.0f, 1.0f, 1.0f)
@@ -69,6 +110,7 @@ Model3D::Model3D(std::vector<Mesh*>&& meshes, std::string const& name, std::stri
 	, m_file_path(file_path)
 	, m_is_visible(true)
 {
+	set_material(material);
 }
 
 Model3D::Model3D(Model3D const& other)
@@ -143,6 +185,15 @@ void Model3D::set_rotation(Vector3f const& rotation)
 	m_rotation_matrix = Quaternion::CreateRotationMatrix(quat);
 }
 
+inline void Model3D::set_material(Material* material)
+{
+	// Create white material if material is null
+	if (material)
+		m_material.reset(material);
+	else
+		m_material.reset(new Material());
+}
+
 void Model3D::ImGuiRenderer()
 {
 	ImGui::DragFloat3("Translate", &m_position[0], 0.1f);
@@ -150,7 +201,7 @@ void Model3D::ImGuiRenderer()
 	ImGui::DragFloat3("Rotate", &m_rotate[0], 0.05f, -6.28f, 6.28f);
 	ImGui::Separator();
 	
-	m_material.imgui_renderer();
+	m_material->imgui_renderer();
 	ImGui::Separator();
 	
 	ImGui::Checkbox("Visibility", &m_is_visible);
@@ -160,10 +211,10 @@ void Model3D::ImGuiRenderer()
 	set_rotation(m_rotate);
 }
 
-Model3D Model3D::load_model(std::string const& file_path)
+void Model3D::load_model()
 {
 	Assimp::Importer import;
-	const aiScene* scene = import.ReadFile(file_path, aiProcess_Triangulate | aiProcess_FlipUVs);
+	const aiScene* scene = import.ReadFile(m_file_path, mesh_import_flags);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
@@ -171,24 +222,22 @@ Model3D Model3D::load_model(std::string const& file_path)
 		throw;
 	}
 
-	std::vector<Mesh*> meshes;
-	process_assimp_node(scene->mRootNode, scene, meshes);
-	return Model3D(std::move(meshes), file_path);
+	process_assimp_node(scene->mRootNode, scene);
 }
 
-void Model3D::process_assimp_node(aiNode* node, aiScene const* scene, std::vector<Mesh*>& meshes)
+void Model3D::process_assimp_node(aiNode* node, aiScene const* scene)
 {
 	// process all the node's meshes (if any)
-	meshes.reserve(node->mNumMeshes);
+	m_meshes.reserve(node->mNumMeshes);
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		meshes.emplace_back(process_mesh(mesh, scene));
+		m_meshes.emplace_back(process_mesh(mesh, scene));
 	}
 	// then do the same for each of its children
 	for (unsigned int i = 0; i < node->mNumChildren; i++)
 	{
-		process_assimp_node(node->mChildren[i], scene, meshes);
+		process_assimp_node(node->mChildren[i], scene);
 	}
 }
 
@@ -200,7 +249,12 @@ Mesh* Model3D::process_mesh(aiMesh* mesh, aiScene const* scene)
 	{
 		vertices[i].position = mesh->mVertices[i];
 		vertices[i].normal = mesh->mNormals[i];
-		if (mesh->mTextureCoords[0])
+		if (mesh->HasTangentsAndBitangents())
+		{
+			vertices[i].tangent = mesh->mTangents[i];
+			vertices[i].bitagent = mesh->mBitangents[i];
+		}
+		if (mesh->HasTextureCoords(0))
 		{
 			vertices[i].textcoord[0] = mesh->mTextureCoords[0][i].x;
 			vertices[i].textcoord[1] = mesh->mTextureCoords[0][i].y;
@@ -226,7 +280,7 @@ void Model3D::copy_other(Model3D const& other)
 	m_meshes.reserve(other.m_meshes.size());
 	for (auto& aux : other.m_meshes)
 		m_meshes.emplace_back(new Mesh(*aux));
-	m_material = other.m_material;
+	m_material.reset(new Material(*other.m_material));
 
 	//matrices
 	set_translation(other.m_position);
@@ -242,7 +296,7 @@ void Model3D::copy_other(Model3D const& other)
 void Model3D::move_other(Model3D&& other)
 {
 	m_meshes = std::move(other.m_meshes);
-	m_material = other.m_material;
+	m_material.reset(other.m_material.release());
 
 	// matrices
 	set_translation(other.m_position);

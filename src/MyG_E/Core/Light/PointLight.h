@@ -20,6 +20,7 @@ public:
 	static unsigned short get_count() { return s_count; }
 
 private:
+
 	// Attenuation (constant, linear, quadratic).
 	Vector3f m_attenuation_constants;
 	static unsigned short s_count;

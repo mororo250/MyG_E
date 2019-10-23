@@ -73,9 +73,6 @@ bool Game::Initialize()
 
 void Game::Loop()
 {
-	// Setup some opengl cofiguration
-	GLcall(glEnable(GL_MULTISAMPLE));
-
 	// layers
 	m_imgui_layer = new ImGuiLayer();
 

@@ -16,9 +16,12 @@ PointLight::PointLight(const Vector3f& position, const Vector3f& color)
 void PointLight::ImGuiRenderer()
 {
 	Light::ImGuiRenderer();
-	ImGui::DragFloat("Constant:", &m_attenuation_constants[0], 0.05f, 0.0f, 1.0f);
-	ImGui::DragFloat("Linear:", &m_attenuation_constants[1], 0.05f, 0.0f, 1.0f);
-	ImGui::DragFloat("Quadratic:", &m_attenuation_constants[2], 0.05f, 0.0f, 1.0f);
+	if (ImGui::CollapsingHeader("Attenuation", nullptr, ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		ImGui::DragFloat("Constant:", &m_attenuation_constants[0], 0.05f, 0.0f, 1.0f);
+		ImGui::DragFloat("Linear:", &m_attenuation_constants[1], 0.05f, 0.0f, 1.0f);
+		ImGui::DragFloat("Quadratic:", &m_attenuation_constants[2], 0.05f, 0.0f, 1.0f);
+	}
 }
 
 void PointLight::set_uniform(Shader const* shader)

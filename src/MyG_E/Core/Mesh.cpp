@@ -58,14 +58,16 @@ void Mesh::move_other(Mesh&& other)
 
 void Mesh::CreateMesh()
 {
-	constexpr int NumAttrib = 8;
+	constexpr int NumAttrib = sizeof(vertex)/sizeof(float);
 	m_vao.reset(new VertexArray());
 	m_vb.reset(new VertexBuffer(reinterpret_cast<float *>(m_vertex_data.data()), m_vertex_data.size(), NumAttrib));
 	m_ib.reset(new IndexBuffer(m_indices.data(), m_indices.size()));
 
-	m_vao->PushLayout(3, GL_FLOAT, GL_FALSE, 0);
-	m_vao->PushLayout(3, GL_FLOAT, GL_FALSE, 3);
-	m_vao->PushLayout(2, GL_FLOAT, GL_FALSE, 6);
+	m_vao->PushLayout(3, GL_FLOAT, GL_FALSE, 0);  // Position
+	m_vao->PushLayout(3, GL_FLOAT, GL_FALSE, 3);  // Normal
+	m_vao->PushLayout(3, GL_FLOAT, GL_FALSE, 6);  // tangent
+	m_vao->PushLayout(3, GL_FLOAT, GL_FALSE, 9);  // bitangent
+	m_vao->PushLayout(2, GL_FLOAT, GL_FALSE, 12); // texcoord
 
 	m_vao->AddBuffer(*m_vb);
 

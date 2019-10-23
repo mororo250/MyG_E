@@ -5,10 +5,13 @@
 #include "Shader.h"
 
 
-Shader::Shader(const std::string& filepath)
+Shader::Shader(std::string const& vert_file, std::string const& frag_file, std::string const& geom_file)
 	: m_shader_program(0)
+	, m_vert_file(vert_file)
+	, m_frag_file(frag_file)
+	, m_geom_file(geom_file)
 {
-	ASSERT(!create_shader(filepath));
+	ASSERT(!create_shader());
 }
 
 Shader::~Shader() {
@@ -35,14 +38,9 @@ void Shader::set_uniform1f(int location, float value) const
 	GLcall(glUniform1f(location, value));
 }
 
-void Shader::set_uniform3f(int location, float v1, float v2, float v3) const
+void Shader::set_uniform2f(int location, Vector2f const& vector) const
 {
-	GLcall(glUniform3f(location, v1, v2, v3));
-}
-
-void Shader::set_uniform4f(int location, float v1, float v2, float v3, float v4) const
-{
-	GLcall(glUniform4f(location, v1, v2, v3, v4));
+	GLcall(glUniform2f(location, vector[0], vector[1]));
 }
 
 void Shader::set_uniform3f(int location, const Vector3f& vector) const
@@ -73,79 +71,52 @@ int Shader::get_uniform_location(const std::string& name) const
 	return uniform_location;
 }
 
-//this function read the shader file and put the shader code in a string
-void Shader::read_shader_file(const std::string& shader_name, std::string& vertex_string, std::string& frag_string)
+bool Shader::create_shader()
 {
-	// Shader directory.
-	std::string file_path = std::filesystem::current_path().parent_path().parent_path().parent_path().string();
-	file_path += "\\src\\MyG_E\\Shaders\\" + shader_name;
-	std::ifstream shader_file(file_path);
+	// read vertex file.
+	std::string vert_string("");
+	if (!read_shader_file(vert_string, m_vert_file))
+		return false;
 
-	//test if the file was open correctly
-	if (shader_file.is_open())
-	{
-		std::string fLine;
-		shader_type type = NONE;
-
-		while (getline(shader_file, fLine))
-		{
-			if (fLine.find("#shader") != std::string::npos)
-			{
-				if (fLine.find("vertex") != std::string::npos)
-				{
-					type = VERTEX;
-				}
-				else if (fLine.find("fragment") != std::string::npos)
-				{
-					type = FRAGMENT;
-				}
-			}
-			else {
-				switch (type)
-				{
-				case VERTEX:
-					vertex_string += std::move(fLine) + "\n";
-					break;
-
-				case FRAGMENT:
-					frag_string += std::move(fLine) + "\n";
-					break;
-
-				default:
-					break;
-				}
-
-			}
-		}
-	}
-	else //if the file couldn't be opened print a error message
-	{
-		std::cout << "Failure to open shader file" << std::endl;
-	}
-}
-
-bool Shader::create_shader(const std::string& filepath)
-{
-	std::string vertex_string("");
+	// read fragment file.
 	std::string frag_string("");
-	read_shader_file(filepath, vertex_string, frag_string);
-	//create a shader program that links together the vertex/frag shaders
+	if (!read_shader_file(frag_string, m_frag_file))
+		return false;
+
+
+	// Create a shader program that links together all the shaders.
 	GLcall(m_shader_program = glCreateProgram());
 
-
-	unsigned int vertex_shader = compile_shader(vertex_string, GL_VERTEX_SHADER);
+	unsigned int vert_shader = compile_shader(vert_string, GL_VERTEX_SHADER);
 	unsigned int frag_shader = compile_shader(frag_string, GL_FRAGMENT_SHADER);
+	unsigned int geom_shader = 0; // It wont be used if there is no geometry shader.
 
-	// links together the vertex/frag shaders
-	GLcall(glAttachShader(m_shader_program, vertex_shader));
+	GLcall(glAttachShader(m_shader_program, vert_shader));
 	GLcall(glAttachShader(m_shader_program, frag_shader));
+
+	// if there is a geometry shader.
+	if (!m_geom_file.empty())
+	{
+		// read geometry file.
+		std::string geom_string("");
+		if (!read_shader_file(geom_string, m_geom_file))
+			return false;
+
+		geom_shader = compile_shader(geom_string, GL_GEOMETRY_SHADER);
+		GLcall(glAttachShader(m_shader_program, geom_shader));
+	}
+
 	GLcall(glLinkProgram(m_shader_program));
+	
 	// Checks whether the executables contained in the program can execute given the current OpenGL state
 	GLcall(glValidateProgram(m_shader_program));
 
 	// Delete intermidiates Shaders 
-	GLcall(glDeleteShader(vertex_shader));
+	GLcall(glDeleteShader(vert_shader));
 	GLcall(glDeleteShader(frag_shader));
+	if (geom_shader)
+		GLcall(glDeleteShader(geom_shader));
+
 	// Testing if everything went right
 	int result;
 	GLcall(glGetProgramiv(m_shader_program, GL_VALIDATE_STATUS, &result));
@@ -159,9 +130,28 @@ bool Shader::create_shader(const std::string& filepath)
 		std::cout << "Failed to create Program" << std::endl;
 		return false;
 	}
-
 	return true;
 }
+
+
+bool Shader::read_shader_file(std::string& shader_string, std::string& file_name)
+{
+	std::string file_path = "..\\..\\..\\src\\MyG_E\\Shaders\\" + file_name;
+	std::ifstream file(file_path);
+
+	if (file.is_open())
+	{
+		shader_string.assign(std::istreambuf_iterator<char>(file),
+			std::istreambuf_iterator<char>());
+		return true;
+	}
+	else
+	{
+		std::cout << "Failure to open" << file_path << "shader file" << std::endl;
+		return false;
+	}
+}
+
 
 unsigned int Shader::compile_shader(const std::string& source, const unsigned int shader_type) 
 {

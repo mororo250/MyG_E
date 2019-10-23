@@ -19,4 +19,7 @@ private:
 		ProjectController const* project_controller);
 	void write_lights(rapidjson::PrettyWriter<rapidjson::StringBuffer>& writer, 
 		ProjectController const* project_controller);
+
+	void write_vector3f(rapidjson::PrettyWriter<rapidjson::StringBuffer>& writer, float const* vec);
+	void write_vector2f(rapidjson::PrettyWriter<rapidjson::StringBuffer>& writer, float const* vec);
 };

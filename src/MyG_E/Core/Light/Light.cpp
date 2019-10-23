@@ -4,7 +4,7 @@
 
 Light::Light(const Vector3f& position, const Vector3f& color)
 	: m_color(color)
-	, m_model(new Model3D(Model3D::load_model("..\\..\\..\\Resources\\basic_meshes\\sphere.obj")))
+	, m_model(new Model3D(nullptr, "..\\..\\..\\Resources\\basic_meshes\\sphere.obj"))
 	, m_ambient_strength(0.1f)
 	, m_diffuse_strength(1.0f)
 	, m_specular_strength(1.0f)
@@ -40,10 +40,13 @@ void Light::ImGuiRenderer()
 	m_model->set_position(position);
 	ImGui::ColorEdit3("Light Color", &m_color[0]);
 	ImGui::Separator();
-	ImGui::DragFloat("Ambient stength", &m_ambient_strength, 0.05f , 0.0f, 1.0f);
-	ImGui::DragFloat("Diffuse stength", &m_diffuse_strength, 0.05f ,0.0f, 5.0f);
-	ImGui::DragFloat("Specular stength", &m_specular_strength, 0.05f, 0.0f, 5.0f);
-	ImGui::Separator();
+	if (ImGui::CollapsingHeader("Strength", nullptr, ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		ImGui::DragFloat("Ambient stength", &m_ambient_strength, 0.05f, 0.0f, 1.0f);
+		ImGui::DragFloat("Diffuse stength", &m_diffuse_strength, 0.05f, 0.0f, 5.0f);
+		ImGui::DragFloat("Specular stength", &m_specular_strength, 0.05f, 0.0f, 5.0f);
+		ImGui::Separator();
+	}
 }
 
 void Light::set_general_uniform(Shader const* shader, std::string const& uniform_name)

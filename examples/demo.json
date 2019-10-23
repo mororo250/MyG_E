@@ -2,9 +2,9 @@
     "camera": {
         "model": "edit_camera",
         "position": {
-            "x": -9.08401107788086,
-            "y": 3.9517717361450197,
-            "z": -18.430862426757814
+            "x": 4.317691326141357,
+            "y": 1.8100337982177735,
+            "z": 0.8644835948944092
         },
         "direction": {
             "x": 0.0,
@@ -34,13 +34,25 @@
             "material": {
                 "has_texture": true,
                 "texture": "..\\..\\..\\Resources\\Cerberus_by_Andrew_Maximov\\Textures\\Cerberus_A.tga",
+                "texture_scale_uv": {
+                    "x": 1.0099999904632569,
+                    "y": 1.0
+                },
                 "has_specular_map": false,
                 "specular": {
                     "x": 1.0,
                     "y": 0.9999899864196777,
                     "z": 0.9999899864196777
                 },
-                "shininess": 32.0
+                "specular_map_scale_uv": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "normal_map_scale_uv": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "shininess": 1.0
             }
         },
         {
@@ -52,9 +64,9 @@
                 "z": 0.0
             },
             "scale": {
-                "x": 100.0,
-                "y": 0.0,
-                "z": 100.0
+                "x": 20.0,
+                "y": 1.0,
+                "z": 20.0
             },
             "rotation": {
                 "x": 0.0,
@@ -62,27 +74,35 @@
                 "z": 0.0
             },
             "material": {
-                "has_texture": false,
-                "diffuse": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
+                "has_texture": true,
+                "texture": "..\\..\\..\\Resources\\Textures\\wood.png",
+                "texture_scale_uv": {
+                    "x": 2.0,
+                    "y": 2.0
                 },
                 "has_specular_map": false,
                 "specular": {
-                    "x": 1.0,
-                    "y": 1.0,
-                    "z": 1.0
+                    "x": 0.25,
+                    "y": 0.17830806970596314,
+                    "z": 0.0625
                 },
-                "shininess": 32.0
+                "specular_map_scale_uv": {
+                    "x": 1.0,
+                    "y": 2.0
+                },
+                "normal_map_scale_uv": {
+                    "x": 1.0,
+                    "y": 2.0
+                },
+                "shininess": 0.10000000149011612
             }
         },
         {
             "path": "C:\\Users\\joao_\\OneDrive\\Desktop\\git\\MyG_E\\Resources\\Cerberus_by_Andrew_Maximov\\Cerberus_LP.FBX",
             "visibility": true,
             "position": {
-                "x": 2.5,
-                "y": 1.2000000476837159,
+                "x": 3.4000000953674318,
+                "y": 1.0,
                 "z": -0.20000000298023225
             },
             "scale": {
@@ -98,9 +118,22 @@
             "material": {
                 "has_texture": true,
                 "texture": "..\\..\\..\\Resources\\Cerberus_by_Andrew_Maximov\\Textures\\Cerberus_A.tga",
+                "texture_scale_uv": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
                 "has_specular_map": true,
                 "specular_map": "..\\..\\..\\Resources\\Cerberus_by_Andrew_Maximov\\Textures\\Cerberus_M.tga",
-                "shininess": 32.0
+                "specular_map_scale_uv": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "normal_map": "..\\..\\..\\Resources\\Cerberus_by_Andrew_Maximov\\Textures\\Cerberus_N.tga",
+                "normal_map_scale_uv": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "shininess": 1.0
             }
         }
     ],

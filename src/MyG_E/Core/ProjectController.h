@@ -46,8 +46,10 @@ public:
 private:
 	void create_object(std::string const& file_path);
 	void create_light(unsigned int type);
+	void set_shader(unsigned int index);
 
 	std::unique_ptr<Shader> m_shader;
+	std::unique_ptr<Shader> m_normal_shader;
 	std::unique_ptr<Shader> m_light_shader;
 	std::unique_ptr<Shader> m_skybox_shader;
 	std::unique_ptr<Renderer> m_renderer;
@@ -59,5 +61,21 @@ private:
 	std::vector<Model3D*> m_object_buffer;
 
 	Matrix<float, 4, 4> m_persp_matrix;
-	float m_fov; // I am still not sure if this should be a menber of camera or not..... 
+	float m_fov; // I am still not sure if this should be a menber of camera or not.....
+
+	unsigned char m_flags; // enum flags
+
+	enum flags
+	{
+		flags_none =			0,
+		flags_draw_lights =		1 << 0,
+		flags_draw_normals =	1 << 1,
+		flags_draw_skybox =		1 << 2
+	};
+	enum current_shader
+	{
+		BLINN_PHONG = 0,
+		PHONG = 1
+	};
+	current_shader m_current_shader;
 };
