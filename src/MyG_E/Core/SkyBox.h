@@ -22,3 +22,5 @@ private:
 	std::unique_ptr<VertexArray> m_vao;
 	std::unique_ptr<VertexBuffer> m_vb;
 };
+
+// Need improvement: It should use Mesh and Renderer

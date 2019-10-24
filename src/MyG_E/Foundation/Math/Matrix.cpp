@@ -76,8 +76,8 @@ ScaleMatrix4::ScaleMatrix4(const float ScaleX, const float ScaleY, const float S
 }
 
 RotationMatrix3::RotationMatrix3(float angle, AxisUsage axis)
-	: Matrix<float, 3, 3>{ {1, 0, 0}, { 0, 1, 0}, { 0, 0, 1} },
-	mAxis(axis)
+	: Matrix<float, 3, 3>{ {1, 0, 0}, { 0, 1, 0}, { 0, 0, 1} }
+	, mAxis(axis)
 {
 	SetAngle(angle);
 }

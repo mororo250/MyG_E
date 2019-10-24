@@ -30,9 +30,6 @@ ProjectController::~ProjectController()
 	// Delete Lights
 	for (auto* aux : m_light_buffer)
 		delete aux;
-	
-	// Delete Camera
-	delete m_camera;
 }
 
 void ProjectController::update()
@@ -269,6 +266,19 @@ void ProjectController::imgui_renderer()
 			if (ImGui::Button("Attach skybox"))
 				set_skybox(new TextureCubMap(open_folder_browser()));
 
+		char const* camera[] = { "Edit Camera", "Fps Camera" };
+		static int camera_idx = 0;
+		ImGui::Combo("Camera", &camera_idx, camera, sizeof(camera) / sizeof(char*));
+		if (m_current_camera != current_camera(camera_idx))
+			set_current_camera(camera_idx);
+
+		// Shader
+		char const* shader[] = { "Blinn Phong", "Phong" };
+		static int shader_idx = 0;
+		ImGui::Combo("Shader", &shader_idx, shader, sizeof(shader) / sizeof(char*));
+		if (m_current_shader != current_shader(shader_idx))
+			set_current_shader(shader_idx);
+
 		// Flags
 		if (ImGui::CollapsingHeader("Flags", nullptr, ImGuiTreeNodeFlags_DefaultOpen))
 		{
@@ -276,13 +286,6 @@ void ProjectController::imgui_renderer()
 			ImGui::CheckboxFlags("Draw skybox", reinterpret_cast<unsigned int*>(&m_flags), flags_draw_skybox);
 			ImGui::CheckboxFlags("Draw Normals", reinterpret_cast<unsigned int*>(&m_flags), flags_draw_normals);
 		}
-
-		char const* shader[] = { "Blinn Phong", "Phong" };
-		static int idx = 0;
-		ImGui::Combo("Shader", &idx, shader, sizeof(shader)/sizeof(char*));
-		if (m_current_shader != current_shader(idx))
-			set_shader(idx);
-
 	}
 	ImGui::End();
 
@@ -300,6 +303,15 @@ void ProjectController::pop_object(Model3D* object)
 	auto aux = std::find(m_object_buffer.begin(), m_object_buffer.end(), object);
 	if (aux != m_object_buffer.end())
 		m_object_buffer.erase(aux);
+}
+
+void ProjectController::set_camera(Camera* camera)
+{
+	m_camera.reset(camera);
+	if (dynamic_cast<EditCamera const*>(m_camera.get()))
+		m_current_camera = EDIT_CAMERA;
+	if (dynamic_cast<FPSCamera const*>(m_camera.get()))
+		m_current_camera = FPS_CAMERA;
 }
 
 void ProjectController::set_perspective_matrix()
@@ -334,7 +346,7 @@ void ProjectController::create_light(unsigned int type)
 	}
 }
 
-void ProjectController::set_shader(unsigned int index)
+void ProjectController::set_current_shader(unsigned int index)
 {
 	m_current_shader = current_shader(index);
 	switch (m_current_shader)
@@ -344,6 +356,22 @@ void ProjectController::set_shader(unsigned int index)
 		break;
 	case PHONG:
 		m_shader.reset(new Shader("Phong.vert", "Phong.frag"));
+		break;
+	}
+}
+
+void ProjectController::set_current_camera(unsigned int index)
+{
+	m_current_camera = current_camera(index);
+	Vector3f pos = m_camera->get_position();
+	Vector3f dir = m_camera->get_direction();
+	switch (m_current_camera)
+	{
+	case EDIT_CAMERA:
+		m_camera.reset(new EditCamera(pos, dir));
+		break;
+	case FPS_CAMERA:
+		m_camera.reset(new FPSCamera(pos, dir));
 		break;
 	}
 }

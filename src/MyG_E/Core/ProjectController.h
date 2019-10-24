@@ -35,8 +35,8 @@ public:
 	inline SkyBox const* get_skybox() const { return m_skybox.get(); }
 
 	// Currente Camera
-	inline void set_camera(Camera* camera) { m_camera = camera; }
-	inline Camera const* get_camera() const { return m_camera; }
+	void set_camera(Camera* camera);
+	inline Camera const* get_camera() const { return m_camera.get(); }
 
 	// perspective matrix:
 	void set_perspective_matrix();
@@ -46,7 +46,8 @@ public:
 private:
 	void create_object(std::string const& file_path);
 	void create_light(unsigned int type);
-	void set_shader(unsigned int index);
+	void set_current_shader(unsigned int index);
+	void set_current_camera(unsigned int index);
 
 	std::unique_ptr<Shader> m_shader;
 	std::unique_ptr<Shader> m_normal_shader;
@@ -55,7 +56,7 @@ private:
 	std::unique_ptr<Renderer> m_renderer;
 	
 	// entities
-	Camera* m_camera;
+	std::unique_ptr<Camera> m_camera;
 	std::unique_ptr<SkyBox> m_skybox;
 	std::vector<Light*> m_light_buffer;
 	std::vector<Model3D*> m_object_buffer;
@@ -77,5 +78,12 @@ private:
 		BLINN_PHONG = 0,
 		PHONG = 1
 	};
+	enum current_camera
+	{
+		EDIT_CAMERA = 0,
+		FPS_CAMERA = 1
+	};
+
 	current_shader m_current_shader;
+	current_camera m_current_camera;
 };

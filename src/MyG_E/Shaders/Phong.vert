@@ -26,9 +26,9 @@ void main()
 	// Normals
 	mat3 normal_matrix = mat3(transpose(inverse(u_Model)));
 	v_normal = normalize(normal * normal_matrix);
-	vec3 bt = normalize(tangent * normal_matrix);
-	vec3 t = normalize(bitangent * normal_matrix);
-	v_world_normals = mat3(t, bt, normal);
+	vec3 bt = tangent;
+	vec3 t = bitangent;
+	v_world_normals = transpose(normal_matrix) * mat3(t, bt, normal);
 
 	// Textcoord
 	v_tex_coord = tex_coord;

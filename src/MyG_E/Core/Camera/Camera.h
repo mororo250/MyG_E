@@ -30,6 +30,7 @@ public:
 protected:
 	virtual void translate() = 0;
 	virtual void rotate() = 0;
+	class Quaternion get_orientation() const;
 
 	float m_speed; //speed of camera moviment
 	float m_sensitivity; //velocity in witch the camera will change front_camera
@@ -39,4 +40,7 @@ protected:
 	Vector3f m_position;
 	Vector3f m_direction;
 	Matrix<float, 4, 4> m_view;
+
+	float m_yaw;
+	float m_pitch;
 };

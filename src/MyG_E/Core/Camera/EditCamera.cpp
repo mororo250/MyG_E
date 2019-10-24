@@ -10,12 +10,11 @@
 
 EditCamera::EditCamera(const Vector3f& position, const Vector3f& direction)
 	: m_distance((position - direction).Length())
-	, m_yaw(0.0f)
-	, m_pitch(0.0f)
 {
 	m_position = position;
 	m_direction = direction;
-	m_view = LookAt(m_position, m_direction, {0.0f, 1.0f, 0.0f});
+	Quaternion aux = get_orientation();
+	m_view = TranslationMatrix4(-m_direction) * Quaternion::CreateRotationMatrix(aux) * TranslationMatrix4(-Vector3f({ 0.0f, 0.0f, m_distance }));
 }
 
 EditCamera::~EditCamera()
@@ -57,11 +56,4 @@ void EditCamera::translate()
 	else
 		m_distance -= moved_distance;
 	Input::Get().SetScrollOffset(0.0);
-}
-
-Quaternion EditCamera::get_orientation() const
-{
-	Quaternion quatx = Quaternion::MakeRotate(m_yaw, { 1.0f, 0.0f, 0.0f });
-	Quaternion quaty = Quaternion::MakeRotate(m_pitch, { 0.0f, 1.0f, 0.0f });
-	return quaty * quatx;
 }

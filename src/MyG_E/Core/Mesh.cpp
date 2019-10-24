@@ -58,7 +58,7 @@ void Mesh::move_other(Mesh&& other)
 
 void Mesh::CreateMesh()
 {
-	constexpr int NumAttrib = sizeof(vertex)/sizeof(float);
+	constexpr unsigned int NumAttrib = sizeof(vertex)/sizeof(float);
 	m_vao.reset(new VertexArray());
 	m_vb.reset(new VertexBuffer(reinterpret_cast<float *>(m_vertex_data.data()), m_vertex_data.size(), NumAttrib));
 	m_ib.reset(new IndexBuffer(m_indices.data(), m_indices.size()));

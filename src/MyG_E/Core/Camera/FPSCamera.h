@@ -13,4 +13,8 @@ public:
 protected:
 	void rotate() override;
 	void translate() override;
+
+private:
+	Vector3f m_up;
+	const Vector3f m_direction_begin; // Need Improvement
 };
