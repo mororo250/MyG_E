@@ -40,14 +40,26 @@ void ProjectFileWriter::write_camera(rapidjson::PrettyWriter<rapidjson::StringBu
 	writer.StartObject(); // Camera
 	writer.Key("model");
 	if (dynamic_cast<EditCamera const*>(camera))
+	{
 		writer.String("edit_camera");
+		writer.Key("direction");
+		write_vector3f(writer, &dynamic_cast<EditCamera const*>(camera)->get_focal_point()[0]);
+	}
 	if (dynamic_cast<FPSCamera const*>(camera))
+	{
 		writer.String("fps_camera");
+		writer.Key("focal_point");
+		write_vector3f(writer, &dynamic_cast<FPSCamera const*>(camera)->get_direction()[0]);
+	}
 
 	writer.Key("position");
 	write_vector3f(writer, &camera->get_position()[0]);
-	writer.Key("direction");
-	write_vector3f(writer, &camera->get_direction()[0]);
+
+	writer.Key("yaw");
+	writer.Double(camera->get_yaw());
+
+	writer.Key("pitch");
+	writer.Double(camera->get_pitch());
 
 	writer.EndObject(); // End Camera
 }

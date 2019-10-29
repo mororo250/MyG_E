@@ -5,8 +5,12 @@
 class FPSCamera : public Camera
 {
 public:
-	FPSCamera(Vector3f position, Vector3f direction);
+	FPSCamera(Vector3f const& position, float yaw = 0.0f, float pitch = 0.0f);
+	FPSCamera(Camera const* other);
 	~FPSCamera();
+
+	inline Vector3f get_direction() const { return m_direction; }
+	inline void set_direction(Vector3f const& direction) { m_direction = direction; }
 
 	void update() override;
 
@@ -16,5 +20,5 @@ protected:
 
 private:
 	Vector3f m_up;
-	const Vector3f m_direction_begin; // Need Improvement
+	Vector3f m_direction;
 };

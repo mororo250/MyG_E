@@ -1,5 +1,7 @@
 #pragma once
 
+#define _USE_MATH_DEFINES // Math constants
+
 // STL libraries
 #include <algorithm>
 #include <array>

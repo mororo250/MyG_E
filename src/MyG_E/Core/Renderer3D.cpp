@@ -31,6 +31,11 @@ void Renderer3D::draw_element(const IndexBuffer & ib) const
 	GLcall(glDrawElements(GL_TRIANGLES, ib.GetNumIndex(), GL_UNSIGNED_INT, nullptr));
 }
 
+void Renderer3D::custom_draw() const
+{
+	//GLcall(glDrawElements(GL_TRIANGLES, ib.GetNumIndex(), GL_UNSIGNED_INT, nullptr));
+}
+
 void Renderer3D::clear() const
 {
 	GLcall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));

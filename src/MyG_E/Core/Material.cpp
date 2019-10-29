@@ -24,17 +24,21 @@ Material& Material::operator=(Material const& other)
 
 void Material::imgui_renderer()
 {
-	if (ImGui::CollapsingHeader("Diffuse", nullptr, ImGuiTreeNodeFlags_DefaultOpen))
-		m_diffuse->imgui_renderer("diffuse");
-	if (ImGui::CollapsingHeader("Specular Map", nullptr, ImGuiTreeNodeFlags_DefaultOpen))
-		m_specular->imgui_renderer("specular map");
-	if (ImGui::CollapsingHeader("Normal Map", nullptr, ImGuiTreeNodeFlags_DefaultOpen))
+	if (ImGui::CollapsingHeader("Material", nullptr, ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		m_normal_map->imgui_renderer("normal map");
-		ImGui::Checkbox("Use", &m_use_normal_map);
+		ImGui::Indent(10.0f);
+		if (ImGui::CollapsingHeader("Diffuse", nullptr, ImGuiTreeNodeFlags_DefaultOpen))
+			m_diffuse->imgui_renderer("diffuse");
+		if (ImGui::CollapsingHeader("Specular Map", nullptr, ImGuiTreeNodeFlags_DefaultOpen))
+			m_specular->imgui_renderer("specular map");
+		if (ImGui::CollapsingHeader("Normal Map", nullptr, ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			m_normal_map->imgui_renderer("normal map");
+			ImGui::Checkbox("Use", &m_use_normal_map);
+		}
+		ImGui::DragFloat("shininess", &m_shininess, 0.05f, 0.0f, 100.0f);
+		ImGui::Unindent(10.0f);
 	}
-
-	ImGui::DragFloat("shininess", &m_shininess, 0.05f, 0.0f, 100.0f);
 }
 
 void Material::copy_other(Material const& other)

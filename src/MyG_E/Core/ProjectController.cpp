@@ -157,7 +157,7 @@ void ProjectController::update()
 
 			m_skybox_shader->set_uniformMatrix4f(m_skybox_shader->get_uniform_location("u_Projection"), m_persp_matrix);
 			m_skybox_shader->set_uniformMatrix4f(m_skybox_shader->get_uniform_location("u_View"), m_camera->get_view());
-			m_skybox_shader->set_uniformMatrix4f(m_skybox_shader->get_uniform_location("scale"), ScaleMatrix4(10000.0f, 10000.0f, 10000.0f)); // this is temporary.
+			m_skybox_shader->set_uniform3f(m_skybox_shader->get_uniform_location("u_camera_position"), m_camera->get_position()); // this is temporary.
 			m_skybox_shader->set_uniform1i(m_skybox_shader->get_uniform_location("u_skybox"), 0);
 			m_skybox->draw();
 			m_skybox_shader->unbind();
@@ -364,14 +364,18 @@ void ProjectController::set_current_camera(unsigned int index)
 {
 	m_current_camera = current_camera(index);
 	Vector3f pos = m_camera->get_position();
-	Vector3f dir = m_camera->get_direction();
 	switch (m_current_camera)
 	{
 	case EDIT_CAMERA:
-		m_camera.reset(new EditCamera(pos, dir));
+	{
+		Vector3f dir = dynamic_cast<FPSCamera const*>(m_camera.get())->get_direction();
+		m_camera.reset(new EditCamera(pos, pos + 5*dir, m_camera->get_yaw(), m_camera->get_pitch()));
 		break;
+	}
 	case FPS_CAMERA:
-		m_camera.reset(new FPSCamera(pos, dir));
+	{
+		m_camera.reset(new FPSCamera(m_camera.get()));
 		break;
+	}
 	}
 }

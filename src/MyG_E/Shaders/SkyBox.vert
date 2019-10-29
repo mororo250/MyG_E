@@ -6,11 +6,11 @@ out vec3 v_tex_coord;;
 
 uniform mat4 u_View;
 uniform mat4 u_Projection;
-uniform mat4 scale;
+uniform vec3 u_camera_position;
 
 void main()
 {
     v_tex_coord = position;
-	vec4 pos = (vec4(position, 1.0) * scale * u_View * u_Projection);
+	vec4 pos = (vec4(u_camera_position + position, 1.0) * u_View * u_Projection);
 	gl_Position = pos.xyww;
 }

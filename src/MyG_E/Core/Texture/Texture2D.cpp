@@ -114,7 +114,8 @@ void Texture2D::imgui_renderer(std::string const& name)
 		std::string button_name = "remove " + name;
 		if (ImGui::Button(button_name.c_str()))
 			change_texture(Vector3f{});
-		ImGui::DragFloat2("Scale UV", &m_scale_uv[0], 0.01f);
+		// ## is used to pass a complement to the ID that isn't visible to the end-user.
+		ImGui::DragFloat2(std::string("Scale UV##" + name).c_str(), &m_scale_uv[0], 0.01f);
 	}
 	
 	// ImGui::Text("Current Texture2D: %s", m_file_path.c_str());

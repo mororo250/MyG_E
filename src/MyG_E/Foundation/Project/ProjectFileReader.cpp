@@ -55,11 +55,19 @@ bool ProjectFileReader::load_camera(rapidjson::Document const& document, Project
 		std::cout << "There isn't the position of the camera in the file" << std::endl;
 		return false;
 	}
-	if (!document["camera"].HasMember("direction"))
+
+	float yaw = 0.0f;
+	if (document["camera"].HasMember("yaw"))
 	{
-		std::cout << "There isn't the direction of the camera in the file" << std::endl;
-		return false;
+		yaw = document["camera"]["yaw"].GetFloat();
 	}
+
+	float pitch = 0.0f;
+	if (document["camera"].HasMember("pitch"))
+	{
+		yaw = document["camera"]["pitch"].GetFloat();
+	}
+
 	// Create new camera
 	std::string camera_model(document["camera"]["model"].GetString());
 
@@ -68,19 +76,32 @@ bool ProjectFileReader::load_camera(rapidjson::Document const& document, Project
 		document["camera"]["position"]["y"].GetFloat(),
 		document["camera"]["position"]["z"].GetFloat() };
 	
-	// Load camera direction
-	Vector3f direction{ document["camera"]["direction"]["x"].GetFloat(),
-		document["camera"]["direction"]["y"].GetFloat(),
-		document["camera"]["direction"]["z"].GetFloat() };
-	
 	// Create new camera
 	if (camera_model == "edit_camera")
 	{
-		controller->set_camera(new EditCamera(position, direction));
+		if (!document["camera"].HasMember("focal_point"))
+		{
+			std::cout << "There isn't the direction of the camera in the file" << std::endl;
+			return false;
+		}
+		// Load camera focal point
+		Vector3f focal_point{ document["camera"]["focal_point"]["x"].GetFloat(),
+			document["camera"]["focal_point"]["y"].GetFloat(),
+			document["camera"]["focal_point"]["z"].GetFloat() };
+		controller->set_camera(new EditCamera(position, focal_point, yaw, pitch));
 	}
 	else if (document["camera"]["model"].GetString() == "fps_camera")
 	{
-		controller->set_camera(new FPSCamera(position, direction));
+		if (!document["camera"].HasMember("direction"))
+		{
+			std::cout << "There isn't the direction of the camera in the file" << std::endl;
+			return false;
+		}
+		// Load camera direction
+		Vector3f direction{ document["camera"]["direction"]["x"].GetFloat(),
+			document["camera"]["direction"]["y"].GetFloat(),
+			document["camera"]["direction"]["z"].GetFloat() };
+		controller->set_camera(new FPSCamera(position, yaw, pitch));
 	}
 	return true;
 
