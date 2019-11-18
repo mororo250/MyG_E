@@ -10,7 +10,7 @@
 
 EditCamera::EditCamera(Vector3f const& position, Vector3f const& focal_point, float yaw, float pitch)
 	: Camera(yaw, pitch)
-	, m_distance((position - focal_point).Length())
+	, m_distance((position - focal_point).length())
 	, m_focal_point(focal_point)
 {
 	update_view();
@@ -44,7 +44,7 @@ void EditCamera::rotate()
 
 void EditCamera::translate()
 {
-	m_distance = (m_position - m_focal_point).Length();
+	m_distance = (m_position - m_focal_point).length();
 	float moved_distance = static_cast<float>(Input::Get().GetScrollOffset()) * m_speed / 10.0f * m_distance;
 	if (Input::Get().GetScrollOffset() && moved_distance >= m_distance) 
 		m_distance = m_distance * 0.2f;
@@ -66,6 +66,6 @@ void EditCamera::update_view()
 {
 	Quaternion quat = get_orientation();
 	Vector3f vec(0.0f, 0.0f, m_distance);
-	m_view = TranslationMatrix4(-m_focal_point) * Quaternion::CreateRotationMatrix(quat) * TranslationMatrix4(-vec);
+	m_view = Matrix4x4f::make_translation_matrix(-m_focal_point) * Quaternion::make_rotation_matrix(quat) * Matrix4x4f::make_translation_matrix(-vec);
 	m_position = m_focal_point + Quaternion::rotate(quat, vec);
 }

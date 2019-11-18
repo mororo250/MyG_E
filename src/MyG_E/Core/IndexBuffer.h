@@ -5,7 +5,7 @@
 class IndexBuffer : public Uncopyable
 {
 public:
-	IndexBuffer(const unsigned int *indices, const unsigned int num_indices);
+	explicit IndexBuffer(unsigned int const *indices, unsigned int const num_indices);
 	~IndexBuffer();
 
 	void bind() const;

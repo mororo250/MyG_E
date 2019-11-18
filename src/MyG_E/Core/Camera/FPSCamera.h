@@ -9,7 +9,7 @@ public:
 	FPSCamera(Camera const* other);
 	~FPSCamera();
 
-	inline Vector3f get_direction() const { return m_direction; }
+	inline Vector3f get_direction() const override { return m_direction; }
 	inline void set_direction(Vector3f const& direction) { m_direction = direction; }
 
 	void update() override;

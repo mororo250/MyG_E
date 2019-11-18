@@ -3,6 +3,8 @@ include (../../cmake/include/cmake-precompiled-header.cmake)
 
 set (core_source
     Core/BatchRenderer.h
+	Core/FrameBuffer.cpp
+	Core/FrameBuffer.h
     Core/IndexBuffer.cpp
     Core/IndexBuffer.h
 	Core/ProjectController.cpp
@@ -13,6 +15,7 @@ set (core_source
     Core/Mesh.h
     Core/Model3D.cpp
     Core/Model3D.h
+	Core/Renderer.cpp
     Core/Renderer.h
 	Core/Renderer2D.cpp
 	Core/Renderer2D.h
@@ -20,6 +23,8 @@ set (core_source
 	Core/Renderer3D.h
     Core/Shader.cpp
     Core/Shader.h
+    Core/ShadowMap.cpp
+    Core/ShadowMap.h
     Core/Sprite.cpp
     Core/Sprite.h
     Core/SkyBox.cpp
@@ -54,6 +59,8 @@ source_group ("Core\\Camera" FILES
 )
 
 set (light_source
+	Core/Light/AmbientLight.cpp
+	Core/Light/AmbientLight.h
 	Core/Light/Light.cpp
 	Core/Light/Light.h
 	Core/Light/DirectionalLight.cpp
@@ -72,6 +79,8 @@ source_group ("Core\\Light" FILES
 )
 
 set (texture_source
+	Core/Texture/BasicTexture2D.cpp
+	Core/Texture/BasicTexture2D.h
 	Core/Texture/Texture2D.cpp
 	Core/Texture/Texture2D.h
 	Core/Texture/TextureCubMap.cpp
@@ -88,6 +97,9 @@ source_group ("Core\\Texture" FILES
 )
 
 set (math_source
+	Foundation/Math/EulerAngles.cpp
+	Foundation/Math/EulerAngles.h
+	Foundation/Math/ExtraMathConstant.h
 	Foundation/Math/Matrix.cpp
 	Foundation/Math/Matrix.h
 	Foundation/Math/Quaternion.cpp
@@ -154,6 +166,7 @@ set (foundation_source
 	Foundation/LayerCollection.h
     Foundation/Main.cpp
     Foundation/Uncopyable.h
+	Foundation/Utility.h
 )
 
 list (APPEND MyG_E_sources
@@ -164,11 +177,20 @@ source_group ("Foundation" FILES
 )
 
 set (shaders_source
-    Shaders/Color.glsl
-    Shaders/Light.glsl
-    Shaders/Phong.glsl
-    Shaders/Shader.glsl
-    Shaders/SkyBox.glsl
+    Shaders/Blinn-Phong.frag
+    Shaders/Empty.frag
+    Shaders/Light.frag
+    Shaders/Light.vert
+    Shaders/Normal.frag
+    Shaders/Normal.geom
+    Shaders/Normal.vert
+    Shaders/Phong.frag
+    Shaders/Phong.vert
+	Shaders/ShadowMapDebug.vert
+	Shaders/ShadowMapDebug.frag
+    Shaders/ShadowMap.vert
+    Shaders/SkyBox.frag
+    Shaders/SkyBox.vert
 )
 
 list (APPEND MyG_E_sources

@@ -13,8 +13,7 @@ Texture2D::Texture2D(std::string const& file_path)
 	: m_texture(0)
 	, m_color(nullptr)
 	, m_file_path(file_path)
-	, m_scale_uv({1.0f, 1.0f})
-	, m_number_of_channels(0)
+	, m_scale_uv(1.0f, 1.0f)
 	, m_width(0)
 	, m_height(0)
 	, m_is_unitary(false)
@@ -26,8 +25,7 @@ Texture2D::Texture2D(Vector3f const& color)
 	: m_texture(0)
 	, m_color(new float[3]{ color[0], color[1], color[2] })
 	, m_file_path("")
-	, m_scale_uv({ 1.0f, 1.0f })
-	, m_number_of_channels(4)
+	, m_scale_uv(1.0f, 1.0f)
 	, m_width(1)
 	, m_height(1)
 	, m_is_unitary(true)
@@ -100,7 +98,7 @@ void Texture2D::change_texture(Vector3f const& color)
 
 void Texture2D::imgui_renderer(std::string const& name)
 { 
-	if (ImGui::ImageButton(reinterpret_cast<ImTextureID>(m_texture), ImVec2(32, 32), ImVec2(0, 0), ImVec2(1, 1)))
+	if (ImGui::ImageButton(reinterpret_cast<unsigned int*>(m_texture), ImVec2(32, 32), ImVec2(0, 0), ImVec2(1, 1)))
 		change_texture(open_file_browser(L"Image Files", L"*.png;*.jpg;*.tga"));
 	if (m_is_unitary)
 	{
@@ -127,7 +125,6 @@ void Texture2D::copy_other(Texture2D const& other)
 	m_scale_uv = other.m_scale_uv;
 	m_width = other.m_width;
 	m_height = other.m_height;
-	m_number_of_channels = other.m_number_of_channels;
 	m_is_unitary = other.m_is_unitary;
 
 	m_color.reset(nullptr);
@@ -155,7 +152,8 @@ void Texture2D::if_is_a_color()
 void Texture2D::if_is_a_texture()
 {
 	stbi_set_flip_vertically_on_load(1); // Flip the image - opengl start from the top left intead of the bottom left.
-	unsigned char* local_buffer = stbi_load(m_file_path.c_str(), &m_width, &m_height, &m_number_of_channels, 4);
+	int number_of_channels = 0;
+	unsigned char* local_buffer = stbi_load(m_file_path.c_str(), &m_width, &m_height, &number_of_channels, 4);
 
 	create_texture(local_buffer);
 

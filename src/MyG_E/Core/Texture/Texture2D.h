@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Texture/Texture.h"
+#include "Core/Texture/BasicTexture2D.h"
 #include "Foundation/Math/Vector.h"
 
 class Texture2D : public Texture
@@ -41,9 +42,9 @@ private:
 	std::string m_file_path;
 	Vector2f m_scale_uv;
 	unsigned int m_texture;
+
 	int m_width;
 	int m_height;
-	int m_number_of_channels;
 
 	bool m_is_unitary; // Ture if texture is a 1 x 1.
 };

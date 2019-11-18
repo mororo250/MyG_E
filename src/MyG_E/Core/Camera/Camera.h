@@ -10,7 +10,7 @@ public:
 	Camera(float yaw = 0.0f, float pitch = 0.0f);
 	virtual ~Camera();
 
-	inline Matrix<float, 4, 4> & get_view() { return m_view; }
+	inline Matrix<float, 4, 4> &get_view() { return m_view; }
 
 	inline Vector3f get_position() const { return m_position; }
 	inline void set_position(const Vector3f position) { m_position = position; }
@@ -26,6 +26,7 @@ public:
 
 	virtual void imgui_renderer();
 	virtual void update() = 0;
+	virtual Vector3f get_direction() const = 0;
 
 protected:
 	virtual void translate() = 0;

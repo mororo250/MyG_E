@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Foundation/Math/Vector.h"
-#include "Core\Model3D.h"
+#include "Core/ShadowMap.h"
+#include "Core/Model3D.h"
 
 class Light
 {
@@ -17,19 +18,19 @@ public:
 	inline Vector3f get_light_color() const { return m_color; }
 	inline void set_light_color(Vector3f const& color) { m_color = color; }
 
-	inline float get_ambient_strength() const { return m_ambient_strength; }
-	inline void set_ambient_strength(const float ambient_strength) { m_ambient_strength = ambient_strength; }
-
 	inline float get_diffuse_strength() const { return m_diffuse_strength; }
-	inline void set_diffuse_strength(const float diffuse_strength) { m_diffuse_strength = diffuse_strength; }
+	inline void set_diffuse_strength(float const diffuse_strength) { m_diffuse_strength = diffuse_strength; }
 	
 	inline float get_specular_strength() const { return m_specular_strength; }
-	inline void set_specular_strength(const float specular_strength) { m_specular_strength = specular_strength; }
+	inline void set_specular_strength(float const specular_strength) { m_specular_strength = specular_strength; }
 
-	Model3D* GetModel() { return m_model; }
+	Model3D* get_model() { return m_model; }
 
-	virtual void ImGuiRenderer();
+	virtual void imgui_renderer();
 	virtual void set_uniform(class Shader const* shader) = 0;
+	virtual inline ShadowMap const* get_shadow_map() { return nullptr; }
+
+	virtual Matrix4x4f get_light_space() { return IDENTITY_4x4F; }
 
 protected:
 	void set_general_uniform(Shader const* shader, std::string const& uniform_name);
@@ -39,7 +40,6 @@ private:
 
 	Vector3f m_color;
 	Model3D* m_model;
-	float m_ambient_strength;
 	float m_diffuse_strength;
 	float m_specular_strength;
 };

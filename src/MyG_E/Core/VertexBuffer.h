@@ -2,18 +2,16 @@
 
 #include "Foundation\Uncopyable.h"
 
-#include "glad/glad.h"
-
-
-enum class BufferUsage
-{
-	STATIC, DYNAMIC
-};
-
 class VertexBuffer : public Uncopyable
 {
+	enum BufferUsage
+	{
+		STATIC = 0x88E4, // GL_STATIC_DRAW
+		DYNAMIC = 0x88E8 // GL_DYNAMIC_DRAW
+	};
+
 public:
-	VertexBuffer(const float *verts, const unsigned int num_vertex, const unsigned int vetex, BufferUsage usage = BufferUsage::STATIC);
+	VertexBuffer(const float *verts, const unsigned int num_vertex, const unsigned int vetex, BufferUsage usage = STATIC);
 	~VertexBuffer();
 	
 	template<class T>

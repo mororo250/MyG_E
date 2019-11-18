@@ -3,11 +3,10 @@
 #include "Foundation\Uncopyable.h"
 #include "Foundation\LayerCollection.h"
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 class ProjectController;
+class LayerCollection;
 class ImGuiLayer;
+class GLFWwindow;
 
 //singleton class
 class Game : public Uncopyable 

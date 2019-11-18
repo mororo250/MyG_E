@@ -1,5 +1,8 @@
 #include "Game.h"
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 //imgui
 #include "imgui.h"
 #include "imgui_impl_opengl3.h"
@@ -13,6 +16,7 @@
 // Others
 #include "Foundation/Project/ProjectFileReader.h"
 #include "Foundation/Project/ProjectFileWriter.h"
+#include "Foundation/Gldebug.h"
 
 Game* Game::s_Instance = nullptr;
 

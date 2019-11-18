@@ -28,10 +28,10 @@ public:
 	inline Vector3f get_position() const { return m_position; };
 	inline void set_position(Vector3f const& pos) { set_translation(pos); }
 
-	inline TranslationMatrix4 get_translation() const { return m_trans_matrix; }
+	inline Matrix4x4f get_translation() const { return m_trans_matrix; }
 	void set_translation(Vector3f const& trans);
 
-	inline ScaleMatrix4 get_scale_matrix() const { return m_scale_matrix; }
+	inline Matrix4x4f get_scale_matrix() const { return m_scale_matrix; }
 	inline Vector3f get_scale() const { return m_scale; }
 	void set_scale(Vector3f const& Scale);
 
@@ -39,7 +39,7 @@ public:
 	inline Vector3f get_rotation() { return m_rotate; };
 	void set_rotation(Vector3f const& Rotation);
 
-	inline std::vector<Mesh*> const* const get_meshes() { return &m_meshes; }
+	inline std::vector<Mesh*>const& get_meshes() { return m_meshes; }
 
 	inline Material const* get_material() const { return m_material.get(); }
 	inline void set_material(Material* material);
@@ -53,7 +53,7 @@ public:
 	inline void set_visibility(bool is_visible) { m_is_visible = is_visible; }
 	inline bool is_visible() { return m_is_visible; }
 
-	void ImGuiRenderer();
+	void imgui_renderer();
 
 	static unsigned int get_number_of_object() { return m_number_of_objects; } 
 
@@ -73,9 +73,9 @@ private:
 	Vector3f m_rotate;
 
 	//matrices
-	TranslationMatrix4 m_trans_matrix;
-	ScaleMatrix4 m_scale_matrix;
-	Matrix<float, 4, 4> m_rotation_matrix;
+	Matrix4x4f m_trans_matrix;
+	Matrix4x4f m_scale_matrix;
+	Matrix4x4f m_rotation_matrix;
 	
 	std::string m_file_path;
 	std::string m_object_name;

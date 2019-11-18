@@ -1,17 +1,25 @@
 #pragma once
 
-#include "Core\Renderer.h"
+#include "Core/Renderer.h"
 
-class Renderer3D : public Renderer
+class Renderer3D
 {
 public:
+
 	Renderer3D();
 	~Renderer3D();
 
-	void draw_element(const IndexBuffer& ib) const override;
-	void custom_draw() const;
-	void clear() const override;
+	static void draw_element(class IndexBuffer const& ib);
+	static void draw_quad();
 
-	void set_active() override;
-	void set_disactive() override;
+	static void clear();
+	static void clear_buffer();
+
+	static void init();
+	static void end();
+
+	inline static bool has_init() { return s_has_init; }
+
+private:
+	static bool s_has_init;
 };

@@ -1,7 +1,6 @@
 #include "Gldebug.h"
 
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
  bool glCheckError_( const char *function, const char *file, const int line)
 {

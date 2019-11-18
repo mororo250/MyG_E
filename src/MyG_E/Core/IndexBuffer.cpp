@@ -1,8 +1,8 @@
+#include "IndexBuffer.h"
+
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 #include "Foundation/Gldebug.h"
-#include "IndexBuffer.h"
 
 IndexBuffer::IndexBuffer(const unsigned int *indices, const unsigned int num_indices)
 :m_num_index(num_indices)

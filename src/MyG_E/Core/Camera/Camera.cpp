@@ -32,7 +32,7 @@ void Camera::imgui_renderer()
 
 Quaternion Camera::get_orientation() const
 {
-	Quaternion quatx = Quaternion::MakeRotate(m_yaw, { 1.0f, 0.0f, 0.0f });
-	Quaternion quaty = Quaternion::MakeRotate(m_pitch, { 0.0f, 1.0f, 0.0f });
+	Quaternion quatx = Quaternion::make_rotate(m_yaw, { 1.0f, 0.0f, 0.0f });
+	Quaternion quaty = Quaternion::make_rotate(m_pitch, { 0.0f, 1.0f, 0.0f });
 	return quaty * quatx;
 }

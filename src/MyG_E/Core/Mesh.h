@@ -31,15 +31,15 @@ public:
 
 	~Mesh();
 
-	inline vertex* GetData() { return m_vertex_data.data(); }
-	inline VertexArray const& GetVertexArray() const { return *m_vao; }
-	inline IndexBuffer const& GetIndexBuffer() const { return *m_ib; }
+	inline vertex* get_data() { return m_vertex_data.data(); }
+	inline VertexArray const& get_vertex_array() const { return *m_vao; }
+	inline IndexBuffer const& get_index_buffer() const { return *m_ib; }
 
 private:
 	void copy_other(Mesh const& other);
 	void move_other(Mesh&& other);
 
-	void CreateMesh();
+	void create_mesh();
 
 	std::vector<vertex> m_vertex_data;
 	std::vector<unsigned int> m_indices;

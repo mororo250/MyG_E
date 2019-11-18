@@ -7,16 +7,16 @@ FPSCamera::FPSCamera(Vector3f const& position, float yaw, float pitch)
 {
 	m_up = Quaternion::rotate(get_orientation(), Y_AXIS);
 	m_position = position;
-	m_direction = Quaternion::rotate(get_orientation(), DIRECTION_AUXILIAR).Normalize();
-	m_view = LookAt(m_position, m_direction, m_up);
+	m_direction = Quaternion::rotate(get_orientation(), DIRECTION_AUXILIAR).normalize();
+	m_view = Matrix4x4f::make_look_at(m_position, m_direction, m_up);
 }
 
 FPSCamera::FPSCamera(Camera const* other)
 	:Camera(*other)
 {
 	m_up = Quaternion::rotate(get_orientation(), Y_AXIS);
-	m_direction = Quaternion::rotate(get_orientation(), DIRECTION_AUXILIAR).Normalize();
-	m_view = LookAt(m_position, m_direction + m_position, m_up);
+	m_direction = Quaternion::rotate(get_orientation(), DIRECTION_AUXILIAR).normalize();
+	m_view = Matrix4x4f::make_look_at(m_position, m_direction + m_position, m_up);
 }
 
 FPSCamera::~FPSCamera()
@@ -30,8 +30,8 @@ void FPSCamera::update()
 	rotate();
 	m_mouse_pos = m_current_mouse_pos; // Update mouse Position.
 
-	m_direction = Quaternion::rotate(get_orientation(), DIRECTION_AUXILIAR).Normalize();
-	m_view = LookAt(m_position, m_direction + m_position, m_up);
+	m_direction = Quaternion::rotate(get_orientation(), DIRECTION_AUXILIAR).normalize();
+	m_view = Matrix4x4f::make_look_at(m_position, m_direction + m_position, m_up);
 }
 
 void FPSCamera::rotate()
@@ -53,7 +53,7 @@ void FPSCamera::translate()
 	if (Input::Get().IsKeyPressed(KEY_S))
 		m_position -= m_speed * m_direction;
 	if (Input::Get().IsKeyPressed(KEY_A))
-		m_position -= m_speed * Vector3f::Cross(m_direction, m_up);
+		m_position -= m_speed * Vector3f::cross(m_direction, m_up);
 	if (Input::Get().IsKeyPressed(KEY_D))
-		m_position += m_speed * Vector3f::Cross(m_direction, m_up);
+		m_position += m_speed * Vector3f::cross(m_direction, m_up);
 }

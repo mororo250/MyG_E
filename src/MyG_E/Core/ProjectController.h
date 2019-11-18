@@ -5,8 +5,9 @@
 #include "Core/Camera/FPSCamera.h"
 #include "Core/Camera/EditCamera.h"
 #include "Core/Light/PointLight.h"
-#include "Core\Light\SpotLight.h"
-#include "Core\Light\DirectionalLight.h"
+#include "Core/Light/SpotLight.h"
+#include "Core/Light/DirectionalLight.h"
+#include "Core/Light/AmbientLight.h"
 #include "Core/SkyBox.h"
 
 class ProjectController : public Layer
@@ -43,22 +44,31 @@ public:
 
 	void set_fov(float fov); // Maximum m_fov = 120 and minimum = 30
 	inline float get_fov() const { return m_fov; }
+
 private:
 	void create_object(std::string const& file_path);
 	void create_light(unsigned int type);
 	void set_current_shader(unsigned int index);
 	void set_current_camera(unsigned int index);
 
+	void draw_shadow_maps();
+	void draw_objects();
+	void draw_normals();
+	void draw_lights();
+	void draw_skybox();
+
 	std::unique_ptr<Shader> m_shader;
 	std::unique_ptr<Shader> m_normal_shader;
 	std::unique_ptr<Shader> m_light_shader;
 	std::unique_ptr<Shader> m_skybox_shader;
-	std::unique_ptr<Renderer> m_renderer;
+	std::unique_ptr<Shader> m_shadow_map_shader;
+	std::unique_ptr<Renderer3D> m_renderer;
 	
 	// entities
 	std::unique_ptr<Camera> m_camera;
 	std::unique_ptr<SkyBox> m_skybox;
 	std::vector<Light*> m_light_buffer;
+	AmbientLight m_ambinet_light;
 	std::vector<Model3D*> m_object_buffer;
 
 	Matrix<float, 4, 4> m_persp_matrix;
@@ -71,7 +81,7 @@ private:
 		flags_none =			0,
 		flags_draw_lights =		1 << 0,
 		flags_draw_normals =	1 << 1,
-		flags_draw_skybox =		1 << 2
+		flags_draw_skybox =		1 << 2,
 	};
 	enum current_shader
 	{

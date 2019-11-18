@@ -1,8 +1,7 @@
 #pragma once
 
 #include "VertexBuffer.h"
-#include "Foundation/Gldebug.h"
-#include "Foundation\Uncopyable.h"
+#include "Foundation/Uncopyable.h"
 
 
 struct VertexLayout
@@ -19,14 +18,14 @@ public:
 	VertexArray();
 	~VertexArray();
 
-	void AddBuffer(const VertexBuffer& vb);
-	void PushLayout(unsigned int num_elem, unsigned int type = GL_FLOAT, bool normalized = false, const unsigned int offset = 0);
+	void AddBuffer(VertexBuffer const& vb) const;
+	void PushLayout(unsigned int num_elem, unsigned int type = 0x1406 , bool normalized = false, const unsigned int offset = 0); // type = GL_FLOAT
 	void bind() const;
 	void unbind() const;
 
-	inline void EnabelVertexArray() { GLcall(glEnableVertexAttribArray(m_vertex_array)); }
-	inline std::vector<VertexLayout> GetVertexLayouts() { return m_layout_vector; }
-	inline unsigned int GetVertexArray() const { return m_vertex_array; }
+	void EnabelVertexArray() const;
+	inline std::vector<VertexLayout> get_vertex_layout() const { return m_layout_vector; }
+	inline unsigned int get_vertex_array() const { return m_vertex_array; }
 	
 
 private:

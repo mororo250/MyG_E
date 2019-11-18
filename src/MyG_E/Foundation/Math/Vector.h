@@ -2,126 +2,134 @@
 
 #include <assimp/vector3.h>
 
+#include "Foundation/\Utility.h"
+
 template<class T, unsigned int NumRow, unsigned int NumCol>
 class Matrix;
 
-template<class T, unsigned int NumElem>
+template<class T, unsigned int M>
 class Vector
 {
 public:
-	Vector()
-		:mVector{}
+	Vector() = default;
+
+	explicit constexpr Vector(T value)
+		:m_vector(std::move(fill_array<T, M>(value)))
+	{
+	}
+
+	template <class ...Args, typename std::enable_if<(sizeof...(Args) == M), int>::type = 0>
+	constexpr Vector(Args ... args)
+		:m_vector{args ...}
 	{}
 
+	constexpr Vector(std::array<T, M> const& vector)
+		: m_vector(vector)
+	{}
 
-	Vector(T value)
-	{
-		for (auto& aux : mVector)
-			aux = value;
-	}
-
-	Vector (T vector[NumElem])
-	{
-		std::memcpy(mVector, vector, NumElem * sizeof(T));
-	}
-
-	Vector (std::initializer_list<T> aux)
-	{
-		unsigned int i = 0;
-		for (auto p : aux)
-		{
-			mVector[i] = p;
-			i++;
-		}
-	}
+	constexpr Vector(std::array<T, M>&& vector)
+		: m_vector{ std::move(vector) }
+	{}
+	/* 
+	Ambiguity in Vector<int, 2> A({something, something}) becouse the compiler can't choose between constexpr Vector(Args ... args) 
+	and constexpr Vector(std::array<T, M>&& vector). Instead, you should call Vector<int, 2> A(something, something) or even
+	Vector<int, 2> A{something, something}.
+	*/
 
 	// Operators
 	T& operator[](unsigned int index)
 	{
-		return mVector[index];
+		return m_vector[index];
 	}
 
 	const T& operator[](unsigned int index) const
 	{
-		return mVector[index];
+		return m_vector[index];
 	}
 
-	Vector& operator*=(const T scalar)
+	Vector operator*=(T const scalar)
 	{
-		for (unsigned int i = 0; i < NumElem; i++)
-			mVector[i] *= scalar;
+		for (unsigned int i = 0; i < M; i++)
+			m_vector[i] *= scalar;
 		return *this;
 	}
 
-	Vector& operator+=(const Vector& vector2)
+	Vector operator /= (T const scalar)
 	{
-		for (unsigned int i = 0; i < NumElem; i++)
-			mVector[i] += vector2.mVector[i];
+		for (unsigned int i = 0; i < M; i++)
+			m_vector[i] /= scalar;
 		return *this;
 	}
 
-	Vector& operator-=(const Vector& vector2)
+	Vector operator+=(Vector const& vector2)
 	{
-		for (unsigned int i = 0; i < NumElem; i++)
-			mVector[i] -= vector2.mVector[i];
+		for (unsigned int i = 0; i < M; i++)
+			m_vector[i] += vector2.m_vector[i];
+		return *this;
+	}
+
+	Vector operator-=(Vector const& vector2)
+	{
+		for (unsigned int i = 0; i < M; i++)
+			m_vector[i] -= vector2.m_vector[i];
 		return *this;
 	}
 
 	Vector operator-()
 	{
 		Vector3f aux;
-		for (unsigned int i = 0; i < NumElem; i++)
-			aux.mVector[i] = -mVector[i];
+		for (unsigned int i = 0; i < M; i++)
+			aux.m_vector[i] = -m_vector[i];
 		return aux;
 	}
 
-	inline bool operator==(const Vector& other) { return std::equal(mVector, mVector + NumElem, other.mVector); }
+	inline bool operator==(Vector const& other) { return std::equal(m_vector, m_vector + M, other.m_vector); }
 
 	// Auxiliary function.
-	auto GetAsPointer() const { return mVector; }
-	unsigned int GetNumElem() const { return NumElem; }
+	T* get_as_pointer() { return m_vector.data(); }
+	T const* get_as_pointer() const { return m_vector.data(); }
 
-	inline float Length() const
+	inline float length() const
 	{
 		float length = 0;
-		for (unsigned int i = 0; i < NumElem; i++)
-			length += std::fabsf(mVector[i] * mVector[i]);
+		for (unsigned int i = 0; i < M; i++)
+			length += m_vector[i] * m_vector[i];
 		return sqrt(length);
 	}
 
-	// Return normalized vector but dont normalize it.
-	inline Vector<T, NumElem> GetNormalized() const
+	// Return normalizedd vector but dont normalized it.
+	inline Vector<T, M> get_normalized() const
 	{
-		Vector<T, NumElem> aux = *this;
-		aux.Normalize();
+		Vector<T, M> aux = *this;
+		aux.normalized();
 		return aux;
 	}
 
-	// Normalize vector and return it.
-	inline Vector<T, NumElem> Normalize() const
+	// normalized vector and return it.
+	inline Vector<T, M> normalize() const
 	{
-		float L = Length();
-		for (unsigned int i = 0; i < NumElem; i++)
-			mVector[i] = mVector[i] / L;
+		float L = length();
+		for (unsigned int i = 0; i < M; i++)
+			m_vector[i] = m_vector[i] / L;
 		return *this;
 	}
 
-	inline bool isNormalized() const
+	inline bool is_normalized() const
 	{
-		return Length() == 1;
+		return length() == 1;
 	}
 
-	// Dot product
-	static T Dot(Vector<T, NumElem> const& vector1, Vector<T, NumElem>const& vector2)
+	// dot product
+	static T dot(Vector<T, M> const& vector1, Vector<T, M>const& vector2)
 	{
 		T result = 0;
-		for (unsigned int i = 0; i < NumElem; i++)
+		for (unsigned int i = 0; i < M; i++)
 			result += vector1[i] * vector2[i];
 		return result;
 	}
 
 private:
-	T mVector[NumElem];
+	std::array<T, M> m_vector;
 };
 
 
@@ -130,31 +138,28 @@ template<class T>
 class Vector<T, 3>
 {
 public:
-	constexpr Vector()
-		:mVector{}
-	{}
+	Vector() = default;
 
-	constexpr Vector(T value)
-		: mVector{ value, value, value }
-	{}
-
-	constexpr Vector(T vector[3])
-		: mVector{ vector[0], vector[1], vector[2] }
+	explicit constexpr Vector(T value)
+		: m_vector{ value, value, value }
 	{}
 
 	constexpr Vector(T v1, T v2, T v3)
-		: mVector{v1, v2, v3}
+		: m_vector{v1, v2, v3}
 	{}
 
-	 Vector(std::initializer_list<T> aux)
-	{
-		unsigned int i = 0;
-		for (auto p : aux)
-		{
-			mVector[i] = p;
-			i++;
-		}
-	}
+	constexpr Vector(std::array<T, 3> const& vector)
+		: m_vector(vector)
+	{}
+
+	constexpr Vector(std::array<T, 3>&& vector)
+		: m_vector{ std::move(vector) }
+	{}
+	/*
+	Ambiguity in Vector A({something, something, something}) becouse the compiler can't choose between constexpr Vector(T v1, T v2, T v3)
+	and constexpr Vector(std::array<T, M>&& vector). Instead, you should call Vector A(something, something, something) or even
+	Vector A{something, something, something}.
+	*/
 
 	// assimp vector
 	Vector(aiVector3D const& vector)
@@ -162,108 +167,114 @@ public:
 		*this = vector;
 	}
 
-	Vector& operator=(aiVector3D const& vector)
+	Vector operator=(aiVector3D const& vector)
 	{
-		mVector[0] = vector.x;
-		mVector[1] = vector.y;
-		mVector[2] = vector.z;
+		m_vector[0] = vector.x;
+		m_vector[1] = vector.y;
+		m_vector[2] = vector.z;
 		return *this;
 	}
 
 	// Operators
 	T& operator[](unsigned int index)
 	{
-		return mVector[index];
+		return m_vector[index];
 	}
-
-
 
 	T const& operator[](unsigned int index) const
 	{
-		return mVector[index];
+		return m_vector[index];
 	}
 
-	template<class V>
-	Vector& operator*=(const V scalar)
+	Vector operator*=(T const scalar)
 	{
-		mVector[0] *= scalar;
-		mVector[1] *= scalar;
-		mVector[2] *= scalar;
+		m_vector[0] *= scalar;
+		m_vector[1] *= scalar;
+		m_vector[2] *= scalar;
 		return *this;
 	}
 
-	Vector& operator+=(const Vector& vector2)
+	Vector operator/=(T const scalar)
 	{
-		mVector[0] += vector2.mVector[0];
-		mVector[1] += vector2.mVector[1];
-		mVector[2] += vector2.mVector[2];
+		m_vector[0] /= scalar;
+		m_vector[1] /= scalar;
+		m_vector[2] /= scalar;
 		return *this;
 	}
 
-	Vector& operator-=(const Vector& vector2)
+
+	Vector operator+=(Vector const& vector2)
 	{
-		mVector[0] -= vector2.mVector[0];
-		mVector[1] -= vector2.mVector[1];
-		mVector[2] -= vector2.mVector[2];
+		m_vector[0] += vector2.m_vector[0];
+		m_vector[1] += vector2.m_vector[1];
+		m_vector[2] += vector2.m_vector[2];
+		return *this;
+	}
+
+	Vector operator-=(Vector const& vector2)
+	{
+		m_vector[0] -= vector2.m_vector[0];
+		m_vector[1] -= vector2.m_vector[1];
+		m_vector[2] -= vector2.m_vector[2];
 		return *this;
 	}
 
 	Vector operator-()
 	{
 		Vector3f aux;
-		aux.mVector[0] = -mVector[0];
-		aux.mVector[1] = -mVector[1];
-		aux.mVector[2] = -mVector[2];
+		aux.m_vector[0] = -m_vector[0];
+		aux.m_vector[1] = -m_vector[1];
+		aux.m_vector[2] = -m_vector[2];
 		return aux;
 	}
 
-	inline bool operator==(const Vector& other) { return std::equal(mVector, mVector + 3, other.mVector); }
+	inline bool operator==(Vector const& other) { return std::equal(m_vector, m_vector + 3, other.m_vector); }
 
 	// Auxiliary function.
-	auto GetAsPointer() const { return mVector; }
-	unsigned int GetNumElem() const { return 3; }
+	T* get_as_pointer() { return m_vector.data(); }
+	T const* get_as_pointer() const { return m_vector.data(); }
 
-	inline float Length() const
+	inline float length() const
 	{
 		float length = 0;
-		for (unsigned int i = 0; i < 3; i++)
-			length += std::fabsf(mVector[i] * mVector[i]);
+		length += m_vector[0] * m_vector[0];
+		length += m_vector[1] * m_vector[1];
+		length += m_vector[2] * m_vector[2];
 		return sqrt(length);
 	}
 
-	// Return normalized vector but dont normalize it.
-	inline Vector<T, 3> GetNormalized() const
+	// Return normalizedd vector but dont normalized it.
+	inline Vector<T, 3> get_normalized() const
 	{
 		Vector<T, 3> aux = *this;
-		aux.Normalize();
+		aux.normalize();
 		return aux;
 	}
 
-	// Normalize vector and return it.
-	inline Vector<T, 3> Normalize()
+	// normalized vector and return it.
+	inline Vector<T, 3> normalize()
 	{
-		float L = Length();
-		for (unsigned int i = 0; i < 3; i++)
-			mVector[i] = mVector[i] / L;
+		float l = length();
+		m_vector[0] = m_vector[0] / l;
+		m_vector[1] = m_vector[1] / l;
+		m_vector[2] = m_vector[2] / l;
 		return *this;
 	}
 
-	inline bool isNormalized() const
-	{
-		return Length() == 1;
-	}
+	inline bool is_normalized() const { return length() == 1; }
 
-	// Dot product
-	static T Dot(Vector<T, 3> const& vector1, Vector<T, 3> const& vector2)
+	// dot product
+	static T dot(Vector<T, 3> const& vector1, Vector<T, 3> const& vector2)
 	{
 		T result = 0;
-		for (unsigned int i = 0; i < 3; i++)
-			result += vector1[i] * vector2[i];
+		result += vector1[0] * vector2[0];
+		result += vector1[1] * vector2[1];
+		result += vector1[2] * vector2[2];
 		return result;
 	}
 
-	// Cross product.
-	static Vector<T, 3> Cross(Vector<T, 3> const& vector1, Vector<T, 3> const& vector2)
+	// cross product.
+	static Vector<T, 3> cross(Vector<T, 3> const& vector1, Vector<T, 3> const& vector2)
 	{
 		Vector<T, 3> result;
 		result[0] = (vector1[1] * vector2[2] - vector1[2] * vector2[1]);
@@ -273,18 +284,18 @@ public:
 	}
 
 private:
-	 T mVector[3];
+	 std::array<T, 3> m_vector;
 };
 
 //cout
-template<class T, unsigned int NumElem>
-std::ostream& operator<<(std::ostream& os, const Vector<T, NumElem>& vector)
+template<class T, unsigned int M>
+std::ostream& operator<<(std::ostream& os, Vector<T, M> const& vector)
 {
-	for (unsigned int i = 0; i < NumElem; i++)
+	for (unsigned int i = 0; i < M; i++)
 	{
 		if (i == 0)
 			os << "{ " << vector[i];
-		else if (i == NumElem - 1)
+		else if (i == M - 1)
 			os << ", " << vector[i] << " }";
 		else
 			os << ", " << vector[i];
@@ -292,26 +303,38 @@ std::ostream& operator<<(std::ostream& os, const Vector<T, NumElem>& vector)
 	return os;
 }
 
-template<class V, class T, unsigned int NumElem >
-Vector<T, NumElem> operator*(Vector<T, NumElem> vector, const V scalar)
+template<class V, class T, unsigned int M >
+Vector<T, M> operator*(Vector<T, M> vector, V const scalar)
 {
 	return vector *= scalar;
 }
 
-template<class V,  class T, unsigned int NumElem>
-Vector<T, NumElem> operator*(const V scalar, Vector<T, NumElem> vector)
+template<class V,  class T, unsigned int M>
+Vector<T, M> operator*(V const scalar, Vector<T, M> vector)
 {
 	return vector *= scalar;
 }
 
-template<class T, unsigned int NumElem>
-Vector<T, NumElem> operator+(Vector<T, NumElem> vector1, const Vector<T, NumElem>& vector2)
+template<class V, class T, unsigned int M >
+Vector<T, M> operator/(Vector<T, M> vector, V const scalar)
+{
+	return vector /= scalar;
+}
+
+template<class V, class T, unsigned int M>
+Vector<T, M> operator/(V const scalar, Vector<T, M> vector)
+{
+	return vector /= scalar;
+}
+
+template<class T, unsigned int M>
+Vector<T, M> operator+(Vector<T, M> vector1, Vector<T, M> const& vector2)
 {
 	return vector1 += vector2;
 }
 
-template<class T, unsigned int NumElem>
-Vector<T, NumElem> operator-(Vector<T, NumElem> vector1, const Vector<T, NumElem>& vector2)
+template<class T, unsigned int M>
+Vector<T, M> operator-(Vector<T, M> vector1, Vector<T, M> const& vector2)
 {
 	return vector1 -= vector2;
 }
@@ -326,6 +349,6 @@ typedef Vector<int, 2> Vector2i;
 typedef Vector<float, 2> Vector2f;
 typedef Vector<double, 2> Vector2d;
 
-static constexpr Vector3f X_AXIS = Vector3f(1.0f, 0.0f, 0.0f);
-static constexpr Vector3f Y_AXIS = Vector3f(0.0f, 1.0f, 0.0f);
-static constexpr Vector3f Z_AXIS = Vector3f(0.0f, 0.0f, 1.0f);
+constexpr Vector3f X_AXIS = { 1.0f, 0.0f, 0.0f };
+constexpr Vector3f Y_AXIS = { 0.0f, 1.0f, 0.0f };
+constexpr Vector3f Z_AXIS = { 0.0f, 0.0f, 1.0f };

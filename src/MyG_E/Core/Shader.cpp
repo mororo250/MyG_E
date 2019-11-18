@@ -1,8 +1,8 @@
+#include "Shader.h"
+
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 #include "Foundation/Gldebug.h"
-#include "Shader.h"
 
 
 Shader::Shader(std::string const& vert_file, std::string const& frag_file, std::string const& geom_file)
@@ -33,6 +33,11 @@ void Shader::set_uniform1i(int location, int value) const
 	GLcall(glUniform1i(location, value));
 }
 
+void Shader::set_uniform1ui(int location, unsigned int value) const
+{
+	GLcall(glUniform1ui(location, value));
+}
+
 void Shader::set_uniform1f(int location, float value) const
 {
 	GLcall(glUniform1f(location, value));
@@ -43,27 +48,27 @@ void Shader::set_uniform2f(int location, Vector2f const& vector) const
 	GLcall(glUniform2f(location, vector[0], vector[1]));
 }
 
-void Shader::set_uniform3f(int location, const Vector3f& vector) const
+void Shader::set_uniform3f(int location, Vector3f const& vector) const
 {
 	GLcall(glUniform3f(location, vector[0], vector[1], vector[2]));
 }
 
-void Shader::set_uniform4f(int location, const Vector<float, 4>& vector) const
+void Shader::set_uniform4f(int location, Vector4f const& vector) const
 {
 	GLcall(glUniform4f(location, vector[0], vector[1], vector[2], vector[3]));
 }
 
-void Shader::set_uniformMatrix3f(int location, const Matrix<float, 3, 3>& matrix) const
+void Shader::set_uniformMatrix3f(int location, Matrix3x3f const& matrix) const
 {
-	GLcall(glUniformMatrix3fv(location, 1, GL_TRUE, reinterpret_cast<const float *>(matrix.GetAsPointer()) ));
+	GLcall(glUniformMatrix3fv(location, 1, GL_TRUE, matrix.get_as_pointer() ));
 }
 
-void Shader::set_uniformMatrix4f(int location, const Matrix<float, 4, 4>& matrix) const
+void Shader::set_uniformMatrix4f(int location, Matrix4x4f const& matrix) const
 {
-	GLcall(glUniformMatrix4fv(location, 1, GL_TRUE, reinterpret_cast<const float *>(matrix.GetAsPointer()) ));
+	GLcall(glUniformMatrix4fv(location, 1, GL_TRUE, matrix.get_as_pointer() ));
 }
 
-int Shader::get_uniform_location(const std::string& name) const
+int Shader::get_uniform_location(std::string const& name) const
 {
 	GLcall(int uniform_location = glGetUniformLocation(m_shader_program, name.c_str()));
 	if (uniform_location == -1)

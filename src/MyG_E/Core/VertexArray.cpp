@@ -1,8 +1,8 @@
+#include "VertexArray.h"
+
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 #include "Foundation/Gldebug.h"
-#include "VertexArray.h"
 #include "VertexBuffer.h"
 
 VertexArray::VertexArray()
@@ -17,7 +17,7 @@ VertexArray::~VertexArray()
 }
 
 
-void VertexArray::AddBuffer(const VertexBuffer& vb)
+void VertexArray::AddBuffer(VertexBuffer const& vb) const
 {
 	vb.bind();
 	for (unsigned int i = 0; i < m_layout_vector.size(); i++)
@@ -42,6 +42,11 @@ void VertexArray::bind() const
 void VertexArray::unbind() const
 {
 	GLcall(glBindVertexArray(0));
+}
+
+void VertexArray::EnabelVertexArray() const
+{
+	GLcall(glEnableVertexAttribArray(m_vertex_array));
 }
 
 void VertexArray::PushLayout(unsigned int num_elem, unsigned int type, bool normalized, const unsigned int offset)

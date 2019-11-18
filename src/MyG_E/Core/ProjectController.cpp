@@ -8,14 +8,16 @@
 
 ProjectController::ProjectController()
 	: m_camera(nullptr)
+	, m_shadow_map_shader(new Shader("ShadowMap.vert", "Empty.frag"))
 	, m_skybox_shader(new Shader("SkyBox.vert", "SkyBox.frag"))
 	, m_normal_shader(new Shader("Normal.vert", "Normal.frag", "Normal.geom"))
 	, m_light_shader(new Shader("Light.vert", "Light.frag"))
 	, m_shader(new Shader("Phong.vert", "Blinn-Phong.frag"))
 	, m_renderer(new Renderer3D())
 	, m_fov(60.0f)
-	, m_persp_matrix(CreatePerspectiveMatrix(60.0f, Game::Get().get_window_aspect_ratio(), 0.01f))
+	, m_persp_matrix(Matrix4x4f::make_perspective_matrix(60.0f, Game::Get().get_window_aspect_ratio(), 0.01f))
 	, m_skybox(nullptr)
+	, m_ambinet_light()
 	, m_flags(flags_draw_skybox)
 	, m_current_shader(BLINN_PHONG)
 {
@@ -34,8 +36,8 @@ ProjectController::~ProjectController()
 
 void ProjectController::update()
 {
-	if (!m_renderer->is_active())
-		m_renderer->set_active(); // Ideally set it as active just when changing current project.
+	if (!m_renderer->has_init())
+		m_renderer->init(); // Ideally set it as active just when changing current project.
 
 	if (m_camera != nullptr)
 		m_camera->update();
@@ -46,124 +48,15 @@ void ProjectController::update()
 	}
 
 	m_renderer->clear();
-
-	// Draw Objects.
-	{
-		m_shader->bind();
-
-		// General uniforms.
-		m_shader->set_uniform1i(m_shader->get_uniform_location("u_NumPointLight"), PointLight::get_count());
-		m_shader->set_uniform1i(m_shader->get_uniform_location("u_NumSpotLight"), SpotLight::get_count());
-		m_shader->set_uniform1i(m_shader->get_uniform_location("u_NumDirectionalLight"), DirectionalLight::get_count());
-		m_shader->set_uniform3f(m_shader->get_uniform_location("u_ViewPos"), m_camera->get_position());
-		m_shader->set_uniformMatrix4f(m_shader->get_uniform_location("u_View"), m_camera->get_view());
-		m_shader->set_uniformMatrix4f(m_shader->get_uniform_location("u_Projection"), m_persp_matrix);
-
-		// Light uniforms
-		for (unsigned int i = 0; i < m_light_buffer.size(); i++)
-			m_light_buffer[i]->set_uniform(m_shader.get());
-
-		for (auto* aux : m_object_buffer)
-		{
-			if (aux->is_visible())
-			{
-				Matrix<float, 4, 4> model_matrix = aux->get_scale_matrix() * aux->get_rotation_matrix() * aux->get_translation(); // Model view projection.
-				m_shader->set_uniformMatrix4f(m_shader->get_uniform_location("u_Model"), model_matrix);
-				m_shader->set_uniform2f(m_shader->get_uniform_location("u_scale_uv"), aux->get_material()->get_diffuse()->get_scale_uv());
-
-				aux->get_material()->get_diffuse()->bind(0);
-				aux->get_material()->get_specular()->bind(1);
-				aux->get_material()->get_normal_map()->bind(2);
-				m_shader->set_uniform1i(m_shader->get_uniform_location("u_texture"), 0);
-				m_shader->set_uniform1i(m_shader->get_uniform_location("u_specular_map"), 1);
-				m_shader->set_uniform1i(m_shader->get_uniform_location("u_nomal_map"), 2);
-				m_shader->set_uniform1i(m_shader->get_uniform_location("u_is_using_normal_map"), aux->get_material()->is_using_normal_map());
-				m_shader->set_uniform1f(m_shader->get_uniform_location("u_shininess"), aux->get_material()->get_shininess());
-				for (auto& meshes : *aux->get_meshes())
-				{
-					meshes->GetVertexArray().bind();
-					meshes->GetIndexBuffer().bind();
-					m_renderer->draw_element(meshes->GetIndexBuffer());
-					meshes->GetVertexArray().unbind();
-					meshes->GetIndexBuffer().unbind();
-				}
-				aux->get_material()->get_diffuse()->unbind();
-				aux->get_material()->get_specular()->unbind();
-			}
-		}
-		m_shader->unbind();
-	}
-
-	// Draw Normals
-	if (m_flags & flags_draw_normals)
-	{
-		m_normal_shader->bind();
-		m_normal_shader->set_uniformMatrix4f(m_normal_shader->get_uniform_location("u_View"), m_camera->get_view());
-		m_normal_shader->set_uniformMatrix4f(m_normal_shader->get_uniform_location("u_Projection"), m_persp_matrix);
-		for (auto* aux : m_object_buffer)
-		{
-			if (aux->is_visible())
-			{
-				Matrix<float, 4, 4> model_matrix = aux->get_scale_matrix() * aux->get_rotation_matrix() * aux->get_translation(); //Model view projection
-				m_shader->set_uniformMatrix4f(m_normal_shader->get_uniform_location("u_Model"), model_matrix);
-
-				for (auto& meshes : *aux->get_meshes())
-				{
-					meshes->GetVertexArray().bind();
-					meshes->GetIndexBuffer().bind();
-					m_renderer->draw_element(meshes->GetIndexBuffer());
-					meshes->GetVertexArray().unbind();
-					meshes->GetIndexBuffer().unbind();
-				}
-			}
-		}
-		m_normal_shader->unbind();
-	}
-
-	// Light.
-	if (m_flags & flags_draw_lights)
-	{
-		m_light_shader->bind();
-		m_light_shader->set_uniformMatrix4f(m_light_shader->get_uniform_location("u_View"), m_camera->get_view());
-		m_light_shader->set_uniformMatrix4f(m_light_shader->get_uniform_location("u_Projection"), m_persp_matrix);
-		for (auto* aux : m_light_buffer)
-		{
-			if (aux->GetModel()->is_visible())
-			{
-				Matrix<float, 4, 4> model_matrix = aux->GetModel()->get_scale_matrix() * aux->GetModel()->get_rotation_matrix() * aux->GetModel()->get_translation(); // Model view projection
-				m_light_shader->set_uniformMatrix4f(m_light_shader->get_uniform_location("u_Model"), model_matrix);
-				m_light_shader->set_uniform3f(m_light_shader->get_uniform_location("u_Color"), aux->get_light_color());
-
-				for (auto& meshes : *aux->GetModel()->get_meshes())
-				{
-					meshes->GetVertexArray().bind();
-					meshes->GetIndexBuffer().bind();
-					m_renderer->draw_element(meshes->GetIndexBuffer());
-					meshes->GetVertexArray().unbind();
-					meshes->GetIndexBuffer().unbind();
-				}
-			}
-		}
-		m_light_shader->unbind();
-	}
 	
-	// SkyBox.
+	draw_shadow_maps();
+	draw_objects();
+	if (m_flags & flags_draw_normals)
+		draw_normals();
+	if (m_flags & flags_draw_lights)
+		draw_lights();
 	if (m_flags & flags_draw_skybox)
-	{
-		if (m_skybox)
-		{
-			m_skybox->begin();
-			m_skybox_shader->bind();
-
-			m_skybox_shader->set_uniformMatrix4f(m_skybox_shader->get_uniform_location("u_Projection"), m_persp_matrix);
-			m_skybox_shader->set_uniformMatrix4f(m_skybox_shader->get_uniform_location("u_View"), m_camera->get_view());
-			m_skybox_shader->set_uniform3f(m_skybox_shader->get_uniform_location("u_camera_position"), m_camera->get_position()); // this is temporary.
-			m_skybox_shader->set_uniform1i(m_skybox_shader->get_uniform_location("u_skybox"), 0);
-			m_skybox->draw();
-			m_skybox_shader->unbind();
-			m_skybox->end();
-		}
-	}
+		draw_skybox();
 }
 
 // It need to improve (remove code repretition)
@@ -178,15 +71,22 @@ void ProjectController::imgui_renderer()
 
 		// Left
 		static std::size_t selected = 0;
-		ImGui::BeginChild("left pane", ImVec2(100, 0), true);
-		
+		ImGui::BeginChild("left pane", ImVec2(120, 0), true);
+
+		{
+			char label[128];
+			sprintf(label, "Ambient Light");
+			if (ImGui::Selectable(label, selected == 0))
+				selected = 0;
+		}
+
 		// Lights
 		for (unsigned int i = 0; i < m_light_buffer.size(); i++)
 		{
 			char label[128];
 			sprintf(label, "Light %d", i);
-			if (ImGui::Selectable(label, selected == i))
-				selected = i;
+			if (ImGui::Selectable(label, selected == (i + 1)))
+				selected = i + 1;
 		}
 
 		// Objects
@@ -194,8 +94,8 @@ void ProjectController::imgui_renderer()
 		{
 			char label[128];
 			sprintf(label, m_object_buffer[i - m_light_buffer.size()]->get_name().c_str());
-			if (ImGui::Selectable(label, selected == i))
-				selected = i;
+			if (ImGui::Selectable(label, selected == i + 1))
+				selected = i + 1;
 		}
 	
 		ImGui::EndChild();
@@ -203,18 +103,25 @@ void ProjectController::imgui_renderer()
 		
 		// Right 
 		ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing())); // Leave room for 1 line below us
+
+		if (selected == 0)
+		{
+			ImGui::Text("Ambient Light");
+			ImGui::Separator();
+			m_ambinet_light.imgui_renderer();
+		}
 		
-		if (selected < m_light_buffer.size() && selected >= 0) 
+		if (selected < (m_light_buffer.size() + 1) && selected >= 1) 
 		{
 			ImGui::Text("Light: %d", selected);
 			ImGui::Separator();
-			m_light_buffer[selected]->ImGuiRenderer();
+			m_light_buffer[selected - 1]->imgui_renderer();
 		}
-		else if(selected >= m_light_buffer.size() && m_object_buffer.size() + m_light_buffer.size() >= selected)
+		else if(selected >= (m_light_buffer.size() + 1) && (m_object_buffer.size() + m_light_buffer.size() + 1) >= selected)
 		{
 			ImGui::Text("Object: %d", selected - m_light_buffer.size());
 			ImGui::Separator();
-			m_object_buffer[selected - m_light_buffer.size()]->ImGuiRenderer();
+			m_object_buffer[selected - m_light_buffer.size() - 1]->imgui_renderer();
 		}
 		ImGui::EndChild();
 
@@ -235,6 +142,8 @@ void ProjectController::imgui_renderer()
 					create_light(1);
 				if (ImGui::MenuItem("Directional Light"))
 					create_light(2);
+				if (ImGui::MenuItem("Shadow Caster Directional Light"))
+					create_light(3);
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("Object"))
@@ -316,7 +225,7 @@ void ProjectController::set_camera(Camera* camera)
 
 void ProjectController::set_perspective_matrix()
 {
-	m_persp_matrix = CreatePerspectiveMatrix(m_fov, Game::Get().get_window_aspect_ratio(), 0.01f);
+	m_persp_matrix = Matrix4x4f::make_perspective_matrix(m_fov, Game::Get().get_window_aspect_ratio(), 0.01f);
 }
 
 void ProjectController::set_fov(float const fov)
@@ -342,6 +251,9 @@ void ProjectController::create_light(unsigned int type)
 		break;
 	case 2:
 		push_light(new DirectionalLight({ 0.0f, 0.0f, 0.0f }));
+		break;
+	case 3:
+		push_light(new DirectionalLight({ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, {0.0f, -1.0f, 0.0f}, new ShadowMap(m_camera.get())));
 		break;
 	}
 }
@@ -377,5 +289,173 @@ void ProjectController::set_current_camera(unsigned int index)
 		m_camera.reset(new FPSCamera(m_camera.get()));
 		break;
 	}
+	}
+}
+
+void ProjectController::draw_shadow_maps()
+{
+	m_shadow_map_shader->bind();
+	for (auto& light : m_light_buffer)
+	{
+		if (!light->get_shadow_map())
+			continue;
+		light->get_shadow_map()->begin();
+		m_renderer->clear_buffer();
+		m_shadow_map_shader->set_uniformMatrix4f(
+			m_shadow_map_shader->get_uniform_location("u_light_space"), light->get_light_space());
+		for (auto& model : m_object_buffer)
+		{
+			if (model->is_visible())
+			{
+				Matrix4x4f model_matrix =
+					model->get_scale_matrix() *
+					model->get_rotation_matrix() *
+					model->get_translation(); // Model view projection.
+				m_shadow_map_shader->set_uniformMatrix4f(m_shadow_map_shader->get_uniform_location("u_model"), model_matrix);
+		
+				for (auto& mesh : model->get_meshes())
+				{
+					mesh->get_vertex_array().bind();
+					mesh->get_index_buffer().bind();
+					m_renderer->draw_element(mesh->get_index_buffer());
+					mesh->get_vertex_array().unbind();
+					mesh->get_index_buffer().unbind();
+				}
+			}
+		}
+		light->get_shadow_map()->end();
+	}
+	m_shadow_map_shader->unbind();
+	m_renderer->clear();
+}
+
+void ProjectController::draw_objects()
+{
+	m_shader->bind();
+
+	// General uniforms.
+	m_shader->set_uniform1ui(m_shader->get_uniform_location("u_NUM_POINT_LIGHT"), PointLight::get_count());
+	m_shader->set_uniform1ui(m_shader->get_uniform_location("u_NUM_SPOT_LIGHT"), SpotLight::get_count());
+	m_shader->set_uniform1ui(m_shader->get_uniform_location("u_NUM_DIRECTIONAL_LIGHT"), DirectionalLight::get_count());
+	m_shader->set_uniform1ui(m_shader->get_uniform_location(
+		"u_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH"), DirectionalLight::get_count_shadow_caster());
+	m_shader->set_uniform3f(m_shader->get_uniform_location("u_ambient_light.color"), m_ambinet_light.get_light_color());
+	m_shader->set_uniform1f(m_shader->get_uniform_location("u_ambient_light.strength"), m_ambinet_light.get_strength());
+
+	m_shader->set_uniform3f(m_shader->get_uniform_location("u_viewPos"), m_camera->get_position());
+	m_shader->set_uniformMatrix4f(m_shader->get_uniform_location("u_view"), m_camera->get_view());
+	m_shader->set_uniformMatrix4f(m_shader->get_uniform_location("u_projection"), m_persp_matrix);
+
+	// Light uniforms
+	for (unsigned int i = 0; i < m_light_buffer.size(); i++)
+		m_light_buffer[i]->set_uniform(m_shader.get());
+
+	for (auto& model : m_object_buffer)
+	{
+		if (model->is_visible())
+		{
+			Matrix4x4f model_matrix =
+				model->get_scale_matrix() *
+				model->get_rotation_matrix() *
+				model->get_translation(); // Model view projection.
+			m_shader->set_uniformMatrix4f(m_shader->get_uniform_location("u_model"), model_matrix);
+			m_shader->set_uniform2f(m_shader->get_uniform_location("u_scale_uv"),
+				model->get_material()->get_diffuse()->get_scale_uv());
+
+			model->get_material()->get_diffuse()->bind(0);
+			model->get_material()->get_specular()->bind(1);
+			model->get_material()->get_normal_map()->bind(2);
+			m_shader->set_uniform1i(m_shader->get_uniform_location("u_texture"), 0);
+			m_shader->set_uniform1i(m_shader->get_uniform_location("u_specular_map"), 1);
+			m_shader->set_uniform1i(m_shader->get_uniform_location("u_nomal_map"), 2);
+			m_shader->set_uniform1i(m_shader->get_uniform_location("u_is_using_normal_map"),
+				model->get_material()->is_using_normal_map());
+			m_shader->set_uniform1f(m_shader->get_uniform_location("u_shininess"),
+				model->get_material()->get_shininess());
+			for (auto& mesh : model->get_meshes())
+			{
+				mesh->get_vertex_array().bind();
+				mesh->get_index_buffer().bind();
+				m_renderer->draw_element(mesh->get_index_buffer());
+				mesh->get_vertex_array().unbind();
+				mesh->get_index_buffer().unbind();
+			}
+			model->get_material()->get_diffuse()->unbind();
+		}
+	}
+	m_shader->unbind();
+}
+
+void ProjectController::draw_normals()
+{
+	m_normal_shader->bind();
+	m_normal_shader->set_uniformMatrix4f(m_normal_shader->get_uniform_location("u_view"), m_camera->get_view());
+	m_normal_shader->set_uniformMatrix4f(m_normal_shader->get_uniform_location("u_projection"), m_persp_matrix);
+	for (auto& model : m_object_buffer)
+	{
+		if (model->is_visible())
+		{
+			Matrix4x4f model_matrix =
+				model->get_scale_matrix() *
+				model->get_rotation_matrix() *
+				model->get_translation(); //Model view projection
+			m_shader->set_uniformMatrix4f(m_normal_shader->get_uniform_location("u_model"), model_matrix);
+
+			for (auto& mesh : model->get_meshes())
+			{
+				mesh->get_vertex_array().bind();
+				mesh->get_index_buffer().bind();
+				m_renderer->draw_element(mesh->get_index_buffer());
+				mesh->get_vertex_array().unbind();
+				mesh->get_index_buffer().unbind();
+			}
+		}
+	}
+	m_normal_shader->unbind();
+}
+
+void ProjectController::draw_lights()
+{
+	m_light_shader->bind();
+	m_light_shader->set_uniformMatrix4f(m_light_shader->get_uniform_location("u_view"), m_camera->get_view());
+	m_light_shader->set_uniformMatrix4f(m_light_shader->get_uniform_location("u_projection"), m_persp_matrix);
+	for (auto& light : m_light_buffer)
+	{
+		if (light->get_model()->is_visible())
+		{
+			Matrix4x4f model_matrix =
+				light->get_model()->get_scale_matrix() *
+				light->get_model()->get_rotation_matrix() *
+				light->get_model()->get_translation(); // Model view projection
+			m_light_shader->set_uniformMatrix4f(m_light_shader->get_uniform_location("u_model"), model_matrix);
+			m_light_shader->set_uniform3f(m_light_shader->get_uniform_location("u_Color"), light->get_light_color());
+
+			for (auto& mesh : light->get_model()->get_meshes())
+			{
+				mesh->get_vertex_array().bind();
+				mesh->get_index_buffer().bind();
+				m_renderer->draw_element(mesh->get_index_buffer());
+				mesh->get_vertex_array().unbind();
+				mesh->get_index_buffer().unbind();
+			}
+		}
+	}
+	m_light_shader->unbind();
+}
+
+void ProjectController::draw_skybox()
+{
+	if (m_skybox)
+	{
+		m_skybox->begin();
+		m_skybox_shader->bind();
+
+		m_skybox_shader->set_uniformMatrix4f(m_skybox_shader->get_uniform_location("u_projection"), m_persp_matrix);
+		m_skybox_shader->set_uniformMatrix4f(m_skybox_shader->get_uniform_location("u_view"), m_camera->get_view());
+		m_skybox_shader->set_uniform3f(m_skybox_shader->get_uniform_location("u_camera_position"), m_camera->get_position()); // this is temporary.
+		m_skybox_shader->set_uniform1i(m_skybox_shader->get_uniform_location("u_skybox"), 0);
+		m_skybox->draw();
+		m_skybox_shader->unbind();
+		m_skybox->end();
 	}
 }

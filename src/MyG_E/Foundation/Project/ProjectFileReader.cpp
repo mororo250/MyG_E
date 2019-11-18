@@ -81,7 +81,7 @@ bool ProjectFileReader::load_camera(rapidjson::Document const& document, Project
 	{
 		if (!document["camera"].HasMember("focal_point"))
 		{
-			std::cout << "There isn't the direction of the camera in the file" << std::endl;
+			std::cout << "There isn't the focal point of the camera in the file" << std::endl;
 			return false;
 		}
 		// Load camera focal point
@@ -155,8 +155,12 @@ bool ProjectFileReader::load_lights(rapidjson::Document const& document, Project
 				direction = { light_buffer[i]["direction"]["x"].GetFloat(),
 					light_buffer[i]["direction"]["y"].GetFloat(),
 					light_buffer[i]["direction"]["z"].GetFloat() };
-
-			DirectionalLight* light = new DirectionalLight(position, color, direction);
+			
+			DirectionalLight* light;
+			if (light_buffer[i].HasMember("is_shadow_caster") && light_buffer[i]["is_shadow_caster"].GetBool())
+				light = new DirectionalLight(position, color, direction, new ShadowMap(controller->get_camera()));
+			else
+				light = new DirectionalLight(position, color, direction);
 			load_light_strength(light, light_buffer[i]);
 			controller->push_light(light);
 		}
@@ -312,9 +316,9 @@ bool ProjectFileReader::load_objects(rapidjson::Document const& document, Projec
 					Texture2D* diffuse = nullptr;
 					if (!has_texture)
 					{
-						diffuse = new Texture2D(Vector3f({ material_json["diffuse"]["x"].GetFloat(),
+						diffuse = new Texture2D(Vector3f( material_json["diffuse"]["x"].GetFloat(),
 							material_json["diffuse"]["y"].GetFloat(),
-							material_json["diffuse"]["z"].GetFloat() }));
+							material_json["diffuse"]["z"].GetFloat() ));
 					}
 					else
 						diffuse = new Texture2D(std::filesystem::absolute(material_json["texture"].GetString()).string());
@@ -326,7 +330,7 @@ bool ProjectFileReader::load_objects(rapidjson::Document const& document, Projec
 					if (material_json.HasMember("normal_map"))
 						normal_map = new Texture2D(std::filesystem::absolute(material_json["normal_map"].GetString()).string());
 					else
-						normal_map = new Texture2D(Vector3f({0.0f, 0.0f, 1.0f}));
+						normal_map = new Texture2D(Vector3f(0.0f, 0.0f, 1.0f));
 					if (material_json.HasMember("normal_map_scale_uv"))
 						normal_map->set_scale_uv(Vector2f{ material_json["normal_map_scale_uv"]["x"].GetFloat(),
 							material_json["normal_map_scale_uv"]["y"].GetFloat() });
@@ -348,7 +352,6 @@ bool ProjectFileReader::load_objects(rapidjson::Document const& document, Projec
 
 void ProjectFileReader::load_light_strength(Light* light, rapidjson::Value const& json)
 {
-	light->set_ambient_strength(json["ambient_strength"].GetFloat());
 	light->set_diffuse_strength(json["diffuse_strength"].GetFloat());
 	light->set_specular_strength(json["specular_strength"].GetFloat());
 }

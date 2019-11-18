@@ -1,16 +1,18 @@
 {
     "camera": {
         "model": "edit_camera",
-        "position": {
-            "x": 0.0,
-            "y": 0.0,
-            "z": 15.0
-        },
         "focal_point": {
             "x": 0.0,
             "y": 0.0,
             "z": 0.0
-        }
+        },
+        "position": {
+            "x": 1.6056697368621827,
+            "y": 3.9831185340881349,
+            "z": 10.624064445495606
+        },
+        "yaw": -0.3549998104572296,
+        "pitch": 0.1499999612569809
     },
     "object_buffer": [
         {
@@ -137,22 +139,6 @@
     "light_buffer": [
         {
             "position": {
-                "x": -5.300000190734863,
-                "y": 1.399999976158142,
-                "z": -1.2999999523162842
-            },
-            "color": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            },
-            "ambient_strength": 0.10000000149011612,
-            "diffuse_strength": 1.0,
-            "specular_strength": 1.0499999523162842,
-            "model": "point_light"
-        },
-        {
-            "position": {
                 "x": 0.0,
                 "y": 24.100000381469728,
                 "z": -0.20000000298023225
@@ -162,54 +148,15 @@
                 "y": 1.0,
                 "z": 1.0
             },
-            "ambient_strength": 0.0,
-            "diffuse_strength": 0.0,
-            "specular_strength": 0.0,
+            "diffuse_strength": 1.0,
+            "specular_strength": 1.0,
             "model": "directional_light",
             "direction": {
                 "x": 0.0,
                 "y": -1.0,
                 "z": 0.0
-            }
-        },
-        {
-            "position": {
-                "x": 0.0,
-                "y": 5.800000190734863,
-                "z": 0.4000000059604645
             },
-            "color": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            },
-            "ambient_strength": 0.0,
-            "diffuse_strength": 1.0,
-            "specular_strength": 1.0,
-            "model": "spot_light",
-            "direction": {
-                "x": 0.0,
-                "y": -1.0,
-                "z": 0.0
-            },
-            "in_angle": 0.0,
-            "out_angle": 0.5235990285873413
-        },
-        {
-            "position": {
-                "x": 2.5999999046325685,
-                "y": 2.0999999046325685,
-                "z": 1.5
-            },
-            "color": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            },
-            "ambient_strength": 0.0,
-            "diffuse_strength": 1.0,
-            "specular_strength": 1.0,
-            "model": "point_light"
+            "is_shadow_caster": true
         }
     ],
     "skybox": "..\\..\\..\\Resources\\skyboxs\\lake"

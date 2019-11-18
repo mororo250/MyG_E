@@ -1,5 +1,7 @@
 #include "Input.h"
 
+#include "GLFW/glfw3.h"
+
 Input* Input::s_Instance = nullptr;
 
 Input::Input()

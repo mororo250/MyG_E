@@ -1,26 +1,17 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include "Foundation/Gldebug.h"
 #include "VertexBuffer.h"
 
-VertexBuffer::
-VertexBuffer(const float *verts, const unsigned int num_vertex, const unsigned int stride, BufferUsage usage)
+#include "glad/glad.h"
+
+#include "Foundation/Gldebug.h"
+
+VertexBuffer::VertexBuffer(const float *verts, const unsigned int num_vertex, const unsigned int stride, BufferUsage usage)
 :m_stride(stride)
 {
 	GLcall(glGenBuffers(1, &m_vertex_buffer));
 	GLcall(glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer));
 	// Pass the Vertex data into the buffer
-	switch (usage)
-	{
-	case BufferUsage::STATIC:
-		GLcall(glBufferData(GL_ARRAY_BUFFER, num_vertex * m_stride * sizeof(float), verts, GL_STATIC_DRAW));
-		break;
 
-	case BufferUsage::DYNAMIC:
-		GLcall(glBufferData(GL_ARRAY_BUFFER, num_vertex * m_stride * sizeof(float), verts, GL_DYNAMIC_DRAW));
-		break;
-	}
+	GLcall(glBufferData(GL_ARRAY_BUFFER, num_vertex * m_stride * sizeof(float), verts, usage));
 }
 
 VertexBuffer::~VertexBuffer()

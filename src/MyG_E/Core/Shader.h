@@ -13,12 +13,13 @@ public:
 	void bind() const;
 	void unbind() const;
 	void set_uniform1i(int location, int value) const;
+	void set_uniform1ui(int location, unsigned int value) const;
 	void set_uniform1f(int location, float value) const;
 	void set_uniform2f(int location, Vector2f const& vector) const;
 	void set_uniform3f(int location, Vector3f const& vector3) const;
-	void set_uniform4f(int location, Vector<float, 4> const& vector4) const;
-	void set_uniformMatrix3f(int location, Matrix< float, 3, 3> const& matrix) const;
-	void set_uniformMatrix4f(int location, Matrix< float, 4, 4> const& matrix) const;
+	void set_uniform4f(int location, Vector4f const& vector4) const;
+	void set_uniformMatrix3f(int location, Matrix3x3f const& matrix) const;
+	void set_uniformMatrix4f(int location, Matrix4x4f const& matrix) const;
 
 	int get_uniform_location(std::string const& name) const;
 

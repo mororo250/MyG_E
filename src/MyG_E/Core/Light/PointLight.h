@@ -5,7 +5,7 @@
 class PointLight : public Light
 {
 public:
-	PointLight(const Vector3f& position, const Vector3f& color = Vector3f({ 1.0f, 1.0f, 1.0f }));
+	PointLight(const Vector3f& position, const Vector3f& color = { 1.0f, 1.0f, 1.0f });
 	~PointLight() { s_count--; }
 	
 	inline Vector3f GetAttenuationConstants() const { return m_attenuation_constants; }
@@ -14,7 +14,7 @@ public:
 	inline float GetQuadratic() const { return m_attenuation_constants[2]; }
 	inline void SetAttenuationConstants(const Vector3f& constants) { m_attenuation_constants = constants; }
 
-	void ImGuiRenderer() override;
+	void imgui_renderer() override;
 	void set_uniform(Shader const* shader) override;
 
 	static unsigned short get_count() { return s_count; }
@@ -24,5 +24,4 @@ private:
 	// Attenuation (constant, linear, quadratic).
 	Vector3f m_attenuation_constants;
 	static unsigned short s_count;
-	static unsigned short s_id; // indentify position in the point light array
 };

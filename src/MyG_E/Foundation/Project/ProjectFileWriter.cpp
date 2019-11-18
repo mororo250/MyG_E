@@ -42,13 +42,13 @@ void ProjectFileWriter::write_camera(rapidjson::PrettyWriter<rapidjson::StringBu
 	if (dynamic_cast<EditCamera const*>(camera))
 	{
 		writer.String("edit_camera");
-		writer.Key("direction");
+		writer.Key("focal_point");
 		write_vector3f(writer, &dynamic_cast<EditCamera const*>(camera)->get_focal_point()[0]);
 	}
 	if (dynamic_cast<FPSCamera const*>(camera))
 	{
 		writer.String("fps_camera");
-		writer.Key("focal_point");
+		writer.Key("direction");
 		write_vector3f(writer, &dynamic_cast<FPSCamera const*>(camera)->get_direction()[0]);
 	}
 
@@ -163,8 +163,6 @@ void ProjectFileWriter::write_lights(rapidjson::PrettyWriter<rapidjson::StringBu
 		writer.Key("color");
 		write_vector3f(writer, &light_buffer[i]->get_light_color()[0]);
 
-		writer.Key("ambient_strength");
-		writer.Double(light_buffer[i]->get_ambient_strength());
 		writer.Key("diffuse_strength");
 		writer.Double(light_buffer[i]->get_diffuse_strength());
 		writer.Key("specular_strength");
@@ -177,7 +175,10 @@ void ProjectFileWriter::write_lights(rapidjson::PrettyWriter<rapidjson::StringBu
 			DirectionalLight* light = static_cast<DirectionalLight*>(light_buffer[i]);
 
 			writer.Key("direction");
-			write_vector3f(writer, &light->GetDirection()[0]);
+			write_vector3f(writer, &light->get_direction()[0]);
+
+			writer.Key("is_shadow_caster");
+			writer.Bool(light->is_shadow_caster());
 		}
 		else if (dynamic_cast<SpotLight*>(light_buffer[i]))
 		{

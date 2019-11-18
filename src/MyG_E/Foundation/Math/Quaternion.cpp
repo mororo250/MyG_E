@@ -1,102 +1,103 @@
 #include "Quaternion.h"
 
-Quaternion::Quaternion(const float scale, const Vector3f& vector)
+Quaternion::Quaternion(float const scale, Vector3f const& vector)
 	: m_scalar(scale)
 	, m_vector(vector)
 {
 }
 
-float Quaternion::Length()
+float Quaternion::length() const
 {
 	return std::sqrt(m_scalar * m_scalar + m_vector[0] * m_vector[0] + m_vector[1] * m_vector[1] + m_vector[2] * m_vector[2]);
 }
 
-void Quaternion::Normalize()
+Quaternion Quaternion::get_normalized() const
 {
-	m_scalar = m_scalar / Length();
-	m_vector[0] = m_vector[0] / Length();
-	m_vector[1] = m_vector[1] / Length();
-	m_vector[2] = m_vector[2] / Length();
+	return Quaternion(m_scalar/ length(), m_vector/length());
 }
 
-Quaternion& Quaternion::operator+=(const Quaternion& other)
+void Quaternion::normalize()
+{
+	m_scalar = m_scalar / length();
+	m_vector = m_vector / length();
+}
+
+Quaternion Quaternion::operator+=(Quaternion const& other)
 {
 	m_scalar += other.m_scalar;
 	m_vector += other.m_vector;
 	return *this;
 }
 
-Quaternion& Quaternion::operator-=(const Quaternion& other)
+Quaternion Quaternion::operator-=(Quaternion const& other)
 {
 	m_scalar -= other.m_scalar;
 	m_vector -= other.m_vector;
 	return *this;
 }
 
-Quaternion& Quaternion::operator*=(const Quaternion& rhs)
+Quaternion Quaternion::operator*=(Quaternion const& rhs)
 {
 	float scalar = m_scalar;
-	m_scalar = m_scalar * rhs.m_scalar - Vector3f::Dot(m_vector, rhs.m_vector);
-	m_vector = scalar * rhs.m_vector + m_vector * rhs.m_scalar + Vector3f::Cross(m_vector, rhs.m_vector);
+	m_scalar = m_scalar * rhs.m_scalar - Vector3f::dot(m_vector, rhs.m_vector);
+	m_vector = scalar * rhs.m_vector + m_vector * rhs.m_scalar + Vector3f::cross(m_vector, rhs.m_vector);
 	return *this;
 }
 
-Quaternion& Quaternion::operator*=(const float scalar)
+Quaternion Quaternion::operator*=(float const scalar)
 {
 	m_scalar *= scalar;
 	m_vector *= scalar;
 	return *this;
 }
 
-Matrix<float, 4, 4> Quaternion::GetRotationMatrix()
+Matrix4x4f Quaternion::get_rotation_matrix()
 {
-	return CreateRotationMatrix(*this);
+	return make_rotation_matrix(*this);
 }
 
-Quaternion Quaternion::MakeRotate(const float angle, Vector3f axis)
+Quaternion Quaternion::make_rotate(float const angle, Vector3f axis)
 {
-	if (!axis.isNormalized())
-		axis.Normalize();
+	if (!axis.is_normalized())
+		axis.normalize();
 	float half_angle = 0.5f * angle;
 	return Quaternion(std::cos(half_angle), axis * std::sin(half_angle));
 }
 
-Matrix<float, 4, 4> Quaternion::CreateRotationMatrix(const Quaternion& quat)
+constexpr Matrix4x4f Quaternion::make_rotation_matrix(Quaternion const& quat)
 {
-	return Matrix<float, 4, 4>(
-		{	  {1.0f - 2.0f*(quat.m_vector[1]*quat.m_vector[1] + quat.m_vector[2]*quat.m_vector[2]), 2.0f*(quat.m_vector[0]*quat.m_vector[1] - quat.m_scalar*quat.m_vector[2]), 2.0f*(quat.m_vector[0]*quat.m_vector[2] + quat.m_scalar*quat.m_vector[1]), 0.0f}
-			, {2.0f*(quat.m_vector[0]*quat.m_vector[1] + quat.m_scalar*quat.m_vector[2]), 1.0f - 2.0f*(quat.m_vector[0]*quat.m_vector[0] + quat.m_vector[2]*quat.m_vector[2]), 2.0f*(quat.m_vector[1]*quat.m_vector[2] - quat.m_scalar*quat.m_vector[0]), 0.0f}
-			, {2.0f*(quat.m_vector[0]*quat.m_vector[2] - quat.m_scalar*quat.m_vector[1]), 2.0f*(quat.m_vector[1]*quat.m_vector[2] + quat.m_scalar*quat.m_vector[0]), 1.0f - 2.0f*(quat.m_vector[0]*quat.m_vector[0] + quat.m_vector[1]*quat.m_vector[1]), 0.0f}
-			, {0.0f, 0.0f, 0.0f, 1.0f}
-		});
+	return Matrix4x4f(	
+		1.0f - 2.0f*(quat.m_vector[1]*quat.m_vector[1] + quat.m_vector[2]*quat.m_vector[2]), 2.0f*(quat.m_vector[0]*quat.m_vector[1] - quat.m_scalar*quat.m_vector[2]), 2.0f*(quat.m_vector[0]*quat.m_vector[2] + quat.m_scalar*quat.m_vector[1]), 
+		0.0f, 2.0f*(quat.m_vector[0]*quat.m_vector[1] + quat.m_scalar*quat.m_vector[2]), 1.0f - 2.0f*(quat.m_vector[0]*quat.m_vector[0] + quat.m_vector[2]*quat.m_vector[2]), 2.0f*(quat.m_vector[1]*quat.m_vector[2] - quat.m_scalar*quat.m_vector[0]), 0.0f, 
+		2.0f*(quat.m_vector[0]*quat.m_vector[2] - quat.m_scalar*quat.m_vector[1]), 2.0f*(quat.m_vector[1]*quat.m_vector[2] + quat.m_scalar*quat.m_vector[0]), 1.0f - 2.0f*(quat.m_vector[0]*quat.m_vector[0] + quat.m_vector[1]*quat.m_vector[1]), 
+		0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-Matrix<float, 4, 4> Quaternion::CreateRotationMatrix(const float angle, const Vector3f& axis)
+Matrix4x4f Quaternion::make_rotation_matrix(float const angle, Vector3f const& axis)
 {
-	return CreateRotationMatrix(MakeRotate(angle, axis));
+	return make_rotation_matrix(make_rotate(angle, axis));
 }
 
-Vector3f Quaternion::rotate(const Quaternion& quat, Vector3f vector)
+Vector3f Quaternion::rotate(Quaternion const& quat, Vector3f vector)
 {
 	// Reference for the optimized implementation:
 	//
 	//   https://fgiesen.wordpress.com/2019/02/09/rotating-a-single-vector-using-a-quaternion/
 	//
-	const Vector3f temp = 2.0f * Vector3f::Cross(quat.m_vector, vector);
-	return vector + quat.m_scalar * temp + Vector3f::Cross(quat.m_vector, temp);
+	const Vector3f temp = 2.0f * Vector3f::cross(quat.m_vector, vector);
+	return vector + quat.m_scalar * temp + Vector3f::cross(quat.m_vector, temp);
 }
 
-Vector3f Quaternion::ToEulerAngles(const Quaternion & quat)
+Vector3f Quaternion::ToEulerAngles(Quaternion const& quat)
 {
 	return Vector3f (
-		{
 			std::atan2(2.0f*(quat.m_scalar*quat.m_vector[0] + quat.m_vector[1]*quat.m_vector[2]), 1.0f - 2.0f*(quat.m_vector[0]*quat.m_vector[0] + quat.m_vector[1]*quat.m_vector[1])),
 			std::asin(2.0f*(quat.m_scalar*quat.m_vector[1] - quat.m_vector[2]*quat.m_vector[0])),
 			std::atan2(2.0f*(quat.m_scalar*quat.m_vector[2] + quat.m_vector[0]*quat.m_vector[1]), 1.0f - 2.0f*(quat.m_vector[1]*quat.m_vector[1] + quat.m_vector[2]*quat.m_vector[2]))
-		});
+		);
 }
 
-std::ostream& operator<<(std::ostream& os, const Quaternion& quat)
+std::ostream& operator<<(std::ostream& os, Quaternion const& quat)
 {
 	os << "{ " << quat.m_scalar;
 	os << ", " << quat.m_vector[0];

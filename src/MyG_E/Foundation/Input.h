@@ -35,9 +35,9 @@ enum MouseButtonCode
 
 enum CursorMode
 {
-	CURSOR_NORMAL = GLFW_CURSOR_NORMAL, // Makes the cursor visible and behaving normally.
-	CURSOR_HIDDEN = GLFW_CURSOR_HIDDEN, // Makes the cursor invisible when it is over the client area of the window but does not restrict the cursor from leaving.
-	CURSOR_CAMERA3D = GLFW_CURSOR_DISABLED // Hides and grabs the cursor, providing virtual and unlimited cursor movement
+	CURSOR_NORMAL = 0x00034001, //GLFW_CURSOR_NORMAL - Makes the cursor visible and behaving normally.
+	CURSOR_HIDDEN = 0x00034002, //GLFW_CURSOR_HIDDEN - Makes the cursor invisible when it is over the client area of the window but does not restrict the cursor from leaving.
+	CURSOR_CAMERA3D = 0x00034003 //GLFW_CURSOR_DISABLED - Hides and grabs the cursor, providing virtual and unlimited cursor movement
 };
 
 class Input : public Uncopyable
