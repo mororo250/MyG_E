@@ -2,6 +2,7 @@
 
 #include "imgui.h"
 #include "imgui_internal.h"
+#include "glad/glad.h"
 
 #include "Foundation/ImGuiLayer.h"
 #include "Foundation/UI/FileBrowser.h"

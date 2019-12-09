@@ -8,6 +8,9 @@
 unsigned short DirectionalLight::s_count = 0;
 unsigned short DirectionalLight::s_count_shadow_caster = 0;
 
+static float test = 50.0f;
+static float help = 25.0f;
+
 DirectionalLight::DirectionalLight(Vector3f const& position, Vector3f const& color, Vector3f const& direction, ShadowMap* shadow_map)
 	: m_direction(direction)
 	, m_shadow_map(shadow_map)
@@ -51,9 +54,9 @@ Matrix4x4f DirectionalLight::get_light_space()
 	static constexpr float SUN_DISTANCE = 149600000000.0f; // meters
 	static constexpr float SHADOW_RADIUS = ShadowMap::get_shadow_radius(); // distance from center to borders
 
-	static const Matrix4x4f ortho_projec = Matrix4x4f::make_orthographic_matrix(
-		-SHADOW_RADIUS, SHADOW_RADIUS, -SHADOW_RADIUS, SHADOW_RADIUS, -10.0f, 50.0f);
-	return  Matrix4x4f::make_look_at(m_shadow_map->get_central_pos() - m_direction * 30.0f,
+	Matrix4x4f ortho_projec = Matrix4x4f::make_orthographic_matrix(
+		-SHADOW_RADIUS, SHADOW_RADIUS, -SHADOW_RADIUS, SHADOW_RADIUS, 0.0f, test);
+	return  Matrix4x4f::make_look_at(m_shadow_map->get_central_pos() - m_direction * help,
 		m_shadow_map->get_central_pos(), Z_AXIS) * ortho_projec;
 }
 
@@ -61,6 +64,8 @@ void DirectionalLight::imgui_renderer()
 {
 	Light::imgui_renderer();
 	ImGui::DragFloat3("Direction", &m_direction[0], 0.05f, -1.0f, 1.0f);
+	ImGui::DragFloat("test", &test, 1.0f, 0.0f, std::numeric_limits<float>::infinity());
+	ImGui::DragFloat("help", &help, 1.0f, 0.0f, std::numeric_limits<float>::infinity());
 	if (is_shadow_caster())
 		m_shadow_map->imgui_renderer();
 }

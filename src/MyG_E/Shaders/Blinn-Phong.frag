@@ -66,7 +66,7 @@ in vec4 v_pos_light_space[MAX_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH];
 uniform sampler2D u_texture;
 uniform sampler2D u_specular_map;
 uniform sampler2D u_nomal_map;
-uniform sampler2D u_shadow_map[MAX_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH];
+uniform sampler2DShadow u_shadow_map[MAX_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH];
 uniform bool u_is_using_normal_map;
 uniform float u_shininess;
 Material material;
@@ -142,11 +142,19 @@ vec3 directional_light(const uint i)
 
 float shadow_calculation(const uint i)
 {
+	// shadow map coords
 	vec3 proj_coords = v_pos_light_space[i].xyz / v_pos_light_space[i].w;
 	proj_coords = proj_coords * 0.5f + 0.5f; // Set coordinates to the range {0, 1}
-	float closest_depth = texture(u_shadow_map[i], proj_coords.xy).r;
-	float bias = 0.005;
-	return (proj_coords.z <= closest_depth + bias) ? 1.0f : 0.0f; 
+	
+	// Return 1.0 if is out of the texture area. 
+	if(proj_coords.z > 1.0f || proj_coords.z < 0.0f || proj_coords.x > 1.0f || proj_coords.x < 0.0f || proj_coords.y > 1.0f || proj_coords.y < 0.0f)
+		return 1.0f;
+	
+	// Bias.
+	float bias = 0.01f * tan(acos(clamp(dot( v_normal, u_shadow_caster_directional_light[i].directional ), 0.0f, 1.0f)));
+	proj_coords.z -= clamp(bias, 0, 0.01);
+
+	return texture(u_shadow_map[i], proj_coords);
 }
 
 vec3 shadow_caster_directional_light(const uint i)

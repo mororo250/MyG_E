@@ -140,11 +140,24 @@ vec3 directional_light(const uint i)
 
 float shadow_calculation(const uint i)
 {
+	// shadow map coords
 	vec3 proj_coords = v_pos_light_space[i].xyz / v_pos_light_space[i].w;
 	proj_coords = proj_coords * 0.5f + 0.5f; // Set coordinates to the range {0, 1}
-	float closest_depth = texture(u_shadow_map[i], proj_coords.xy).r;
-	float bias = 0.005;
-	return  proj_coords.z <= closest_depth + bias  ? 1.0f : 0.0f; 
+	if(proj_coords.z > 1.0f || proj_coords.z < 0.0f || proj_coords.x > 1.0f || proj_coords.x < 0.0f || proj_coords.y > 1.0f || proj_coords.y < 0.0f)
+		return 1.0f;
+
+	float bias = 0.01f * tan(acos(clamp(dot( v_normal, u_shadow_caster_directional_light[i].directional ), 0.0f, 1.0f)));
+	bias = clamp(bias, 0, 0.01);
+	float visibility = 0.0f;
+	vec2 texel_size = 1.0f / textureSize(u_shadow_map[i], 0);
+	for (int j = -1; j <= 1; j++)
+		for (int z = -1; z <= 1; z++)
+		{
+			float pcf_depth = texture(u_shadow_map[i], proj_coords.xy + vec2(j, z) * texel_size).r;
+			if((proj_coords.z <= pcf_depth + bias))
+				visibility += 1.0f;
+		}
+	return visibility / 9.0f;
 }
 
 vec3 shadow_caster_directional_light(const uint i)

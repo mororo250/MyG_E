@@ -7,6 +7,5 @@ uniform float u_aux;
 
 void main ()
 {
-	//float depth_value = texture(u_shadow_map, v_tex_coord).x;
-	frag_color = vec4(texture(u_shadow_map, v_tex_coord).xyz, 1.0);
+	frag_color = vec4(vec3(texture(u_shadow_map, v_tex_coord).r), 1.0);
 }

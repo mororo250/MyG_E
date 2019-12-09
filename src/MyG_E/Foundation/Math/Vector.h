@@ -83,7 +83,9 @@ public:
 		return aux;
 	}
 
-	inline bool operator==(Vector const& other) { return std::equal(m_vector, m_vector + M, other.m_vector); }
+	inline bool operator==(Vector const& other) { return std::equal(&m_vector[0], &m_vector[0] + M, other.get_as_pointer()); }
+
+	inline bool operator != (Vector const& other) { return !(*this == other); }
 
 	// Auxiliary function.
 	T* get_as_pointer() { return m_vector.data(); }
@@ -228,7 +230,8 @@ public:
 		return aux;
 	}
 
-	inline bool operator==(Vector const& other) { return std::equal(m_vector, m_vector + 3, other.m_vector); }
+	inline bool operator==(Vector const& other) { return std::equal(&m_vector[0], &m_vector[0] + 3, other.get_as_pointer()); }
+	inline bool operator != (Vector const& other) { return !(*this == other); }
 
 	// Auxiliary function.
 	T* get_as_pointer() { return m_vector.data(); }

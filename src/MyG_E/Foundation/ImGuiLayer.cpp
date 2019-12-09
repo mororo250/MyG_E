@@ -66,8 +66,8 @@ void ImGuiLayer::begin()
 {
 	ImGuiIO& io = ImGui::GetIO();
 	Game& app = Game::Get();
-	std::pair<int, int> display_size(app.get_window_size());
-	io.DisplaySize = ImVec2(static_cast<float>(display_size.first), static_cast<float>(display_size.second));
+	Vector2i display_size(app.get_window_size());
+	io.DisplaySize = ImVec2(static_cast<float>(display_size[0]), static_cast<float>(display_size[1]));
 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -231,4 +231,3 @@ void ImGuiLayer::show_menu_edit()
 	if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
 	if (ImGui::MenuItem("Redo", "CTRL+Y")) {}
 }
-

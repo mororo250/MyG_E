@@ -114,17 +114,17 @@ void Game::resize_window(int width, int height)
 	m_project_controller->set_perspective_matrix();
 }
 
-std::pair<int, int> Game::get_window_size() const
+Vector2i Game::get_window_size() const
 {
-	std::pair<int, int> window_size;
-	glfwGetWindowSize(m_window, &window_size.first, &window_size.second);
+	Vector2i window_size;
+	glfwGetWindowSize(m_window, &window_size[0], &window_size[1]);
 	return window_size;
 }
 
 float Game::get_window_aspect_ratio() const
 {
-	std::pair<int, int> window_size = get_window_size();
-	return static_cast<float>(window_size.first) / static_cast<float>(window_size.second);
+	Vector2i window_size = get_window_size();
+	return static_cast<float>(window_size[0]) / static_cast<float>(window_size[1]);
 }
 
 void Game::open_project(std::string const& path)

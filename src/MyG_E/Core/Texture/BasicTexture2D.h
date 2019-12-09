@@ -1,6 +1,8 @@
 #pragma once
 
-class BasicTexture2D
+#include "Foundation/Uncopyable.h"
+
+class BasicTexture2D : public Uncopyable
 {
 public:
 
@@ -40,8 +42,10 @@ public:
 	BasicTexture2D(TextureFilter const mim_filter, TextureFilter const mag_filter, TextureWrap const s, 
 		TextureWrap const t, int const detail_level, InternalFormat const internal_format, int const width,
 		int const height, InternalFormat const format, DataType type, void* data);
-
 	~BasicTexture2D();
+
+	void respecify_textute(int const detail_level,InternalFormat const internal_format, int const width, int const height,
+		InternalFormat const format, DataType type, void* data) const;
 
 	void bind(unsigned int slot) const;
 	void unbind() const;

@@ -24,6 +24,14 @@ BasicTexture2D::~BasicTexture2D()
 	GLcall(glDeleteTextures(1, &m_texture));
 }
 
+void BasicTexture2D::respecify_textute( int const detail_level, BasicTexture2D::InternalFormat const internal_format, 
+	int const width, int const height, BasicTexture2D::InternalFormat const format, BasicTexture2D::DataType type, void* data) const
+{
+	GLcall(glBindTexture(GL_TEXTURE_2D, m_texture)); // bind
+	GLcall(glTexImage2D(GL_TEXTURE_2D, detail_level, internal_format, width, height, 0, format, type, data));
+	GLcall(glBindTexture(GL_TEXTURE_2D, 0)); // unbind
+}
+
 void BasicTexture2D::bind(unsigned int slot) const
 {
 	GLcall(glActiveTexture(GL_TEXTURE0 + slot));

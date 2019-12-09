@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Foundation\Uncopyable.h"
-#include "Foundation\LayerCollection.h"
+#include "Foundation/Math/Vector.h"
+#include "Foundation/Uncopyable.h"
+#include "Foundation/LayerCollection.h"
 
 class ProjectController;
 class LayerCollection;
@@ -23,7 +24,7 @@ public:
 
 	inline GLFWwindow* GetWindow() const { return m_window; }
 	inline float GetDelta() const { return m_delta; }
-	std::pair<int, int> get_window_size() const;
+	Vector2i get_window_size() const;
 	float get_window_aspect_ratio() const;
 
 	void open_project(std::string const& path);

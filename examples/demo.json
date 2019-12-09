@@ -1,6 +1,6 @@
 {
     "camera": {
-        "model": "edit_camera",
+        "model": "fps_camera",
         "focal_point": {
             "x": 0.0,
             "y": 0.0,
