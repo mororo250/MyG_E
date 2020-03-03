@@ -4,7 +4,7 @@ include (../../cmake/include/cmake-precompiled-header.cmake)
 set (core_source
     Core/BatchRenderer.h
 	Core/FrameBuffer.cpp
-	Core/FrameBuffer.h
+    Core/FrameBuffer.h
     Core/IndexBuffer.cpp
     Core/IndexBuffer.h
 	Core/ProjectController.cpp
@@ -15,6 +15,8 @@ set (core_source
     Core/Mesh.h
     Core/Model3D.cpp
     Core/Model3D.h
+    Core/RenderBuffer.cpp
+    Core/RenderBuffer.h
 	Core/Renderer.cpp
     Core/Renderer.h
 	Core/Renderer2D.cpp
@@ -178,7 +180,6 @@ source_group ("Foundation" FILES
 
 set (shaders_source
     Shaders/Blinn-Phong.frag
-    Shaders/Empty.frag
     Shaders/Light.frag
     Shaders/Light.vert
     Shaders/Normal.frag
@@ -188,6 +189,7 @@ set (shaders_source
     Shaders/Phong.vert
 	Shaders/ShadowMapDebug.vert
 	Shaders/ShadowMapDebug.frag
+    Shaders/ShadowMap.frag
     Shaders/ShadowMap.vert
     Shaders/SkyBox.frag
     Shaders/SkyBox.vert

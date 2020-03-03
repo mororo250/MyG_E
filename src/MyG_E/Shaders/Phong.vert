@@ -13,6 +13,7 @@ out vec3 v_normal;
 out vec2 v_tex_coord;
 out mat3 v_world_normals;
 out vec4 v_pos_light_space[MAX_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH];
+out float v_dist_to_light[MAX_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH];
 
 uniform mat4 u_model;
 uniform mat4 u_view;
@@ -20,7 +21,8 @@ uniform mat4 u_projection;
 
 // Light
 uniform uint u_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH;
-uniform mat4 u_light_space[MAX_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH];
+uniform mat4 u_light_view[MAX_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH];
+uniform mat4 u_light_persp[MAX_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH];
 
 uniform vec2 u_scale_uv;
 
@@ -45,7 +47,8 @@ void main()
 	// Light Space
 	for(uint i = 0u; i < u_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH; i++)
 	{
-		v_pos_light_space[i] = v_position * u_light_space[i];
+		v_pos_light_space[i] = v_position * u_light_view[i];
+		v_dist_to_light[i] = v_pos_light_space[i].z * -1.0f;
+		v_pos_light_space[i] *= u_light_persp[i];
 	}
-
 };

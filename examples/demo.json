@@ -1,6 +1,6 @@
 {
     "camera": {
-        "model": "fps_camera",
+        "model": "edit_camera",
         "focal_point": {
             "x": 0.0,
             "y": 0.0,
@@ -97,7 +97,7 @@
             }
         },
         {
-            "path": "C:\\Users\\joao_\\OneDrive\\Desktop\\git\\MyG_E\\Resources\\Cerberus_by_Andrew_Maximov\\Cerberus_LP.FBX",
+            "path": "..\\..\\..\\Resources\\Cerberus_by_Andrew_Maximov\\Cerberus_LP.FBX",
             "visibility": true,
             "position": {
                 "x": 3.4000000953674318,

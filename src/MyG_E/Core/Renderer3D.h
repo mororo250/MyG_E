@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Renderer.h"
+#include "Foundation/Math/Vector.h"
 
 class Renderer3D
 {
@@ -12,7 +12,7 @@ public:
 	static void draw_element(class IndexBuffer const& ib);
 	static void draw_quad();
 
-	static void clear();
+	static void clear(Vector4f const& color = { 0.0f, 0.0f, 0.0f, 1.0f });
 	static void clear_buffer();
 
 	static void init();

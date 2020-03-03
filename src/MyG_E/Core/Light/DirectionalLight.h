@@ -18,7 +18,8 @@ public:
 	inline void set_direction(Vector3f const& direction) { m_direction = direction; }
 
 	inline ShadowMap const* get_shadow_map() override { return m_shadow_map.get(); }
-	Matrix4x4f get_light_space() override;
+	Matrix4x4f get_light_view() override;
+	Matrix4x4f get_light_persp() override;
 
 	void imgui_renderer() override;
 	void set_uniform(Shader const* shader) override;

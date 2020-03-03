@@ -1,6 +1,7 @@
 #pragma once
 
 #define _USE_MATH_DEFINES // Math constants
+#define NOMINMAX
 
 // STL libraries
 #include <algorithm>

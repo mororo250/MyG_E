@@ -1,6 +1,8 @@
 #pragma once
 
-class FrameBuffer
+#include "Core/RenderBuffer.h"
+
+class FrameBuffer : public Uncopyable
 {
 public:
 	enum Attachment
@@ -17,10 +19,13 @@ public:
 	void bind() const;
 	void unbind() const;
 
+	void attach_rbo(Attachment attachment, RenderBuffer& rbo) const;
+	void detach_rbo(Attachment attachment) const;
+
 	void disable_color_buffer() const;
 
-	inline unsigned int get_fbo() const { return m_fbo; }
-
+	inline unsigned int get_fbo_id() const { return m_fbo; }
+	
 private:
 	unsigned int m_fbo;
 };

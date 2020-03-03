@@ -2,7 +2,7 @@
 
 #include<glad/glad.h>
 
-#include "Foundation\Gldebug.h"
+#include "Foundation/Gldebug.h"
 #include "VertexArray.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
@@ -71,9 +71,9 @@ void Renderer3D::end()
 	GLcall(glDisable(GL_MULTISAMPLE))
 }
 
-void Renderer3D::clear()
+void Renderer3D::clear(Vector4f const& color)
 {
-	GLcall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
+	GLcall(glClearColor(color[0], color[1], color[2], color[3]));
 	GLcall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 

@@ -60,18 +60,21 @@ in vec3 v_normal;
 in vec2 v_tex_coord;
 in mat3 v_world_normals;
 in vec4 v_pos_light_space[MAX_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH];
+in float v_dist_to_light[MAX_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH];
+
 
 
 // Material
 uniform sampler2D u_texture;
 uniform sampler2D u_specular_map;
 uniform sampler2D u_nomal_map;
-uniform sampler2DShadow u_shadow_map[MAX_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH];
+uniform sampler2D u_shadow_map[MAX_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH];
 uniform bool u_is_using_normal_map;
 uniform float u_shininess;
 Material material;
 
-uniform vec3 u_viewPos;
+// Others
+uniform vec3 u_view_pos;
 
 // Lights:
 uniform uint u_NUM_POINT_LIGHT;
@@ -95,7 +98,7 @@ vec3 light(Light light, vec3 ray_direction)
 		norm = normalize(norm * 2.0f - 1.0f);
 		norm = normalize(v_world_normals * norm);
 	}
-	vec3 view_direction = normalize(u_viewPos - v_position.xyz);
+	vec3 view_direction = normalize(u_view_pos - v_position.xyz);
 	vec3 reflect_direction = reflect(ray_direction, norm);
 
 // Difuse
@@ -140,6 +143,11 @@ vec3 directional_light(const uint i)
 	return light;
 }
 
+float reduce_light_bleeding(float v, float min_amount)
+{
+  return clamp((v - min_amount) / (1.0f - min_amount), 0.0f, 1.0f);
+}
+
 float shadow_calculation(const uint i)
 {
 	// shadow map coords
@@ -149,12 +157,24 @@ float shadow_calculation(const uint i)
 	// Return 1.0 if is out of the texture area. 
 	if(proj_coords.z > 1.0f || proj_coords.z < 0.0f || proj_coords.x > 1.0f || proj_coords.x < 0.0f || proj_coords.y > 1.0f || proj_coords.y < 0.0f)
 		return 1.0f;
-	
-	// Bias.
-	float bias = 0.01f * tan(acos(clamp(dot( v_normal, u_shadow_caster_directional_light[i].directional ), 0.0f, 1.0f)));
-	proj_coords.z -= clamp(bias, 0, 0.01);
 
-	return texture(u_shadow_map[i], proj_coords);
+	vec2 m = texture(u_shadow_map[i], proj_coords.xy).xy;
+	
+	// One-tailed inequality valid if v_dist_to_light[i] > Moments.x
+	if (v_dist_to_light[i] <= m.x)
+		return 1.0f;
+	
+	// Compute variance.
+	float variance = m.y - m.x*m.x;
+	variance = max(variance, 0.0002f);
+
+	// Compute probabilistic upper bound.
+	float diff = v_dist_to_light[i]- m.x;
+	float p_max = variance / (variance + diff*diff);
+
+	// Linearly rescale [0.0f, min_amount] to (min_amount, 1.0f].
+	float min_amount = 0.1f;
+	return reduce_light_bleeding(p_max, min_amount); // decrease light bleeding
 }
 
 vec3 shadow_caster_directional_light(const uint i)

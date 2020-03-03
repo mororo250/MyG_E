@@ -9,7 +9,7 @@
 
 ProjectController::ProjectController()
 	: m_camera(nullptr)
-	, m_shadow_map_shader(new Shader("ShadowMap.vert", "Empty.frag"))
+	, m_shadow_map_shader(new Shader("ShadowMap.vert", "ShadowMap.frag"))
 	, m_skybox_shader(new Shader("SkyBox.vert", "SkyBox.frag"))
 	, m_normal_shader(new Shader("Normal.vert", "Normal.frag", "Normal.geom"))
 	, m_light_shader(new Shader("Light.vert", "Light.frag"))
@@ -47,9 +47,9 @@ void ProjectController::update()
 		std::cout << "There isn't any camera" << std::endl;
 		return; // Doen't continue if m_camera = nullptr 
 	}
-
-	m_renderer->clear();
 	
+	m_renderer->clear(Vector4f(0.1f, 0.1f, 0.1f, 1.0f)); // Clear default framebuffer
+
 	draw_shadow_maps();
 	draw_objects();
 	if (m_flags & flags_draw_normals)
@@ -300,10 +300,12 @@ void ProjectController::draw_shadow_maps()
 	{
 		if (!light->get_shadow_map())
 			continue;
-		light->get_shadow_map()->begin();
-		m_renderer->clear_buffer();
+		light->get_shadow_map()->begin(); // bind framebuffer and change viewport size
+		m_renderer->clear();
 		m_shadow_map_shader->set_uniformMatrix4f(
-			m_shadow_map_shader->get_uniform_location("u_light_space"), light->get_light_space());
+			m_shadow_map_shader->get_uniform_location("u_light_view"), light->get_light_view());
+		m_shadow_map_shader->set_uniformMatrix4f(
+			m_shadow_map_shader->get_uniform_location("u_light_persp"), light->get_light_persp());
 		for (auto& model : m_object_buffer)
 		{
 			if (model->is_visible())
@@ -327,7 +329,6 @@ void ProjectController::draw_shadow_maps()
 		light->get_shadow_map()->end();
 	}
 	m_shadow_map_shader->unbind();
-	m_renderer->clear();
 }
 
 void ProjectController::draw_objects()
@@ -343,7 +344,7 @@ void ProjectController::draw_objects()
 	m_shader->set_uniform3f(m_shader->get_uniform_location("u_ambient_light.color"), m_ambinet_light.get_light_color());
 	m_shader->set_uniform1f(m_shader->get_uniform_location("u_ambient_light.strength"), m_ambinet_light.get_strength());
 
-	m_shader->set_uniform3f(m_shader->get_uniform_location("u_viewPos"), m_camera->get_position());
+	m_shader->set_uniform3f(m_shader->get_uniform_location("u_view_pos"), m_camera->get_position());
 	m_shader->set_uniformMatrix4f(m_shader->get_uniform_location("u_view"), m_camera->get_view());
 	m_shader->set_uniformMatrix4f(m_shader->get_uniform_location("u_projection"), m_persp_matrix);
 

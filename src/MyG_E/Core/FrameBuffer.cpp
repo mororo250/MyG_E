@@ -4,13 +4,13 @@
 
 #include "Foundation/Gldebug.h"
 
-FrameBuffer::FrameBuffer(unsigned int tex_id, Attachment attach)
+FrameBuffer::FrameBuffer(unsigned int tex_id, Attachment attachment)
 {
 	GLcall(glGenFramebuffers(1, &m_fbo));
 
 	// Attach texture as FBO.
 	GLcall(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo));
-	GLcall(glFramebufferTexture2D(GL_FRAMEBUFFER, attach, GL_TEXTURE_2D, tex_id, 0));
+	GLcall(glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, tex_id, 0));
 
 	unsigned int status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (status != GL_FRAMEBUFFER_COMPLETE) {
@@ -21,7 +21,7 @@ FrameBuffer::FrameBuffer(unsigned int tex_id, Attachment attach)
 
 FrameBuffer::~FrameBuffer()
 {
-	GLcall(glDeleteBuffers(1, &m_fbo));
+	GLcall(glDeleteFramebuffers(1, &m_fbo));
 }
 
 void FrameBuffer::bind() const
@@ -34,7 +34,17 @@ void FrameBuffer::unbind() const
 	GLcall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
-void FrameBuffer::disable_color_buffer() const
+void FrameBuffer::attach_rbo(Attachment attachment, RenderBuffer& rbo) const // You need to bind the framebuffer before calling it
+{
+	GLcall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, rbo.get_rbo_id()));
+}
+
+void FrameBuffer::detach_rbo(Attachment attachment) const
+{
+	GLcall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, 0));
+}
+
+void FrameBuffer::disable_color_buffer() const // You need to bind the framebuffer before calling it
 {
 	GLcall(glDrawBuffer(GL_NONE));
 	GLcall(glReadBuffer(GL_NONE));

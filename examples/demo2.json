@@ -1,0 +1,223 @@
+{
+    "camera": {
+        "model": "edit_camera",
+        "focal_point": {
+            "x": -0.730800211429596,
+            "y": -4.851717472076416,
+            "z": -0.7171900868415833
+        },
+        "position": {
+            "x": -2.50490140914917,
+            "y": -2.2575082778930666,
+            "z": -1.7193603515625
+        },
+        "yaw": -0.9049975872039795,
+        "pitch": -2.084998846054077
+    },
+    "object_buffer": [
+        {
+            "path": "..\\..\\..\\Resources\\basic_meshes\\plane.obj",
+            "visibility": true,
+            "position": {
+                "x": 0.0,
+                "y": -5.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 20.0,
+                "y": 1.0,
+                "z": 20.0
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "material": {
+                "has_texture": true,
+                "texture": "..\\..\\..\\Resources\\Textures\\wood.png",
+                "texture_scale_uv": {
+                    "x": 2.0,
+                    "y": 2.0
+                },
+                "has_specular_map": false,
+                "specular": {
+                    "x": 0.25,
+                    "y": 0.17830806970596314,
+                    "z": 0.0625
+                },
+                "specular_map_scale_uv": {
+                    "x": 1.0,
+                    "y": 2.0
+                },
+                "normal_map_scale_uv": {
+                    "x": 1.0,
+                    "y": 2.0
+                },
+                "shininess": 0.10000000149011612
+            }
+        },
+        {
+            "path": "..\\..\\..\\Resources\\basic_meshes\\plane.obj",
+            "visibility": true,
+            "position": {
+                "x": 0.0,
+                "y": -3.200000047683716,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rotation": {
+                "x": 7.791704310914639e-38,
+                "y": 5.480000019073486,
+                "z": 7.849665378515428e-38
+            },
+            "material": {
+                "has_texture": false,
+                "diffuse": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "texture_scale_uv": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "has_specular_map": false,
+                "specular": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "specular_map_scale_uv": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "normal_map_scale_uv": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "shininess": 1.0
+            }
+        },
+        {
+            "path": "..\\..\\..\\Resources\\basic_meshes\\plane.obj",
+            "visibility": true,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rotation": {
+                "x": 6.428568808967244e-40,
+                "y": 8.265306758096355e-40,
+                "z": 7.34697982248573e-40
+            },
+            "material": {
+                "has_texture": false,
+                "diffuse": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "texture_scale_uv": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "has_specular_map": false,
+                "specular": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "specular_map_scale_uv": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "normal_map_scale_uv": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "shininess": 1.0
+            }
+        },
+        {
+            "path": "..\\..\\..\\Resources\\basic_meshes\\plane.obj",
+            "visibility": true,
+            "position": {
+                "x": 0.0,
+                "y": -2.0999999046325685,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": -0.30000001192092898,
+                "z": 0.0
+            },
+            "material": {
+                "has_texture": false,
+                "diffuse": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "texture_scale_uv": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "has_specular_map": false,
+                "specular": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "specular_map_scale_uv": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "normal_map_scale_uv": {
+                    "x": 1.0,
+                    "y": 1.0
+                },
+                "shininess": 1.0
+            }
+        }
+    ],
+    "light_buffer": [
+        {
+            "position": {
+                "x": 0.0,
+                "y": 24.100000381469728,
+                "z": -0.20000000298023225
+            },
+            "color": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "diffuse_strength": 1.0,
+            "specular_strength": 1.0,
+            "model": "directional_light",
+            "direction": {
+                "x": 0.0,
+                "y": -1.0,
+                "z": 0.0
+            },
+            "is_shadow_caster": true
+        }
+    ],
+    "skybox": "..\\..\\..\\Resources\\skyboxs\\lake"
+}

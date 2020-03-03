@@ -30,7 +30,8 @@ public:
 	virtual void set_uniform(class Shader const* shader) = 0;
 	virtual inline ShadowMap const* get_shadow_map() { return nullptr; }
 
-	virtual Matrix4x4f get_light_space() { return IDENTITY_4x4F; }
+	virtual Matrix4x4f get_light_view() { return IDENTITY_4x4F; }
+	virtual Matrix4x4f get_light_persp() { return IDENTITY_4x4F; }
 
 protected:
 	void set_general_uniform(Shader const* shader, std::string const& uniform_name);
