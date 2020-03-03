@@ -180,6 +180,9 @@ source_group ("Foundation" FILES
 
 set (shaders_source
     Shaders/Blinn-Phong.frag
+    Shaders/GaussianBlur.vert
+    Shaders/GaussianBlurHorizontal.frag
+    Shaders/GaussianBlurVertical.frag
     Shaders/Light.frag
     Shaders/Light.vert
     Shaders/Normal.frag
