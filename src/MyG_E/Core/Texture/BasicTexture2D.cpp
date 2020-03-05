@@ -34,10 +34,13 @@ void BasicTexture2D::apply_filter(TextureFilter const mim_filter, TextureFilter 
 	gen_texture(tex_id, mim_filter, mag_filter, s, t, detail_level, internal_format, width, height, format, type, nullptr);
 
 	FrameBuffer fbo(tex_id, attachment);
+	fbo.bind();
 	Shader shader(vert_file, frag_file);
 	shader.bind();
 	bind(0);
-	shader.set_uniform1i(shader.get_uniform_location("u_input_texture"), 0);
+	shader.set_uniform1i(shader.get_uniform_location("u_texture"), 0);
+	shader.set_uniform1ui(shader.get_uniform_location("u_kernel_size"), 3);
+	shader.set_uniform1f(shader.get_uniform_location("u_sigma"), 1.0f);
 	Renderer3D::draw_quad();
 	unbind();
 	fbo.unbind();

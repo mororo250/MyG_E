@@ -17,6 +17,7 @@ ShadowMap::ShadowMap(Camera const* camera)
 	, m_fbo(m_texture.get_texture(), FrameBuffer::COLOR_ATTACHMENT)
 	, m_rbo(RenderBuffer::DEPTH_COMPONENT, s_shadow_resolution[0], s_shadow_resolution[1])
 {
+	m_fbo.bind();
 	m_fbo.attach_rbo(FrameBuffer::DEPTH_ATTACHMENT, m_rbo);
 	/*
 	Borders are unsupported on a whole range of hardware
@@ -68,7 +69,7 @@ void ShadowMap::imgui_renderer()
 {	
 	static const BasicTexture2D tex(BasicTexture2D::LINEAR, BasicTexture2D::LINEAR, BasicTexture2D::REPEAT, BasicTexture2D::REPEAT,
 		0, BasicTexture2D::RGBA, 256, 256, BasicTexture2D::FORMAT_RGBA, BasicTexture2D::UNSIGNED_BYTE, nullptr);
-	static Shader const shader("ShadowMapDebug.vert", "ShadowMapDebug.frag");
+	static Shader const shader("BasicShader.vert", "ShadowMapDebug.frag");
 	static int const loc = shader.get_uniform_location("u_shadow_map");
 	static FrameBuffer const fbo(tex.get_texture(), FrameBuffer::COLOR_ATTACHMENT);
 

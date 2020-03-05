@@ -57,11 +57,16 @@ private:
 	void draw_lights();
 	void draw_skybox();
 
+	BasicTexture2D m_texture; // Texture that will be used in the fbo.
+	FrameBuffer m_fbo;
+	RenderBuffer m_rbo;
+
 	std::unique_ptr<Shader> m_shader;
 	std::unique_ptr<Shader> m_normal_shader;
 	std::unique_ptr<Shader> m_light_shader;
 	std::unique_ptr<Shader> m_skybox_shader;
 	std::unique_ptr<Shader> m_shadow_map_shader;
+	std::unique_ptr<Shader> m_basic_texture_shader;	// Used to draw in the screen bruffer from fbo.
 	std::unique_ptr<Renderer3D> m_renderer;
 	
 	// entities

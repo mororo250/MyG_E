@@ -9,7 +9,7 @@ FrameBuffer::FrameBuffer(unsigned int tex_id, Attachment attachment)
 	GLcall(glGenFramebuffers(1, &m_fbo));
 
 	// Attach texture as FBO.
-	GLcall(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo));
+	GLcall(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo)); 
 	GLcall(glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, tex_id, 0));
 
 	unsigned int status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -17,6 +17,7 @@ FrameBuffer::FrameBuffer(unsigned int tex_id, Attachment attachment)
 		std::cout << "FB error, status: 0x%x" << status << std::endl;;
 		ASSERT(false);
 	}
+	GLcall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
 FrameBuffer::~FrameBuffer()

@@ -179,8 +179,8 @@ source_group ("Foundation" FILES
 )
 
 set (shaders_source
+    Shaders/BasicShader.vert
     Shaders/Blinn-Phong.frag
-    Shaders/GaussianBlur.vert
     Shaders/GaussianBlurHorizontal.frag
     Shaders/GaussianBlurVertical.frag
     Shaders/Light.frag
@@ -190,7 +190,6 @@ set (shaders_source
     Shaders/Normal.vert
     Shaders/Phong.frag
     Shaders/Phong.vert
-	Shaders/ShadowMapDebug.vert
 	Shaders/ShadowMapDebug.frag
     Shaders/ShadowMap.frag
     Shaders/ShadowMap.vert

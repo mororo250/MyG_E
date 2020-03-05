@@ -8,12 +8,17 @@
 #include "Foundation/UI/FileBrowser.h"
 
 ProjectController::ProjectController()
-	: m_camera(nullptr)
+	: m_texture(BasicTexture2D::LINEAR, BasicTexture2D::LINEAR, BasicTexture2D::CLAMP_TO_EDGE, BasicTexture2D::CLAMP_TO_EDGE
+		, 0, BasicTexture2D::RGBA, Game::Get().get_window_size()[0], Game::Get().get_window_size()[1], BasicTexture2D::FORMAT_RGBA, BasicTexture2D::FLOAT, nullptr)
+	, m_fbo(m_texture.get_texture(), FrameBuffer::COLOR_ATTACHMENT)
+	, m_rbo(RenderBuffer::DEPTH_COMPONENT, Game::Get().get_window_size()[0], Game::Get().get_window_size()[1])
+	, m_camera(nullptr)
 	, m_shadow_map_shader(new Shader("ShadowMap.vert", "ShadowMap.frag"))
 	, m_skybox_shader(new Shader("SkyBox.vert", "SkyBox.frag"))
 	, m_normal_shader(new Shader("Normal.vert", "Normal.frag", "Normal.geom"))
 	, m_light_shader(new Shader("Light.vert", "Light.frag"))
 	, m_shader(new Shader("Phong.vert", "Blinn-Phong.frag"))
+	, m_basic_texture_shader(new Shader("BasicShader.vert", "DrawTexture.frag"))
 	, m_renderer(new Renderer3D())
 	, m_fov(60.0f)
 	, m_persp_matrix(Matrix4x4f::make_perspective_matrix(60.0f, Game::Get().get_window_aspect_ratio(), 0.01f))
@@ -22,6 +27,9 @@ ProjectController::ProjectController()
 	, m_flags(flags_draw_skybox)
 	, m_current_shader(BLINN_PHONG)
 {
+	m_fbo.bind();
+	m_fbo.attach_rbo(FrameBuffer::DEPTH_ATTACHMENT, m_rbo);
+	m_fbo.unbind();
 }
 
 ProjectController::~ProjectController()
@@ -48,9 +56,11 @@ void ProjectController::update()
 		return; // Doen't continue if m_camera = nullptr 
 	}
 	
-	m_renderer->clear(Vector4f(0.1f, 0.1f, 0.1f, 1.0f)); // Clear default framebuffer
+	m_renderer->clear(); // Clear default framebuffer
 
 	draw_shadow_maps();
+	m_fbo.bind();
+	m_renderer->clear(Vector4f(0.1f, 0.1f, 0.1f, 1.0f)); // Clear default framebuffer
 	draw_objects();
 	if (m_flags & flags_draw_normals)
 		draw_normals();
@@ -58,6 +68,16 @@ void ProjectController::update()
 		draw_lights();
 	if (m_flags & flags_draw_skybox)
 		draw_skybox();
+	m_fbo.unbind();
+
+	static int const loc = m_basic_texture_shader->get_uniform_location("u_texture");
+	m_basic_texture_shader->bind();
+	m_texture.bind(0);
+	m_basic_texture_shader->set_uniform1i(loc, 0);
+	Renderer3D::draw_quad();
+	m_basic_texture_shader->unbind();
+	m_texture.unbind();
+
 }
 
 // It need to improve (remove code repretition)
