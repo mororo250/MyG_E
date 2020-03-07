@@ -13,12 +13,13 @@ public:
 		DEPTH_STENCIL_ATTACHMENT = 0x821A // GL_DEPTH_STENCIL_ATTACHMENT
 	};
 
-	FrameBuffer(unsigned int tex_id, Attachment attach);
+	FrameBuffer(unsigned int tex_id, Attachment attachment);
 	~FrameBuffer();
 
 	void bind() const;
 	void unbind() const;
 
+	void change_texture(unsigned int tex_id, Attachment attachment);
 	void attach_rbo(Attachment attachment, RenderBuffer& rbo) const;
 	void detach_rbo(Attachment attachment) const;
 

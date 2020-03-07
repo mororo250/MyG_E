@@ -1,9 +1,10 @@
 #include "ShadowMap.h"
 
-#include "Foundation/Gldebug.h"
-#include "Foundation/Game.h"
+#include "Core/Post-Processing/GaussianBlur.h"
 #include "Core/Shader.h"
 #include "Core/Renderer3D.h"
+#include "Foundation/Gldebug.h"
+#include "Foundation/Game.h"
 
 #include "glad/glad.h"
 #include "imgui.h"
@@ -53,6 +54,9 @@ void ShadowMap::end() const
 	m_texture.bind(0);
 	m_texture.gen_mipmaps(); // Fill smaller levels with downsampled images.
 	m_texture.unbind();
+	
+	//static GaussianBlur gaussian_blur(5, 0.5f);
+	//gaussian_blur.apply_filter(m_texture);
 }	
 
 void ShadowMap::bind(unsigned int const slot) const

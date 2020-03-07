@@ -98,6 +98,20 @@ source_group ("Core\\Texture" FILES
 	${texture_source}
 )
 
+set (post-porcessing_source
+	Core/Post-Processing/Filter.h
+	Core/Post-Processing/GaussianBlur.cpp
+	Core/Post-Processing/GaussianBlur.h
+)
+
+list (APPEND MyG_E_sources
+	${post-porcessing_source}
+)
+
+source_group ("Core\\Post-Processing" FILES
+	${post-porcessing_source}
+)
+
 set (math_source
 	Foundation/Math/EulerAngles.cpp
 	Foundation/Math/EulerAngles.h

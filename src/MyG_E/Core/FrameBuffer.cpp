@@ -35,6 +35,11 @@ void FrameBuffer::unbind() const
 	GLcall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
+void FrameBuffer::change_texture(unsigned int tex_id, Attachment attachment)
+{
+	GLcall(glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, tex_id, 0));
+}
+
 void FrameBuffer::attach_rbo(Attachment attachment, RenderBuffer& rbo) const // You need to bind the framebuffer before calling it
 {
 	GLcall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, rbo.get_rbo_id()));

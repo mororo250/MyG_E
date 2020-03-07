@@ -4,6 +4,7 @@
 #include "imgui_internal.h"
 #include "glad/glad.h"
 
+#include "Core//Post-Processing/GaussianBlur.h"
 #include "Foundation/ImGuiLayer.h"
 #include "Foundation/UI/FileBrowser.h"
 
@@ -70,6 +71,10 @@ void ProjectController::update()
 		draw_skybox();
 	m_fbo.unbind();
 
+	// Post-Processing
+	for (auto& aux : m_filters)
+		aux->apply_filter(m_texture);
+
 	static int const loc = m_basic_texture_shader->get_uniform_location("u_texture");
 	m_basic_texture_shader->bind();
 	m_texture.bind(0);
@@ -77,10 +82,9 @@ void ProjectController::update()
 	Renderer3D::draw_quad();
 	m_basic_texture_shader->unbind();
 	m_texture.unbind();
-
 }
 
-// It need to improve (remove code repretition)
+// It needs improvement (remove code repretition)
 void ProjectController::imgui_renderer()
 {
 	m_camera->imgui_renderer();
@@ -89,7 +93,6 @@ void ProjectController::imgui_renderer()
 	static bool* scene_p_open;
 	if (ImGui::Begin("Models", models_p_open, ImGuiWindowFlags_MenuBar))
 	{
-
 		// Left
 		static std::size_t selected = 0;
 		ImGui::BeginChild("left pane", ImVec2(120, 0), true);
@@ -152,8 +155,15 @@ void ProjectController::imgui_renderer()
 
 	if (ImGui::Begin("Project Controller", scene_p_open, ImGuiWindowFlags_MenuBar))
 	{
+		// skybox
+		if (m_skybox)
+			m_skybox->imgui_rederer();
+		else
+			if (ImGui::Button("Attach skybox"))
+				set_skybox(new TextureCubMap(open_folder_browser()));
+
 		// add item
-		if (ImGui::BeginMenu("add"))
+		if (ImGui::BeginMenu("Add Entity"))
 		{
 			if (ImGui::BeginMenu("Light"))
 			{
@@ -180,21 +190,45 @@ void ProjectController::imgui_renderer()
 				if (ImGui::MenuItem("Torus"))
 					create_object("..\\..\\..\\Resources\\basic_meshes\\torus.obj");
 				if (ImGui::MenuItem("Import Mesh"))
-				{
 					create_object(open_file_browser(L"Model Files", L"*.obj;*.dae;*.fbx;*.bvh;*.ply;*.stl"));
-				}
-
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();
 		}
 
-		// skybox
-		if (m_skybox)
-			m_skybox->imgui_rederer();
-		else
-			if (ImGui::Button("Attach skybox"))
-				set_skybox(new TextureCubMap(open_folder_browser()));
+		static bool post_processing_managemenet = false; 
+		if (ImGui::CollapsingHeader("Post Processing", nullptr, ImGuiTreeNodeFlags_None))
+		{
+			ImGui::Indent(10.0f);
+			if (ImGui::BeginMenu("Add Filter"))
+			{
+				static int is_actived = 0;
+				if (ImGui::MenuItem("Gaussian Blur"))
+				{
+					if ((is_actived & filters_gaussian_blur) != filters_gaussian_blur)
+					{
+						is_actived |= filters_gaussian_blur;
+						m_filters.push_back(new GaussianBlur());
+						post_processing_managemenet = true;
+					}
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::Unindent(10.0f);
+		}
+		
+		// Creat window to manage post processing
+		if (post_processing_managemenet)
+		{
+			if (ImGui::Begin("Post Processing manegement", &post_processing_managemenet, ImGuiWindowFlags_None))
+			{
+				for (auto& aux : m_filters)
+				{
+					aux->imgui_renderer();
+				}
+			}
+			ImGui::End();
+		}
 
 		char const* camera[] = { "Edit Camera", "Fps Camera" };
 		static int camera_idx = 0;
@@ -218,7 +252,6 @@ void ProjectController::imgui_renderer()
 		}
 	}
 	ImGui::End();
-
 }
 
 void ProjectController::pop_light(Light* light)

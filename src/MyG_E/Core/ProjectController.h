@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/Renderer3D.h"
 #include "Core/Model3D.h"
 #include "Core/Camera/FPSCamera.h"
 #include "Core/Camera/EditCamera.h"
@@ -8,6 +7,8 @@
 #include "Core/Light/SpotLight.h"
 #include "Core/Light/DirectionalLight.h"
 #include "Core/Light/AmbientLight.h"
+#include "Core/Post-Processing/Filter.h"
+#include "Core/Renderer3D.h"
 #include "Core/SkyBox.h"
 
 class ProjectController : public Layer
@@ -71,6 +72,7 @@ private:
 	
 	// entities
 	std::unique_ptr<Camera> m_camera;
+	std::vector<Filter*> m_filters;
 	std::unique_ptr<SkyBox> m_skybox;
 	std::vector<Light*> m_light_buffer;
 	AmbientLight m_ambinet_light;
@@ -87,6 +89,11 @@ private:
 		flags_draw_lights =		1 << 0,
 		flags_draw_normals =	1 << 1,
 		flags_draw_skybox =		1 << 2,
+	};
+	enum filters
+	{
+		filters_none = 0,
+		filters_gaussian_blur = 1 << 0,
 	};
 	enum current_shader
 	{

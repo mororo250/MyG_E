@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/FrameBuffer.h"
+#include "Foundation/Uncopyable.h"
 #include "Foundation/Math/Vector.h"
 
 class BasicTexture2D : public Uncopyable
@@ -82,9 +82,6 @@ public:
 
 	void respecify_textute(int const detail_level, InternalFormat const internal_format, int const width, int const height,
 		Format const format, DataType type, void* data) const;
-	void apply_filter(TextureFilter const mim_filter, TextureFilter const mag_filter, TextureWrap const s,
-		TextureWrap const t, int const detail_level, InternalFormat const internal_format, int const width,
-		int const height, Format const format, DataType const type, FrameBuffer::Attachment const attachment, std::string const& vert_file, std::string const& frag_file);
 	void gen_mipmaps() const;
 
 	void bind(unsigned int slot) const;
@@ -95,7 +92,7 @@ public:
 	static unsigned int get_max_mipmap_level(Vector2i size) { return std::log2f(static_cast<float>(std::max(size[0], size[1]))); }
 
 private:
-	void gen_texture(unsigned int& tex_id, TextureFilter const mim_filter, TextureFilter const mag_filter, TextureWrap const s,
+	void gen_texture(TextureFilter const mim_filter, TextureFilter const mag_filter, TextureWrap const s,
 		TextureWrap const t, int const detail_level, InternalFormat const internal_format, int const width,
 		int const height, Format const format, DataType const type, void* data);
 
