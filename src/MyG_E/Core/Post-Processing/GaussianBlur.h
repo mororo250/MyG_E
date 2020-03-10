@@ -10,7 +10,7 @@ public:
 	~GaussianBlur() = default;
 
 	void imgui_renderer();
-	void apply_filter(BasicTexture2D const& input_texture);
+	void apply_filter(BasicTexture2D& input_texture);
 
 private:
 	int m_kernel_size;

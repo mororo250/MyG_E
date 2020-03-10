@@ -25,7 +25,7 @@ public:
 	void imgui_renderer();
 
 private:
-	BasicTexture2D m_texture;
+	mutable BasicTexture2D m_texture;
 	FrameBuffer m_fbo_msaa;
 	FrameBuffer m_fbo;
 	RenderBuffer m_rbo_depth;

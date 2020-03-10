@@ -102,6 +102,8 @@ set (post-porcessing_source
 	Core/Post-Processing/Filter.h
 	Core/Post-Processing/GaussianBlur.cpp
 	Core/Post-Processing/GaussianBlur.h
+	Core/Post-Processing/SummedAreaTable.cpp
+	Core/Post-Processing/SummedAreaTable.h
 )
 
 list (APPEND MyG_E_sources
@@ -209,6 +211,8 @@ set (shaders_source
     Shaders/ShadowMap.vert
     Shaders/SkyBox.frag
     Shaders/SkyBox.vert
+    Shaders/SummedAreaTableVertical.frag
+    Shaders/SummedAreaTableHorizontal.frag
 )
 
 list (APPEND MyG_E_sources

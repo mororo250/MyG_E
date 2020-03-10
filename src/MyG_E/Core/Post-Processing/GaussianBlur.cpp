@@ -22,15 +22,17 @@ void GaussianBlur::imgui_renderer()
 	}
 }
 
-void GaussianBlur::apply_filter(BasicTexture2D const& input_texture)
+void GaussianBlur::apply_filter(BasicTexture2D& input_texture)
 {
 	static Shader s_horizontal_blur("BasicShader.vert", "GaussianBlurHorizontal.frag");
 	static Shader s_vertical_blur("BasicShader.vert", "GaussianBlurVertical.frag");
 
-	BasicTexture2D aux_texture(BasicTexture2D::NEAREST, BasicTexture2D::NEAREST, BasicTexture2D::CLAMP_TO_EDGE, BasicTexture2D::CLAMP_TO_EDGE,
+	static BasicTexture2D aux_texture(BasicTexture2D::NEAREST, BasicTexture2D::NEAREST, BasicTexture2D::CLAMP_TO_EDGE, BasicTexture2D::CLAMP_TO_EDGE,
 		0, BasicTexture2D::RG32F, 1024, 1024, BasicTexture2D::FORMAT_RG, BasicTexture2D::FLOAT, nullptr);
-	FrameBuffer fbo;
+	static FrameBuffer fbo;
+	
 	fbo.bind();
+	Renderer3D::clear();
 	fbo.attach_texture(aux_texture, FrameBuffer::COLOR_ATTACHMENT);
 	fbo.check_status();
 	

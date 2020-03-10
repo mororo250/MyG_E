@@ -1,6 +1,7 @@
 #include "ShadowMap.h"
 
 #include "Core/Post-Processing/GaussianBlur.h"
+#include "Core/Post-Processing/SummedAreaTable.h"
 #include "Core/Shader.h"
 #include "Core/Renderer3D.h"
 #include "Foundation/Gldebug.h"
@@ -14,7 +15,7 @@ int ShadowMap::s_number_msaa = 4;
 
 ShadowMap::ShadowMap(Camera const* camera)
 	: m_camera_view(camera)
-	, m_texture(BasicTexture2D::NEAREST, BasicTexture2D::NEAREST, BasicTexture2D::CLAMP_TO_EDGE, BasicTexture2D::CLAMP_TO_EDGE,
+	, m_texture(BasicTexture2D::NEAREST, BasicTexture2D::NEAREST, BasicTexture2D::CLAMP_TO_BORDER, BasicTexture2D::CLAMP_TO_BORDER,
 		0, BasicTexture2D::RG32F, s_shadow_resolution[0], s_shadow_resolution[1], BasicTexture2D::FORMAT_RG, BasicTexture2D::FLOAT, nullptr)
 	, m_fbo_msaa()
 	, m_fbo()
@@ -32,11 +33,10 @@ ShadowMap::ShadowMap(Camera const* camera)
 	m_fbo.unbind();
 
 	//Borders are unsupported on a whole range of hardware
-	//m_texture.bind(0);
-	//static float borderColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	//glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-	//m_texture.gen_mipmaps(); // ALocate memory of all textures levels
-	//m_texture.unbind();
+	m_texture.bind(0);
+	static float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+	m_texture.unbind();
 }
 
 
@@ -59,18 +59,12 @@ void ShadowMap::end() const
 	GLcall(glBlitFramebuffer(0, 0, s_shadow_resolution[0], s_shadow_resolution[1], 0, 0, s_shadow_resolution[0],
 		s_shadow_resolution[1], GL_COLOR_BUFFER_BIT, GL_LINEAR));
 
-	// Apply gaussian blur.
-	static GaussianBlur gaussian_blur(60, 20.0);
-	gaussian_blur.apply_filter(m_texture);
+	// Gen Summed Area Table
+	gen_SAT(m_texture);
 
 	// Set viewport back to normal.
 	Vector2i window_size = Game::Get().get_window_size();
 	GLcall(glViewport(0, 0, window_size[0], window_size[1]));
-
-	// Generate mipmaps.
-	//m_texture.bind(0);
-	//m_texture.gen_mipmaps(); // Fill smaller levels with downsampled images.
-	//m_texture.unbind();
 }
 
 void ShadowMap::bind(unsigned int const slot) const
