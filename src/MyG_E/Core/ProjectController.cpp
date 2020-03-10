@@ -11,7 +11,7 @@
 ProjectController::ProjectController()
 	: m_texture(BasicTexture2D::LINEAR, BasicTexture2D::LINEAR, BasicTexture2D::CLAMP_TO_EDGE, BasicTexture2D::CLAMP_TO_EDGE
 		, 0, BasicTexture2D::RGBA, Game::Get().get_window_size()[0], Game::Get().get_window_size()[1], BasicTexture2D::FORMAT_RGBA, BasicTexture2D::FLOAT, nullptr)
-	, m_fbo(m_texture.get_texture(), FrameBuffer::COLOR_ATTACHMENT)
+	, m_fbo()
 	, m_rbo(RenderBuffer::DEPTH_COMPONENT, Game::Get().get_window_size()[0], Game::Get().get_window_size()[1])
 	, m_camera(nullptr)
 	, m_shadow_map_shader(new Shader("ShadowMap.vert", "ShadowMap.frag"))
@@ -29,7 +29,9 @@ ProjectController::ProjectController()
 	, m_current_shader(BLINN_PHONG)
 {
 	m_fbo.bind();
+	m_fbo.attach_texture(m_texture, FrameBuffer::COLOR_ATTACHMENT);
 	m_fbo.attach_rbo(FrameBuffer::DEPTH_ATTACHMENT, m_rbo);
+	m_fbo.check_status();
 	m_fbo.unbind();
 }
 

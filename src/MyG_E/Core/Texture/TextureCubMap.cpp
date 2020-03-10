@@ -36,7 +36,6 @@ void TextureCubMap::bind(unsigned int slot) const
 void TextureCubMap::unbind() const
 {
 	GLcall(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
-
 }
 
 void TextureCubMap::imgui_renderer(std::string const& texture_name)

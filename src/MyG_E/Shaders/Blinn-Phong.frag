@@ -166,14 +166,14 @@ float shadow_calculation(const uint i)
 	
 	// Compute variance.
 	float variance = m.y - m.x*m.x;
-	variance = max(variance, 0.0002f);
+	variance = max(variance, 0.2f);
 
 	// Compute probabilistic upper bound.
 	float diff = v_dist_to_light[i]- m.x;
 	float p_max = variance / (variance + diff*diff);
 
 	// Linearly rescale [0.0f, min_amount] to (min_amount, 1.0f].
-	float min_amount = 0.1f;
+	float min_amount = 0.2f;
 	return reduce_light_bleeding(p_max, min_amount); // decrease light bleeding
 }
 

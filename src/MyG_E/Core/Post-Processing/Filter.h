@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Texture/BasicTexture2D.h"
+#include "Core/Texture/Texture2DMultisample.h" 
 #include "Foundation/Uncopyable.h"
 
 class Filter : public Uncopyable

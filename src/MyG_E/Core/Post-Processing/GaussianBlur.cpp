@@ -17,8 +17,8 @@ void GaussianBlur::imgui_renderer()
 {
 	if (ImGui::CollapsingHeader("Gaussian BLur", nullptr, ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		ImGui::DragInt("Kernel Size", &m_kernel_size, 1, 0, 15);
-		ImGui::DragFloat("Sigma", &m_sigma, 0.1f, 0.0f, 7.0f);
+		ImGui::DragInt("Kernel Size", &m_kernel_size, 1, 0, 30);
+		ImGui::DragFloat("Sigma", &m_sigma, 0.1f, 0.0f, 30.0f);
 	}
 }
 
@@ -27,13 +27,14 @@ void GaussianBlur::apply_filter(BasicTexture2D const& input_texture)
 	static Shader s_horizontal_blur("BasicShader.vert", "GaussianBlurHorizontal.frag");
 	static Shader s_vertical_blur("BasicShader.vert", "GaussianBlurVertical.frag");
 
-	BasicTexture2D aux_texture(BasicTexture2D::LINEAR, BasicTexture2D::LINEAR, BasicTexture2D::CLAMP_TO_EDGE, 
-		BasicTexture2D::CLAMP_TO_EDGE, 0, BasicTexture2D::RGBA, Game::Get().get_window_size()[0], 
-		Game::Get().get_window_size()[1], BasicTexture2D::FORMAT_RGBA, BasicTexture2D::FLOAT, nullptr);
-	FrameBuffer fbo(aux_texture.get_texture(), FrameBuffer::COLOR_ATTACHMENT);
+	BasicTexture2D aux_texture(BasicTexture2D::NEAREST, BasicTexture2D::NEAREST, BasicTexture2D::CLAMP_TO_EDGE, BasicTexture2D::CLAMP_TO_EDGE,
+		0, BasicTexture2D::RG32F, 1024, 1024, BasicTexture2D::FORMAT_RG, BasicTexture2D::FLOAT, nullptr);
+	FrameBuffer fbo;
+	fbo.bind();
+	fbo.attach_texture(aux_texture, FrameBuffer::COLOR_ATTACHMENT);
+	fbo.check_status();
 	
 	// Horizontal blur.
-	fbo.bind();
 	s_horizontal_blur.bind();
 	input_texture.bind(0);
 	s_horizontal_blur.set_uniform1i(s_horizontal_blur.get_uniform_location("u_texture"), 0);
@@ -44,7 +45,8 @@ void GaussianBlur::apply_filter(BasicTexture2D const& input_texture)
 	s_horizontal_blur.unbind();
 
 	// Vertical blur.
-	fbo.change_texture(input_texture.get_texture(), FrameBuffer::COLOR_ATTACHMENT);
+	fbo.detach_texture(FrameBuffer::COLOR_ATTACHMENT);
+	fbo.attach_texture(input_texture, FrameBuffer::COLOR_ATTACHMENT);
 	s_vertical_blur.bind();
 	aux_texture.bind(0);
 	s_vertical_blur.set_uniform1i(s_vertical_blur.get_uniform_location("u_texture"), 0);

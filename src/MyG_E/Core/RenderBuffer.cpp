@@ -12,6 +12,14 @@ RenderBuffer::RenderBuffer(InternalFormat internal_format, unsigned int width, u
 	GLcall(glBindRenderbuffer(GL_RENDERBUFFER, 0)); // Unbind
 }
 
+RenderBuffer::RenderBuffer(unsigned int samples, InternalFormat internal_format, unsigned int width, unsigned int height)
+{
+	GLcall(glGenRenderbuffers(1, &m_rbo));
+	GLcall(glBindRenderbuffer(GL_RENDERBUFFER, m_rbo));
+	GLcall(glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, internal_format, width, height));
+	GLcall(glBindRenderbuffer(GL_RENDERBUFFER, 0)); // Unbind
+}
+
 RenderBuffer::~RenderBuffer()
 {
 	GLcall(glDeleteRenderbuffers(1, &m_rbo));
@@ -33,5 +41,14 @@ void RenderBuffer::respecify_rbo(InternalFormat internal_format, unsigned int wi
 	GLcall(glGenRenderbuffers(1, &m_rbo));
 	GLcall(glBindRenderbuffer(GL_RENDERBUFFER, m_rbo));
 	GLcall(glRenderbufferStorage(GL_RENDERBUFFER, internal_format, width, height));
+	GLcall(glBindRenderbuffer(GL_RENDERBUFFER, 0)); // Unbind
+}
+
+void RenderBuffer::respecify_rbo(unsigned int samples, InternalFormat internal_format, unsigned int width, unsigned int height)
+{
+	GLcall(glDeleteRenderbuffers(1, &m_rbo));
+	GLcall(glGenRenderbuffers(1, &m_rbo));
+	GLcall(glBindRenderbuffer(GL_RENDERBUFFER, m_rbo));
+	GLcall(glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, internal_format, width, height));
 	GLcall(glBindRenderbuffer(GL_RENDERBUFFER, 0)); // Unbind
 }
