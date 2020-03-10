@@ -10,7 +10,7 @@
 #include "glad/glad.h"
 #include "imgui.h"
 
-Vector2i ShadowMap::s_shadow_resolution = { 1024, 1024 };
+Vector2i ShadowMap::s_shadow_resolution = { 64, 64 };
 int ShadowMap::s_number_msaa = 4;
 
 ShadowMap::ShadowMap(Camera const* camera)
@@ -34,7 +34,7 @@ ShadowMap::ShadowMap(Camera const* camera)
 
 	//Borders are unsupported on a whole range of hardware
 	m_texture.bind(0);
-	static float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	static float borderColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 	m_texture.unbind();
 }
@@ -79,7 +79,7 @@ void ShadowMap::unbind() const
 
 void ShadowMap::imgui_renderer()
 {	
-	static const BasicTexture2D tex(BasicTexture2D::LINEAR, BasicTexture2D::LINEAR, BasicTexture2D::REPEAT, BasicTexture2D::REPEAT,
+	static const BasicTexture2D tex(BasicTexture2D::LINEAR, BasicTexture2D::LINEAR, BasicTexture2D::CLAMP_TO_BORDER, BasicTexture2D::CLAMP_TO_BORDER,
 		0, BasicTexture2D::RGBA, 256, 256, BasicTexture2D::FORMAT_RGBA, BasicTexture2D::UNSIGNED_BYTE, nullptr);
 	static Shader const shader("BasicShader.vert", "ShadowMapDebug.frag");
 	static int const loc = shader.get_uniform_location("u_shadow_map");

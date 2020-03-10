@@ -8,5 +8,5 @@ uniform float u_offset;
 
 void main()
 {
-	frag_color = texture(u_texture, v_tex_coord.xy) + texture(u_texture, vec2(v_tex_coord.x, v_tex_coord.y + u_offset / textureSize(u_texture, 0).y));
+	frag_color = texture(u_texture, v_tex_coord.xy) + texture(u_texture, vec2(v_tex_coord.x, v_tex_coord.y - u_offset / textureSize(u_texture, 0).y));
 }

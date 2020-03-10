@@ -34,5 +34,5 @@ private:
 
 	static Vector2i s_shadow_resolution;
 	static int s_number_msaa;
-	static constexpr float SHADOW_RADIUS = 10.0f; // distance from light to shadow center
+	static constexpr float SHADOW_RADIUS = 5.0f; // distance from light to shadow center
 };

@@ -157,10 +157,10 @@ float shadow_calculation(const uint i)
 	vec2 offset = 1.0f / textureSize(u_shadow_map[i], 0);
 
 	// summed area table 9 x 9 
-	vec2 m = (texture(u_shadow_map[i], vec2(proj_coords.x + offset.x * 4, proj_coords.y - offset.y * 4)).xy +
-		texture(u_shadow_map[i], vec2(proj_coords.x - offset.x * 4, proj_coords.y + offset.y * 4)).xy -
-		texture(u_shadow_map[i], vec2(proj_coords.x + offset.x * 4, proj_coords.y + offset.y * 4)).xy -
-		texture(u_shadow_map[i], vec2(proj_coords.x - offset.x * 4, proj_coords.y - offset.y * 4)).xy) / (9 * 9); 
+	vec2 m = (texture(u_shadow_map[i], vec2(proj_coords.x + offset.x * 4, proj_coords.y + offset.y * 4)).xy +
+		texture(u_shadow_map[i], vec2(proj_coords.x - offset.x * 4, proj_coords.y - offset.y * 4)).xy -
+		texture(u_shadow_map[i], vec2(proj_coords.x + offset.x * 4, proj_coords.y - offset.y * 4)).xy -
+		texture(u_shadow_map[i], vec2(proj_coords.x - offset.x * 4, proj_coords.y + offset.y * 4)).xy) / (9 * 9); 
 	
 	// One-tailed inequality valid if v_dist_to_light[i] > Moments.x
 	if (v_dist_to_light[i] <= m.x)
