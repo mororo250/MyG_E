@@ -41,7 +41,7 @@ void FrameBuffer::detach_texture(Attachment attachment) const
 	GLcall(glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, 0, 0));
 }
 
-void FrameBuffer::attach_rbo(Attachment attachment, RenderBuffer& rbo) const
+void FrameBuffer::attach_rbo(RenderBuffer& rbo, Attachment attachment) const
 {
 	GLcall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, rbo.get_rbo_id()));
 }

@@ -1,4 +1,4 @@
-#version 330 core
+#version 450 core
 
 #define MAX_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH 5
 

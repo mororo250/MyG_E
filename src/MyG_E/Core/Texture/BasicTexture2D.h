@@ -54,6 +54,11 @@ public:
 		RG16UI = 0x823A,			// GL_RG16UI
 		RG32I = 0x823B,				// GL_RG32I 
 		RG32UI  = 0x823C,			// GL_RG32UI
+		RGBA32F = 0x881,			// GL_RGBA32F
+		RGBA32UI = 0x8D70,			// GL_RGBA32UI
+		RGB32F = 0x8815,			// GL_RGB32F
+		RGBA16F = 0x881,			// GL_RGBA16F
+		RGB16F = 0x881B,			// GL_RGB16F
 	};
 	enum Format
 	{
@@ -63,6 +68,7 @@ public:
 		FORMAT_RG = 0x8227,					// GL_RG,
 		FORMAT_RGB = 0x1907,				// GL_RGB
 		FORMAT_RGBA = 0x1908,				// GL_RGBA
+		FORMAT_RGBA_INTEGER = 0x8D99		// GL_RGBA_INTEGER
 	};
 	enum DataType
 	{

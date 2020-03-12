@@ -33,7 +33,7 @@ void GaussianBlur::apply_filter(BasicTexture2D& input_texture)
 	
 	fbo.bind();
 	Renderer3D::clear();
-	fbo.attach_texture(aux_texture, FrameBuffer::COLOR_ATTACHMENT);
+	fbo.attach_texture(aux_texture, FrameBuffer::COLOR_ATTACHMENT0);
 	fbo.check_status();
 	
 	// Horizontal blur.
@@ -47,8 +47,8 @@ void GaussianBlur::apply_filter(BasicTexture2D& input_texture)
 	s_horizontal_blur.unbind();
 
 	// Vertical blur.
-	fbo.detach_texture(FrameBuffer::COLOR_ATTACHMENT);
-	fbo.attach_texture(input_texture, FrameBuffer::COLOR_ATTACHMENT);
+	fbo.detach_texture(FrameBuffer::COLOR_ATTACHMENT0);
+	fbo.attach_texture(input_texture, FrameBuffer::COLOR_ATTACHMENT0);
 	s_vertical_blur.bind();
 	aux_texture.bind(0);
 	s_vertical_blur.set_uniform1i(s_vertical_blur.get_uniform_location("u_texture"), 0);

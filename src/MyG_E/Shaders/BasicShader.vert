@@ -1,4 +1,4 @@
-#version 330 core
+#version 450 core
 
 // Vertex shader shared by many frag shaders as Gaussian filters, ShadowMapDebug and DrawTexture.
 

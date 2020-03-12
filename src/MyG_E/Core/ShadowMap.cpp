@@ -10,25 +10,26 @@
 #include "glad/glad.h"
 #include "imgui.h"
 
-Vector2i ShadowMap::s_shadow_resolution = { 64, 64 };
+Vector2i ShadowMap::s_shadow_resolution = { 1024, 1024 };
 int ShadowMap::s_number_msaa = 4;
 
 ShadowMap::ShadowMap(Camera const* camera)
 	: m_camera_view(camera)
 	, m_texture(BasicTexture2D::NEAREST, BasicTexture2D::NEAREST, BasicTexture2D::CLAMP_TO_BORDER, BasicTexture2D::CLAMP_TO_BORDER,
-		0, BasicTexture2D::RG32F, s_shadow_resolution[0], s_shadow_resolution[1], BasicTexture2D::FORMAT_RG, BasicTexture2D::FLOAT, nullptr)
+		0, BasicTexture2D::RGBA32UI, s_shadow_resolution[0], s_shadow_resolution[1], BasicTexture2D::FORMAT_RGBA_INTEGER, BasicTexture2D::UNSIGNED_INT, nullptr)
 	, m_fbo_msaa()
 	, m_fbo()
 	, m_rbo_depth(s_number_msaa, RenderBuffer::DEPTH_COMPONENT, s_shadow_resolution[0], s_shadow_resolution[1])
-	, m_rbo_color(s_number_msaa, RenderBuffer::RG32F, s_shadow_resolution[0], s_shadow_resolution[1])
+	, m_rbo_color(s_number_msaa, RenderBuffer::RGBA32UI, s_shadow_resolution[0], s_shadow_resolution[1])
+	, m_sat(&m_texture, s_shadow_resolution)
 {
 	m_fbo_msaa.bind();
-	m_fbo_msaa.attach_rbo(FrameBuffer::DEPTH_ATTACHMENT, m_rbo_depth);
-	m_fbo_msaa.attach_rbo(FrameBuffer::COLOR_ATTACHMENT, m_rbo_color);
+	m_fbo_msaa.attach_rbo(m_rbo_depth, FrameBuffer::DEPTH_ATTACHMENT);
+	m_fbo_msaa.attach_rbo(m_rbo_color, FrameBuffer::COLOR_ATTACHMENT0);
 	m_fbo_msaa.check_status();
 	GLcall(glEnable(GL_MULTISAMPLE));
 	m_fbo.bind();
-	m_fbo.attach_texture(m_texture, FrameBuffer::COLOR_ATTACHMENT);
+	m_fbo.attach_texture(m_texture, FrameBuffer::COLOR_ATTACHMENT0);
 	m_fbo.check_status();
 	m_fbo.unbind();
 
@@ -53,14 +54,16 @@ void ShadowMap::begin() const
 
 void ShadowMap::end() const
 {
+	static SummeadAreaTable sat(&m_texture, s_shadow_resolution);
+
 	m_fbo_msaa.unbind();
 	GLcall(glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo_msaa.get_fbo_id()));
 	GLcall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo.get_fbo_id()));
 	GLcall(glBlitFramebuffer(0, 0, s_shadow_resolution[0], s_shadow_resolution[1], 0, 0, s_shadow_resolution[0],
-		s_shadow_resolution[1], GL_COLOR_BUFFER_BIT, GL_LINEAR));
+		s_shadow_resolution[1], GL_COLOR_BUFFER_BIT, GL_NEAREST));
 
 	// Gen Summed Area Table
-	gen_SAT(m_texture);
+	sat.gen_sat(s_shadow_resolution);
 
 	// Set viewport back to normal.
 	Vector2i window_size = Game::Get().get_window_size();
@@ -86,7 +89,7 @@ void ShadowMap::imgui_renderer()
 	static FrameBuffer const fbo;
 	
 	fbo.bind();
-	fbo.attach_texture(tex, FrameBuffer::COLOR_ATTACHMENT);
+	fbo.attach_texture(tex, FrameBuffer::COLOR_ATTACHMENT0);
 
 	// Draw shadow map.
 	shader.bind();
@@ -109,14 +112,14 @@ void ShadowMap::imgui_renderer()
 	{
 		m_fbo_msaa.bind();
 		m_rbo_depth.respecify_rbo(s_number_msaa, RenderBuffer::DEPTH_COMPONENT, s_shadow_resolution[0], s_shadow_resolution[1]);
-		m_rbo_color.respecify_rbo(s_number_msaa, RenderBuffer::RG32F, s_shadow_resolution[0], s_shadow_resolution[1]);
-		m_fbo_msaa.attach_rbo(FrameBuffer::DEPTH_ATTACHMENT, m_rbo_depth);
-		m_fbo_msaa.attach_rbo(FrameBuffer::COLOR_ATTACHMENT, m_rbo_color);
+		m_rbo_color.respecify_rbo(s_number_msaa, RenderBuffer::RGBA32UI, s_shadow_resolution[0], s_shadow_resolution[1]);
+		m_fbo_msaa.attach_rbo(m_rbo_depth, FrameBuffer::DEPTH_ATTACHMENT);
+		m_fbo_msaa.attach_rbo(m_rbo_color, FrameBuffer::COLOR_ATTACHMENT0);
 		m_fbo_msaa.unbind();
-		m_texture.respecify_textute(0, BasicTexture2D::RG32F, s_shadow_resolution[0], s_shadow_resolution[1], 
-			BasicTexture2D::FORMAT_RG, BasicTexture2D::FLOAT, nullptr);
+		m_texture.respecify_textute(0, BasicTexture2D::RGBA32UI, s_shadow_resolution[0], s_shadow_resolution[1],
+			BasicTexture2D::FORMAT_RGBA_INTEGER, BasicTexture2D::UNSIGNED_INT, nullptr);
 	}
 
-	ImGui::Indent(10.0f);
+	ImGui::Indent(25.0f);
 	ImGui::Image(reinterpret_cast<unsigned int*>(tex.get_texture()), ImVec2(256, 256), ImVec2(0, 0), ImVec2(1, 1));
 }

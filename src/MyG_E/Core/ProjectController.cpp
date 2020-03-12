@@ -29,8 +29,8 @@ ProjectController::ProjectController()
 	, m_current_shader(BLINN_PHONG)
 {
 	m_fbo.bind();
-	m_fbo.attach_texture(m_texture, FrameBuffer::COLOR_ATTACHMENT);
-	m_fbo.attach_rbo(FrameBuffer::DEPTH_ATTACHMENT, m_rbo);
+	m_fbo.attach_texture(m_texture, FrameBuffer::COLOR_ATTACHMENT0);
+	m_fbo.attach_rbo(m_rbo, FrameBuffer::DEPTH_ATTACHMENT);
 	m_fbo.check_status();
 	m_fbo.unbind();
 }

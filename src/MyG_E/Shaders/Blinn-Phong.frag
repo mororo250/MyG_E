@@ -1,4 +1,4 @@
-#version 330 core
+#version 450 core
 
 #define MAX_NUM_POINT_LIGHT 10
 #define MAX_NUM_SPOT_LIGHT 10
@@ -68,7 +68,7 @@ in float v_dist_to_light[MAX_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH];
 uniform sampler2D u_texture;
 uniform sampler2D u_specular_map;
 uniform sampler2D u_nomal_map;
-uniform sampler2D u_shadow_map[MAX_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH];
+uniform usampler2D u_shadow_map[MAX_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH];
 uniform bool u_is_using_normal_map;
 uniform float u_shininess;
 Material material;
@@ -87,6 +87,8 @@ uniform PointLight u_point_light[MAX_NUM_POINT_LIGHT];
 uniform SpotLight u_spot_light[MAX_NUM_SPOT_LIGHT];
 uniform DirectionalLight u_directional_light[MAX_NUM_DIRECTIONAL_LIGHT];
 uniform DirectionalLight u_shadow_caster_directional_light[MAX_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH];
+
+double texel_size = 0.0146484375;
 
 vec3 light(Light light, vec3 ray_direction)
 {
@@ -148,34 +150,55 @@ float reduce_light_bleeding(float v, float min_amount)
   return clamp((v - min_amount) / (1.0f - min_amount), 0.0f, 1.0f);
 }
 
+dvec2 sample_sat_sum(uint shadow_id, vec2 coords, vec2 offset)
+{
+	uvec4 p1 = texture(u_shadow_map[shadow_id], vec2(coords.x + offset.x, coords.y + offset.y));
+	uvec4 p2 = texture(u_shadow_map[shadow_id], vec2(coords.x - offset.x, coords.y - offset.y));
+	uvec4 p3 = texture(u_shadow_map[shadow_id], vec2(coords.x + offset.x, coords.y - offset.y));
+	uvec4 p4 = texture(u_shadow_map[shadow_id], vec2(coords.x - offset.x, coords.y + offset.y));
+	return dvec2(packDouble2x32(p1.xy) + packDouble2x32(p2.xy) - packDouble2x32(p3.xy) - packDouble2x32(p4.xy),
+		packDouble2x32(p1.zw) + packDouble2x32(p2.zw) - packDouble2x32(p3.zw) - packDouble2x32(p4.zw)); 
+}
+
 float shadow_calculation(const uint i)
 {
 	// shadow map coords
 	vec3 proj_coords = v_pos_light_space[i].xyz / v_pos_light_space[i].w;
 	proj_coords = proj_coords * 0.5f + 0.5f; // Set coordinates to the range {0, 1}
 
+	int n_pixel_offset = 2;
 	vec2 offset = 1.0f / textureSize(u_shadow_map[i], 0);
 
-	// summed area table 9 x 9 
-	vec2 m = (texture(u_shadow_map[i], vec2(proj_coords.x + offset.x * 4, proj_coords.y + offset.y * 4)).xy +
-		texture(u_shadow_map[i], vec2(proj_coords.x - offset.x * 4, proj_coords.y - offset.y * 4)).xy -
-		texture(u_shadow_map[i], vec2(proj_coords.x + offset.x * 4, proj_coords.y - offset.y * 4)).xy -
-		texture(u_shadow_map[i], vec2(proj_coords.x - offset.x * 4, proj_coords.y + offset.y * 4)).xy) / (9 * 9); 
+	// summed area table 15 x 15 
+	dvec2 m1 = sample_sat_sum(i, proj_coords.xy, offset * n_pixel_offset);
+	dvec2 m2 = sample_sat_sum(i, vec2(proj_coords.x + offset.x, proj_coords.y - offset.x), offset * n_pixel_offset);
+	dvec2 m3 = sample_sat_sum(i, vec2(proj_coords.x - offset.x, proj_coords.y), offset * n_pixel_offset);
+	dvec2 m4 = sample_sat_sum(i, vec2(proj_coords.x, proj_coords.y + offset.x), offset * n_pixel_offset);
+	dvec2 m5 = sample_sat_sum(i, vec2(proj_coords.x, proj_coords.y - offset.x), offset * n_pixel_offset);
+	dvec2 m6 = sample_sat_sum(i, vec2(proj_coords.x + offset.x, proj_coords.y + offset.x), offset * n_pixel_offset);
+	dvec2 m7 = sample_sat_sum(i, vec2(proj_coords.x - offset.x, proj_coords.y - offset.x), offset * n_pixel_offset);
+	
+	// Calculate the area. 
+	double area = (2 * n_pixel_offset + 1);
+	area = area * area;
+	dvec2 m = dvec2(1.0 / area);
+	// Sat sum
+
 	
 	// One-tailed inequality valid if v_dist_to_light[i] > Moments.x
 	if (v_dist_to_light[i] <= m.x)
-		return 1.0f;
+		return 1.0;
 	
 	// Compute variance.
-	float variance = m.y - m.x*m.x;
-	variance = max(variance, 0.2f);
+	double variance = m.y - m.x*m.x;
+	variance = max(variance, 0.002);
 
 	// Compute probabilistic upper bound.
-	float diff = v_dist_to_light[i]- m.x;
-	float p_max = variance / (variance + diff*diff);
+	double diff = v_dist_to_light[i]- m.x;
+	float p_max = float(variance / (variance + diff*diff));
 
 	// Linearly rescale [0.0f, min_amount] to (min_amount, 1.0f].
-	float min_amount = 0.2f;
+	float min_amount = 0.0f;
 	return reduce_light_bleeding(p_max, min_amount); // decrease light bleeding
 }
 

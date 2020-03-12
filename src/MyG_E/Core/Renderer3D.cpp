@@ -77,7 +77,13 @@ void Renderer3D::clear(Vector4f const& color)
 	GLcall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 
-void Renderer3D::clear_buffer()
+void Renderer3D::clear_color_buffer(Vector4f const& color)
+{
+	GLcall(glClearColor(color[0], color[1], color[2], color[3]));
+	GLcall(glClear(GL_COLOR_BUFFER_BIT));
+}
+
+void Renderer3D::clear_depth_buffer()
 {
 	GLcall(glClear(GL_DEPTH_BUFFER_BIT));
 }

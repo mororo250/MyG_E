@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Foundation/Math/Vector.h"
+#include "Core/Post-Processing/SummedAreaTable.h"
 #include "Core/Texture/BasicTexture2D.h"
 #include "Core/FrameBuffer.h"
 #include "Core/RenderBuffer.h"
@@ -25,14 +26,15 @@ public:
 	void imgui_renderer();
 
 private:
-	mutable BasicTexture2D m_texture;
+	BasicTexture2D m_texture;
 	FrameBuffer m_fbo_msaa;
 	FrameBuffer m_fbo;
 	RenderBuffer m_rbo_depth;
 	RenderBuffer m_rbo_color;
 	Camera const* m_camera_view;
+	SummeadAreaTable m_sat;
 
 	static Vector2i s_shadow_resolution;
 	static int s_number_msaa;
-	static constexpr float SHADOW_RADIUS = 5.0f; // distance from light to shadow center
+	static constexpr float SHADOW_RADIUS = 15.0f; // distance from light to shadow center
 };

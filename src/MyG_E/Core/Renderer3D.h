@@ -13,7 +13,8 @@ public:
 	static void draw_quad();
 
 	static void clear(Vector4f const& color = { 0.0f, 0.0f, 0.0f, 1.0f });
-	static void clear_buffer();
+	static void clear_depth_buffer();
+	static void clear_color_buffer(Vector4f const& color = { 0.0f, 0.0f, 0.0f, 1.0f });
 
 	static void init();
 	static void end();
