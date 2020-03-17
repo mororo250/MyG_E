@@ -75,6 +75,7 @@ Material material;
 
 // Others
 uniform vec3 u_view_pos;
+uniform int u_shadow_softness;
 
 // Lights:
 uniform uint u_NUM_POINT_LIGHT;
@@ -150,41 +151,84 @@ float reduce_light_bleeding(float v, float min_amount)
   return clamp((v - min_amount) / (1.0f - min_amount), 0.0f, 1.0f);
 }
 
-dvec2 sample_sat_sum(uint shadow_id, vec2 coords, vec2 offset)
+// get value from a single pixel -> Debug propose. 
+dvec2 single_texel_value(uint shadow_id, vec2 coords, vec2 offset)
 {
-	uvec4 p1 = texture(u_shadow_map[shadow_id], vec2(coords.x + offset.x, coords.y + offset.y));
+	uvec4 p1 = texture(u_shadow_map[shadow_id], coords);
 	uvec4 p2 = texture(u_shadow_map[shadow_id], vec2(coords.x - offset.x, coords.y - offset.y));
-	uvec4 p3 = texture(u_shadow_map[shadow_id], vec2(coords.x + offset.x, coords.y - offset.y));
-	uvec4 p4 = texture(u_shadow_map[shadow_id], vec2(coords.x - offset.x, coords.y + offset.y));
+	uvec4 p3 = texture(u_shadow_map[shadow_id], vec2(coords.x, coords.y - offset.y));
+	uvec4 p4 = texture(u_shadow_map[shadow_id], vec2(coords.x - offset.x, coords.y));
+
+	return dvec2(packDouble2x32(p1.xy) + packDouble2x32(p2.xy) 
+	- packDouble2x32(p3.xy) - packDouble2x32(p4.xy), packDouble2x32(p1.zw) + packDouble2x32(p2.zw) 
+	- packDouble2x32(p3.zw) - packDouble2x32(p4.zw));
+}
+
+dvec2 sample_sat_sum(uint shadow_id, vec2 coords, vec2 tile_size)
+{
+	uvec4 p1 = texture(u_shadow_map[shadow_id], coords); // (0, 0)
+	uvec4 p2 = texture(u_shadow_map[shadow_id], coords + tile_size); // (1, 1)
+	uvec4 p3 = texture(u_shadow_map[shadow_id], coords + vec2(tile_size.x, 0.0f)); // (1, 0)
+	uvec4 p4 = texture(u_shadow_map[shadow_id],coords + vec2(0.0f, tile_size.y)); // (0, 1)
 	return dvec2(packDouble2x32(p1.xy) + packDouble2x32(p2.xy) - packDouble2x32(p3.xy) - packDouble2x32(p4.xy),
 		packDouble2x32(p1.zw) + packDouble2x32(p2.zw) - packDouble2x32(p3.zw) - packDouble2x32(p4.zw)); 
+}
+
+void sat_bilinear_filter(inout vec2 coords, vec2 texture_size, out vec4 weights)
+{
+	vec2 texel_size = 1.0f / texture_size;
+	vec2 texel_coords = texture_size * coords;
+	  
+	// Compute Weight
+	weights.xy = fract(texel_coords + 0.5f);
+	weights.zw = 1.0f - weights.xy;
+	weights = weights.xzxz * weights.wyyw;
+
+	// Compute upper-left pixel coordinates
+	coords = (floor(texel_coords - 0.5f) + 0.5f)* texel_size; // move uv to texel centre.
+}
+
+// Compute filter size and return upper left corner of the tile.
+void sat_filter_tile(inout vec2 coords, vec2 texture_size, out vec2 tile_size)
+{
+	vec2 texel_size = 1.0f / texture_size;
+
+	// Compute the filter size.
+	tile_size = round(u_shadow_softness / 1024.0f *  texture_size); // Ensures that blur area will be the same for any shadow resolution.
+	tile_size *= texel_size;
+
+	// Compute upper left size.
+	coords = coords - 0.5 * (tile_size - texel_size);
 }
 
 float shadow_calculation(const uint i)
 {
 	// shadow map coords
-	vec3 proj_coords = v_pos_light_space[i].xyz / v_pos_light_space[i].w;
-	proj_coords = proj_coords * 0.5f + 0.5f; // Set coordinates to the range {0, 1}
+	vec2 light_coords = v_pos_light_space[i].xy / v_pos_light_space[i].w;
+	light_coords = light_coords * 0.5f + 0.5f; // Set coordinates to the range {0, 1}
 
-	int n_pixel_offset = 2;
-	vec2 offset = 1.0f / textureSize(u_shadow_map[i], 0);
+	// int n_pixel_offset = 1;
+	vec2 texture_size = textureSize(u_shadow_map[i], 0);
+	vec2 texel_size = 1 / texture_size;
 
-	// summed area table 15 x 15 
-	dvec2 m1 = sample_sat_sum(i, proj_coords.xy, offset * n_pixel_offset);
-	dvec2 m2 = sample_sat_sum(i, vec2(proj_coords.x + offset.x, proj_coords.y - offset.x), offset * n_pixel_offset);
-	dvec2 m3 = sample_sat_sum(i, vec2(proj_coords.x - offset.x, proj_coords.y), offset * n_pixel_offset);
-	dvec2 m4 = sample_sat_sum(i, vec2(proj_coords.x, proj_coords.y + offset.x), offset * n_pixel_offset);
-	dvec2 m5 = sample_sat_sum(i, vec2(proj_coords.x, proj_coords.y - offset.x), offset * n_pixel_offset);
-	dvec2 m6 = sample_sat_sum(i, vec2(proj_coords.x + offset.x, proj_coords.y + offset.x), offset * n_pixel_offset);
-	dvec2 m7 = sample_sat_sum(i, vec2(proj_coords.x - offset.x, proj_coords.y - offset.x), offset * n_pixel_offset);
+	vec2 tile_size;
+	vec4 weight;
+	sat_filter_tile(light_coords, texture_size, tile_size);
+	sat_bilinear_filter(light_coords, texture_size, weight);
+	
+	// summed area table. 
+	dvec2 m1 = sample_sat_sum(i, light_coords + vec2(texel_size.x, 0), tile_size); //(1, 0)
+	dvec2 m2 = sample_sat_sum(i, light_coords + vec2(0, texel_size.y), tile_size ); //(0, 1)
+	dvec2 m3 = sample_sat_sum(i, light_coords + texel_size, tile_size); //(1, 1)
+	dvec2 m4 = sample_sat_sum(i, light_coords, tile_size); //(0, 0)
 	
 	// Calculate the area. 
-	double area = (2 * n_pixel_offset + 1);
-	area = area * area;
-	dvec2 m = dvec2(1.0 / area);
-	// Sat sum
+	tile_size = tile_size * texture_size; // Compute size in pixels
+	double inv_area = 1 / (tile_size.x * tile_size.y);
+	dvec2 m = (m1 * weight.x + m2 * weight.y + m3 * weight.z + m4 * weight.w) * inv_area;
 
-	
+	// dvec2 m = single_texel_value(i, light_coords, texel_size);
+
 	// One-tailed inequality valid if v_dist_to_light[i] > Moments.x
 	if (v_dist_to_light[i] <= m.x)
 		return 1.0;
@@ -198,7 +242,7 @@ float shadow_calculation(const uint i)
 	float p_max = float(variance / (variance + diff*diff));
 
 	// Linearly rescale [0.0f, min_amount] to (min_amount, 1.0f].
-	float min_amount = 0.0f;
+	float min_amount = 0.2f;
 	return reduce_light_bleeding(p_max, min_amount); // decrease light bleeding
 }
 

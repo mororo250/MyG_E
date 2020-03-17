@@ -22,19 +22,21 @@ public:
 	inline Vector3f get_central_pos() const { return m_camera_view->get_position() + (SHADOW_RADIUS * m_camera_view->get_direction()); }
 	inline Camera const* get_camera_view() { return m_camera_view; }
 	inline static constexpr float get_shadow_radius() { return SHADOW_RADIUS; }
+	inline static int get_shadow_softness() { return s_shadow_softness; }
 
 	void imgui_renderer();
 
 private:
-	BasicTexture2D m_texture;
+	std::vector<std::unique_ptr<BasicTexture2D>> m_textures;
+	std::vector<std::unique_ptr<RenderBuffer>> m_rbo_colors;
+	RenderBuffer m_rbo_depth;
 	FrameBuffer m_fbo_msaa;
 	FrameBuffer m_fbo;
-	RenderBuffer m_rbo_depth;
-	RenderBuffer m_rbo_color;
 	Camera const* m_camera_view;
 	SummeadAreaTable m_sat;
 
 	static Vector2i s_shadow_resolution;
 	static int s_number_msaa;
-	static constexpr float SHADOW_RADIUS = 15.0f; // distance from light to shadow center
+	static int s_shadow_softness;
+	static constexpr float SHADOW_RADIUS = 10.0f; // distance from light to shadow center
 };

@@ -6,7 +6,6 @@
 class BasicTexture2D : public Uncopyable
 {
 public:
-
 	enum TextureFilter
 	{
 		NEAREST = 0x2600, // GL_NEAREST. 
@@ -53,7 +52,7 @@ public:
 		RG16I = 0x8239,				// GL_RG16I 
 		RG16UI = 0x823A,			// GL_RG16UI
 		RG32I = 0x823B,				// GL_RG32I 
-		RG32UI  = 0x823C,			// GL_RG32UI
+		RG32UI = 0x823C,			// GL_RG32UI
 		RGBA32F = 0x881,			// GL_RGBA32F
 		RGBA32UI = 0x8D70,			// GL_RGBA32UI
 		RGB32F = 0x8815,			// GL_RGB32F
@@ -80,6 +79,7 @@ public:
 		UNSIGNED_INT = 0x1405, // GL_UNSIGNED_INT
 		FLOAT = 0x1406 // GL_FLOAT
 	};
+	struct TextureVariables;
 
 	BasicTexture2D(TextureFilter const mim_filter, TextureFilter const mag_filter, TextureWrap const s, 
 		TextureWrap const t, int const detail_level, InternalFormat const internal_format, int const width,
@@ -103,4 +103,24 @@ private:
 		int const height, Format const format, DataType const type, void* data);
 
 	unsigned int m_texture;
+};
+
+struct BasicTexture2D::TextureVariables
+{
+	constexpr TextureVariables(TextureFilter const mim_filter, TextureFilter const mag_filter, TextureWrap const s,
+		TextureWrap const t, int const detail_level, InternalFormat const internal_format, int const width,
+		int const height, Format const format, DataType const type, void* data);
+	~TextureVariables() = default;
+
+	BasicTexture2D::TextureFilter mim_filter;
+	BasicTexture2D::TextureFilter mag_filter;
+	BasicTexture2D::TextureWrap s;
+	BasicTexture2D::TextureWrap t;
+	int detail_level;
+	BasicTexture2D::InternalFormat internal_format;
+	int width;
+	int height;
+	BasicTexture2D::Format format;
+	BasicTexture2D::DataType type;
+	void* data;
 };

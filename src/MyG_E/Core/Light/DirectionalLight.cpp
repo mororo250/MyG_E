@@ -48,11 +48,10 @@ Matrix4x4f DirectionalLight::get_light_persp()
 {
 	// Create assert if m_shadow_map is nullptr
 
-	// static constexpr float SUN_DISTANCE = 149600000000.0f; // meters
 	static constexpr float SHADOW_RADIUS = ShadowMap::get_shadow_radius(); // distance from center to borders
 
 	return Matrix4x4f::make_orthographic_matrix(
-		-SHADOW_RADIUS, SHADOW_RADIUS, -SHADOW_RADIUS, SHADOW_RADIUS, 0.0f, 50.0f);
+		-SHADOW_RADIUS, SHADOW_RADIUS, -SHADOW_RADIUS, SHADOW_RADIUS, 0.0f, 1000.0f);
 }
 
 Matrix4x4f DirectionalLight::get_light_view()
@@ -68,7 +67,10 @@ void DirectionalLight::imgui_renderer()
 	Light::imgui_renderer();
 	ImGui::DragFloat3("Direction", &m_direction[0], 0.05f, -1.0f, 1.0f);
 	if (is_shadow_caster())
-		m_shadow_map->imgui_renderer();
+	{
+		if (ImGui::CollapsingHeader("Shadows", nullptr, ImGuiTreeNodeFlags_DefaultOpen))
+			m_shadow_map->imgui_renderer();
+	}
 }
 
 void DirectionalLight::set_uniform(Shader const* shader)

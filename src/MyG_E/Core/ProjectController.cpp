@@ -396,6 +396,7 @@ void ProjectController::draw_objects()
 	m_shader->set_uniform1ui(m_shader->get_uniform_location("u_NUM_DIRECTIONAL_LIGHT"), DirectionalLight::get_count());
 	m_shader->set_uniform1ui(m_shader->get_uniform_location(
 		"u_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH"), DirectionalLight::get_count_shadow_caster());
+	m_shader->set_uniform1i(m_shader->get_uniform_location("u_shadow_softness"), ShadowMap::get_shadow_softness());
 	m_shader->set_uniform3f(m_shader->get_uniform_location("u_ambient_light.color"), m_ambinet_light.get_light_color());
 	m_shader->set_uniform1f(m_shader->get_uniform_location("u_ambient_light.strength"), m_ambinet_light.get_strength());
 

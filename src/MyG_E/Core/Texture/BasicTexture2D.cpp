@@ -52,3 +52,7 @@ void BasicTexture2D::gen_texture(TextureFilter const mim_filter, TextureFilter c
 	GLcall(glTexImage2D(GL_TEXTURE_2D, detail_level, internal_format, width, height, 0, format, type, data));
 	GLcall(glBindTexture(GL_TEXTURE_2D, 0)); // unbind
 }
+
+BasicTexture2D::TextureVariables::TextureVariables(TextureFilter const mim_filter, TextureFilter const mag_filter, TextureWrap const s, TextureWrap const t, int const detail_level, InternalFormat const internal_format, int const width, int const height, Format const format, DataType const type, void* data)
+{
+}

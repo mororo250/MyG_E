@@ -64,7 +64,7 @@ bool Game::Initialize()
 	/* Make the window's context current */
 	glfwMakeContextCurrent(m_window);
 	//sicronize with vsync
-	glfwSwapInterval(1);
+	glfwSwapInterval(0);
 
 	if (!gladLoadGL()) {
 		printf("Something went wrong!\n");

@@ -8,13 +8,13 @@
 class SummeadAreaTable
 {
 public:
-	SummeadAreaTable(BasicTexture2D const* tex, Vector2i const& shadow_resolution);
+	SummeadAreaTable(BasicTexture2D* sat_texture, Vector2i const& texture_resolution);
 	~SummeadAreaTable() = default;
 
-	void gen_sat(Vector2i const& shadow_size);
+	void gen_sat(BasicTexture2D const& input_texture);
 
 private:
-	BasicTexture2D m_sat_texture;
-	BasicTexture2D const* m_input_texture;
+	std::unique_ptr<BasicTexture2D> m_sat_texture;
 	FrameBuffer m_fbo;
+	Vector2i m_texture_resolution;
 };

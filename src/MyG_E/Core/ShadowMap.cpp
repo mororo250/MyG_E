@@ -11,21 +11,29 @@
 #include "imgui.h"
 
 Vector2i ShadowMap::s_shadow_resolution = { 1024, 1024 };
+constexpr BasicTexture2D::TextureVariables SHADOWMAP_VARIABLES();
 int ShadowMap::s_number_msaa = 4;
+int ShadowMap::s_shadow_softness = 5;
 
-ShadowMap::ShadowMap(Camera const* camera)
+ShadowMap::ShadowMap(Camera const* camera, unsigned int csm_layers)
 	: m_camera_view(camera)
-	, m_texture(BasicTexture2D::NEAREST, BasicTexture2D::NEAREST, BasicTexture2D::CLAMP_TO_BORDER, BasicTexture2D::CLAMP_TO_BORDER,
-		0, BasicTexture2D::RGBA32UI, s_shadow_resolution[0], s_shadow_resolution[1], BasicTexture2D::FORMAT_RGBA_INTEGER, BasicTexture2D::UNSIGNED_INT, nullptr)
 	, m_fbo_msaa()
 	, m_fbo()
 	, m_rbo_depth(s_number_msaa, RenderBuffer::DEPTH_COMPONENT, s_shadow_resolution[0], s_shadow_resolution[1])
-	, m_rbo_color(s_number_msaa, RenderBuffer::RGBA32UI, s_shadow_resolution[0], s_shadow_resolution[1])
-	, m_sat(&m_texture, s_shadow_resolution)
+	, m_sat(new BasicTexture2D(BasicTexture2D::NEAREST, BasicTexture2D::NEAREST, BasicTexture2D::CLAMP_TO_BORDER,
+		BasicTexture2D::CLAMP_TO_BORDER, 0, BasicTexture2D::RGBA32UI, s_shadow_resolution[0], s_shadow_resolution[1], 
+		BasicTexture2D::FORMAT_RGBA_INTEGER, BasicTexture2D::UNSIGNED_INT, nullptr)
+		, s_shadow_resolution)
 {
+	for (unsigned int i = 0; i < csm_layers; i++)
+	{
+		m_textures.push_back(new BasicTexture2D(BasicTexture2D::NEAREST, BasicTexture2D::NEAREST, BasicTexture2D::CLAMP_TO_BORDER,
+			BasicTexture2D::CLAMP_TO_BORDER, 0, BasicTexture2D::RGBA32UI, s_shadow_resolution[0], s_shadow_resolution[1],
+			BasicTexture2D::FORMAT_RGBA_INTEGER, BasicTexture2D::UNSIGNED_INT, nullptr));
+	}
 	m_fbo_msaa.bind();
 	m_fbo_msaa.attach_rbo(m_rbo_depth, FrameBuffer::DEPTH_ATTACHMENT);
-	m_fbo_msaa.attach_rbo(m_rbo_color, FrameBuffer::COLOR_ATTACHMENT0);
+	m_fbo.attach_texture(m_textures, FrameBuffer::COLOR_ATTACHMENT0);
 	m_fbo_msaa.check_status();
 	GLcall(glEnable(GL_MULTISAMPLE));
 	m_fbo.bind();
@@ -102,12 +110,13 @@ void ShadowMap::imgui_renderer()
 	shader.unbind();
 	m_texture.unbind();
 	fbo.unbind();
-
+	
 	// Resolution
 	Vector2i temp_res = s_shadow_resolution;
 	int temp_msaa = s_number_msaa;
-	ImGui::DragInt2("Shadow map resolution: ", s_shadow_resolution.get_as_pointer(), 1, 256, 8192);
-	ImGui::DragInt("Shadow Map MSAA filtering:", &s_number_msaa, 1.0, 0, 32);
+	ImGui::DragInt("Shadow Softness", &s_shadow_softness, 1, 1, 128);
+	ImGui::DragInt2("Shadow resolution", s_shadow_resolution.get_as_pointer(), 1, 256, 8192);
+	ImGui::DragInt("Shadow MSAA", &s_number_msaa, 1.0, 0, 32);
 	if (temp_res != s_shadow_resolution || temp_msaa != s_number_msaa)
 	{
 		m_fbo_msaa.bind();
