@@ -9,8 +9,8 @@
 #include "Foundation/UI/FileBrowser.h"
 
 ProjectController::ProjectController()
-	: m_texture(BasicTexture2D::LINEAR, BasicTexture2D::LINEAR, BasicTexture2D::CLAMP_TO_EDGE, BasicTexture2D::CLAMP_TO_EDGE
-		, 0, BasicTexture2D::RGBA, Game::Get().get_window_size()[0], Game::Get().get_window_size()[1], BasicTexture2D::FORMAT_RGBA, BasicTexture2D::FLOAT, nullptr)
+	: m_texture(BasicTexture2D::TextureParm(BasicTexture2D::LINEAR, BasicTexture2D::LINEAR, BasicTexture2D::CLAMP_TO_EDGE, BasicTexture2D::CLAMP_TO_EDGE
+		, 0, BasicTexture2D::RGBA, Game::Get().get_window_size(), BasicTexture2D::FORMAT_RGBA, BasicTexture2D::FLOAT, nullptr))
 	, m_fbo()
 	, m_rbo(RenderBuffer::DEPTH_COMPONENT, Game::Get().get_window_size()[0], Game::Get().get_window_size()[1])
 	, m_camera(nullptr)
@@ -309,7 +309,7 @@ void ProjectController::create_light(unsigned int type)
 		push_light(new DirectionalLight({ 0.0f, 0.0f, 0.0f }));
 		break;
 	case 3:
-		push_light(new DirectionalLight({ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, {0.0f, -1.0f, 0.0f}, new ShadowMap(m_camera.get())));
+		push_light(new DirectionalLight({ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, {0.0f, -1.0f, 0.0f}, new ShadowMap(m_camera.get(), 1)));
 		break;
 	}
 }

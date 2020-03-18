@@ -79,15 +79,12 @@ public:
 		UNSIGNED_INT = 0x1405, // GL_UNSIGNED_INT
 		FLOAT = 0x1406 // GL_FLOAT
 	};
-	struct TextureVariables;
+	struct TextureParm;
 
-	BasicTexture2D(TextureFilter const mim_filter, TextureFilter const mag_filter, TextureWrap const s, 
-		TextureWrap const t, int const detail_level, InternalFormat const internal_format, int const width,
-		int const height, Format const format, DataType const type, void* data);
+	BasicTexture2D(TextureParm const& parm);
 	~BasicTexture2D();
 
-	void respecify_textute(int const detail_level, InternalFormat const internal_format, int const width, int const height,
-		Format const format, DataType type, void* data) const;
+	void respecify_textute(TextureParm const& parm) const;
 	void gen_mipmaps() const;
 
 	void bind(unsigned int slot) const;
@@ -98,29 +95,25 @@ public:
 	static unsigned int get_max_mipmap_level(Vector2i size) { return std::log2f(static_cast<float>(std::max(size[0], size[1]))); }
 
 private:
-	void gen_texture(TextureFilter const mim_filter, TextureFilter const mag_filter, TextureWrap const s,
-		TextureWrap const t, int const detail_level, InternalFormat const internal_format, int const width,
-		int const height, Format const format, DataType const type, void* data);
+	void gen_texture(TextureParm const& parm);
 
 	unsigned int m_texture;
 };
 
-struct BasicTexture2D::TextureVariables
+struct BasicTexture2D::TextureParm
 {
-	constexpr TextureVariables(TextureFilter const mim_filter, TextureFilter const mag_filter, TextureWrap const s,
-		TextureWrap const t, int const detail_level, InternalFormat const internal_format, int const width,
-		int const height, Format const format, DataType const type, void* data);
-	~TextureVariables() = default;
+	constexpr TextureParm(TextureFilter const mim_filter, TextureFilter const mag_filter, TextureWrap const s,
+		TextureWrap const t, int const detail_level, InternalFormat const internal_format, Vector2i const& res, Format const format, DataType const type, void* data);
+	~TextureParm() = default;
 
-	BasicTexture2D::TextureFilter mim_filter;
-	BasicTexture2D::TextureFilter mag_filter;
-	BasicTexture2D::TextureWrap s;
-	BasicTexture2D::TextureWrap t;
-	int detail_level;
-	BasicTexture2D::InternalFormat internal_format;
-	int width;
-	int height;
-	BasicTexture2D::Format format;
-	BasicTexture2D::DataType type;
-	void* data;
+	TextureFilter m_mim_filter;
+	TextureFilter m_mag_filter;
+	TextureWrap m_s;
+	TextureWrap m_t;
+	int m_detail_level;
+	InternalFormat m_internal_format;
+	Vector2i m_resolution;
+	Format m_format;
+	DataType m_type;
+	void* m_data;
 };

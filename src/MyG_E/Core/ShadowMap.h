@@ -10,7 +10,7 @@
 class ShadowMap
 {
 public:
-	explicit ShadowMap(Camera const* camera);
+	explicit ShadowMap(Camera const* camera, unsigned int csm_layers);
 	~ShadowMap();
 
 	void begin() const; // call before draw buffer
@@ -27,15 +27,15 @@ public:
 	void imgui_renderer();
 
 private:
-	std::vector<std::unique_ptr<BasicTexture2D>> m_textures;
-	std::vector<std::unique_ptr<RenderBuffer>> m_rbo_colors;
-	RenderBuffer m_rbo_depth;
+	std::vector<BasicTexture2D*> m_textures;
+	std::vector<RenderBuffer*> m_color_rbos;
+	RenderBuffer m_depth_rbo;
 	FrameBuffer m_fbo_msaa;
 	FrameBuffer m_fbo;
 	Camera const* m_camera_view;
 	SummeadAreaTable m_sat;
 
-	static Vector2i s_shadow_resolution;
+	static BasicTexture2D::TextureParm s_parm;
 	static int s_number_msaa;
 	static int s_shadow_softness;
 	static constexpr float SHADOW_RADIUS = 10.0f; // distance from light to shadow center

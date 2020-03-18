@@ -4,6 +4,7 @@
 #define MAX_NUM_SPOT_LIGHT 10
 #define MAX_NUM_DIRECTIONAL_LIGHT 5
 #define MAX_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH 5
+#define MAX_NUM_CASCADE_LAYERS 5
 
 layout(location = 0) out vec4 frag_color;
 
@@ -68,7 +69,7 @@ in float v_dist_to_light[MAX_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH];
 uniform sampler2D u_texture;
 uniform sampler2D u_specular_map;
 uniform sampler2D u_nomal_map;
-uniform usampler2D u_shadow_map[MAX_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH];
+uniform usampler2D u_shadow_map[MAX_NUM_SHADOW_CASTER_DIRECTIONAL_LIGTH][MAX_NUM_CASCADE_LAYERS];
 uniform bool u_is_using_normal_map;
 uniform float u_shininess;
 Material material;
@@ -154,10 +155,10 @@ float reduce_light_bleeding(float v, float min_amount)
 // get value from a single pixel -> Debug propose. 
 dvec2 single_texel_value(uint shadow_id, vec2 coords, vec2 offset)
 {
-	uvec4 p1 = texture(u_shadow_map[shadow_id], coords);
-	uvec4 p2 = texture(u_shadow_map[shadow_id], vec2(coords.x - offset.x, coords.y - offset.y));
-	uvec4 p3 = texture(u_shadow_map[shadow_id], vec2(coords.x, coords.y - offset.y));
-	uvec4 p4 = texture(u_shadow_map[shadow_id], vec2(coords.x - offset.x, coords.y));
+	uvec4 p1 = texture(u_shadow_map[shadow_id][0], coords);
+	uvec4 p2 = texture(u_shadow_map[shadow_id][0], vec2(coords.x - offset.x, coords.y - offset.y));
+	uvec4 p3 = texture(u_shadow_map[shadow_id][0], vec2(coords.x, coords.y - offset.y));
+	uvec4 p4 = texture(u_shadow_map[shadow_id][0], vec2(coords.x - offset.x, coords.y));
 
 	return dvec2(packDouble2x32(p1.xy) + packDouble2x32(p2.xy) 
 	- packDouble2x32(p3.xy) - packDouble2x32(p4.xy), packDouble2x32(p1.zw) + packDouble2x32(p2.zw) 
@@ -166,10 +167,10 @@ dvec2 single_texel_value(uint shadow_id, vec2 coords, vec2 offset)
 
 dvec2 sample_sat_sum(uint shadow_id, vec2 coords, vec2 tile_size)
 {
-	uvec4 p1 = texture(u_shadow_map[shadow_id], coords); // (0, 0)
-	uvec4 p2 = texture(u_shadow_map[shadow_id], coords + tile_size); // (1, 1)
-	uvec4 p3 = texture(u_shadow_map[shadow_id], coords + vec2(tile_size.x, 0.0f)); // (1, 0)
-	uvec4 p4 = texture(u_shadow_map[shadow_id],coords + vec2(0.0f, tile_size.y)); // (0, 1)
+	uvec4 p1 = texture(u_shadow_map[shadow_id][0], coords); // (0, 0)
+	uvec4 p2 = texture(u_shadow_map[shadow_id][0], coords + tile_size); // (1, 1)
+	uvec4 p3 = texture(u_shadow_map[shadow_id][0], coords + vec2(tile_size.x, 0.0f)); // (1, 0)
+	uvec4 p4 = texture(u_shadow_map[shadow_id][0],coords + vec2(0.0f, tile_size.y)); // (0, 1)
 	return dvec2(packDouble2x32(p1.xy) + packDouble2x32(p2.xy) - packDouble2x32(p3.xy) - packDouble2x32(p4.xy),
 		packDouble2x32(p1.zw) + packDouble2x32(p2.zw) - packDouble2x32(p3.zw) - packDouble2x32(p4.zw)); 
 }
@@ -208,7 +209,7 @@ float shadow_calculation(const uint i)
 	light_coords = light_coords * 0.5f + 0.5f; // Set coordinates to the range {0, 1}
 
 	// int n_pixel_offset = 1;
-	vec2 texture_size = textureSize(u_shadow_map[i], 0);
+	vec2 texture_size = textureSize(u_shadow_map[i][0], 0);
 	vec2 texel_size = 1 / texture_size;
 
 	vec2 tile_size;

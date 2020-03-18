@@ -18,7 +18,7 @@ SummeadAreaTable::SummeadAreaTable(BasicTexture2D* sat_texture, Vector2i const& 
 	m_fbo.unbind();
 }
 
-void SummeadAreaTable::gen_sat(BasicTexture2D const& input_texture)
+void SummeadAreaTable::gen_sat(BasicTexture2D const& input_texture) const
 {
 	static Shader horizontal_sta("BasicShader.vert", "SummedAreaTableHorizontal.frag");
 	static Shader vertical_sta("BasicShader.vert", "SummedAreaTableVertical.frag");
